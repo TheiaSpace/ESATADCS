@@ -1,0 +1,35 @@
+ESATADCS KEYWORD1
+begin KEYWORD2
+handleCommand KEYWORD2
+readTelemetry KEYWORD2
+update KEYWORD2
+
+ESATCoarseSunSensor KEYWORD1
+begin KEYWORD2
+read KEYWORD2
+
+ESATGyroscope KEYWORD1
+begin KEYWORD2
+read KEYWORD2
+
+ESATMagnetometer KEYWORD1
+begin KEYWORD2
+read KEYWORD2
+
+ESATMagnetorquer KEYWORD1
+begin KEYWORD2
+writeEnable KEYWORD2
+writeX KEYWORD2
+writeY KEYWORD2
+
+ESATTachometer KEYWORD1
+begin KEYWORD2
+read KEYWORD2
+
+ESATWheel KEYWORD1
+begin KEYWORD2
+defaultCalibration KEYWORD2
+loadCalibration KEYWORD2
+saveCalibration KEYWORD2
+write KEYWORD2
+writeDutyCycle KEYWORD2
