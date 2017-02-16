@@ -23,6 +23,9 @@
 class ESATADCS
 {
   public:
+    // True if the inertial measurement unit is alive.
+    boolean inertialMeasurementUnitAlive;
+
     // Get all ADCS subsystems ready.
     void begin();
 

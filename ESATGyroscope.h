@@ -25,6 +25,9 @@
 class ESATGyroscope
 {
   public:
+    // True if the magnetometer is alive.
+    boolean alive;
+
     // Set up the gyroscope.
     void begin();
 

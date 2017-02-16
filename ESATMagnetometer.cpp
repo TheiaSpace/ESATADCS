@@ -28,14 +28,22 @@ void ESATMagnetometer::begin()
 int ESATMagnetometer::getReading()
 {
   byte rawReading[6];
-  (void) I2C.read(magnetometerAddress,
-                  readingRegister,
-                  rawReading,
-                  sizeof(rawReading));
-  const int mx = *(reinterpret_cast<int*>(&(rawReading[0]))) ;
-  const int my = *(reinterpret_cast<int*>(&(rawReading[2]))) ;
-  const int angle = round(Math.atan2(mx, my) * RAD_TO_DEG);
-  return angle;
+  const byte errorCode = I2C.read(magnetometerAddress,
+                                  readingRegister,
+                                  rawReading,
+                                  sizeof(rawReading));
+  alive = (errorCode == 0);
+  if (alive)
+  {
+    const int mx = *(reinterpret_cast<int*>(&(rawReading[0])));
+    const int my = *(reinterpret_cast<int*>(&(rawReading[2])));
+    const int angle = round(Math.atan2(mx, my) * RAD_TO_DEG);
+    return angle;
+  }
+  else
+  {
+    return 0;
+  }
 }
 
 int ESATMagnetometer::read()
@@ -48,14 +56,16 @@ int ESATMagnetometer::read()
 
 void ESATMagnetometer::setBypassMode()
 {
-  (void) I2C.write(chipAddress, bypassRegister, enableBypass);
+  const byte errorCode = I2C.write(chipAddress, bypassRegister, enableBypass);
+  alive = (errorCode == 0);
 }
 
 void ESATMagnetometer::startReading()
 {
-  (void) I2C.write(magnetometerAddress,
-                   controlRegister,
-                   singleMeasurementMode);
+  const byte errorCode = I2C.write(magnetometerAddress,
+                                   controlRegister,
+                                   singleMeasurementMode);
+  alive = (errorCode == 0);
 }
 
 void ESATMagnetometer::waitForReading()
@@ -64,12 +74,13 @@ void ESATMagnetometer::waitForReading()
   byte readingState;
   do
   {
-    (void) I2C.read(magnetometerAddress,
-                    dataStatusRegister,
-                    &readingState,
-                    sizeof(readingState));
+    const byte errorCode = I2C.read(magnetometerAddress,
+                                    dataStatusRegister,
+                                    &readingState,
+                                    sizeof(readingState));
+    alive = (errorCode == 0);
   }
-  while (!(readingState & dataReady) && timeout--);
+  while (!(readingState & dataReady) && timeout-- && alive);
 }
 
 ESATMagnetometer Magnetometer;

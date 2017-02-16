@@ -26,7 +26,9 @@ void ESATGyroscope::begin()
 
 void ESATGyroscope::configureRange()
 {
-  (void) I2C.write(address, configurationRegister, configuration);
+  const byte errorCode =
+    I2C.write(address, configurationRegister, configuration);
+  alive = (errorCode == 0);
 }
 
 int ESATGyroscope::read(unsigned int samples)
@@ -43,8 +45,17 @@ int ESATGyroscope::read(unsigned int samples)
 int ESATGyroscope::readRawSample()
 {
   byte buffer[6];
-  (void) I2C.read(address, gyroscopeReadingRegister, buffer, sizeof(buffer));
-  return (buffer[4] << 8) | buffer[5];
+  const byte errorCode =
+    I2C.read(address, gyroscopeReadingRegister, buffer, sizeof(buffer));
+  alive = (errorCode == 0);
+  if (alive)
+  {
+    return (buffer[4] << 8) | buffer[5];
+  }
+  else
+  {
+    return 0;
+  }
 }
 
 ESATGyroscope Gyroscope;
