@@ -266,6 +266,7 @@ void ESATADCS::readSensors()
   magneticAngle = Magnetometer.read();
   Magnetorquer.writeEnable(enableMagnetorquerDriver);
   sunAngle = CoarseSunSensor.read();
+  inertialMeasurementUnitAlive = Gyroscope.alive && Magnetometer.alive;
 }
 
 String ESATADCS::readTelemetry()

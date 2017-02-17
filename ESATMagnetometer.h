@@ -25,6 +25,9 @@
 class ESATMagnetometer
 {
   public:
+    // True if the magnetometer is alive.
+    boolean alive;
+
     // Set up the magnetometer.
     void begin();
 
