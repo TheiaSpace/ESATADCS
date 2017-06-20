@@ -426,12 +426,12 @@ void ESATADCS::runMaximumMagneticTorque()
 void ESATADCS::runSetWheelSpeed()
 {
   const int wheelSpeedError = targetWheelSpeed - wheelSpeed;
-  const float correction = wheelProportionalGain * wheelSpeedError
-                         - wheelDerivativeGain * (wheelSpeed - oldWheelSpeed)
-                         + wheelIntegralGain * wheelSpeedErrorIntegral;
+  const float control = wheelProportionalGain * wheelSpeedError
+          - wheelDerivativeGain * (wheelSpeed - oldWheelSpeed)
+          + wheelIntegralGain * wheelSpeedErrorIntegral;
   wheelSpeedErrorIntegral = wheelSpeedErrorIntegral + wheelSpeedError;
   oldWheelSpeed = wheelSpeed;
-  Wheel.write(targetWheelSpeed + correction);
+  Wheel.write(control);
 }
 
 void ESATADCS::update()
