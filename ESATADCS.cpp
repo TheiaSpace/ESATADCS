@@ -58,10 +58,10 @@ void ESATADCS::begin()
   targetMagnetorquerDirection = false;
   targetWheelSpeed = 0;
   useWheel = true;
-  wheelDerivativeGain = 0e-1;
-  wheelIntegralGain = 10e-3;
-  wheelProportionalGain = 10e-3;
-  wheelSpeedErrorIntegral = 0.0;
+  wheelDerivativeGain = 0;
+  wheelIntegralGain = 0e-2;
+  wheelProportionalGain = 15e-1;
+  wheelSpeedErrorIntegral = 30e-1;
   Wheel.begin();
   Gyroscope.begin();
   Magnetometer.begin();
@@ -215,9 +215,11 @@ void ESATADCS::handleMaxMagTorqueCommand(String parameters)
 
 void ESATADCS::handleWheelPDConfigCommand(String parameters)
 {
-  wheelProportionalGain = parameters.substring(0, 2).toInt() * 1e-3;
+  wheelProportionalGain = parameters.substring(0, 2).toInt() * 1e-1;
   wheelDerivativeGain = parameters.substring(2, 4).toInt() * 1e-1;
-  wheelIntegralGain = parameters.substring(4, 6).toInt() * 1e-3;
+  wheelIntegralGain = parameters.substring(4, 6).toInt() * 1e-2;
+  wheelSpeedErrorIntegral = 0;
+  oldWheelSpeed = 0;
 }
 
 void ESATADCS::handleMTQDemagCommand(String parameters)
@@ -426,12 +428,12 @@ void ESATADCS::runMaximumMagneticTorque()
 void ESATADCS::runSetWheelSpeed()
 {
   const int wheelSpeedError = targetWheelSpeed - wheelSpeed;
-  const float correction = wheelProportionalGain * wheelSpeedError
-                         - wheelDerivativeGain * (wheelSpeed - oldWheelSpeed)
-                         + wheelIntegralGain * wheelSpeedErrorIntegral;
+  const float control = wheelProportionalGain * wheelSpeedError
+          - wheelDerivativeGain * (wheelSpeed - oldWheelSpeed)
+          + wheelIntegralGain * wheelSpeedErrorIntegral;
   wheelSpeedErrorIntegral = wheelSpeedErrorIntegral + wheelSpeedError;
   oldWheelSpeed = wheelSpeed;
-  Wheel.write(targetWheelSpeed + correction);
+  Wheel.write(control);
 }
 
 void ESATADCS::update()
