@@ -33,9 +33,9 @@ void ESATWheel::begin()
 
 void ESATWheel::defaultCalibration()
 {
-  calibration[0] = 143.0;
-  calibration[1] = 2e-3;
-  calibration[2] = 3e-7;
+  calibration[0] = 128.0;
+  calibration[1] = 1.9e-2;
+  calibration[2] = 0;
 }
 
 void ESATWheel::loadCalibration()
