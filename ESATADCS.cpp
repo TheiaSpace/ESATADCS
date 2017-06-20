@@ -60,8 +60,8 @@ void ESATADCS::begin()
   useWheel = true;
   wheelDerivativeGain = 0;
   wheelIntegralGain = 0e-2;
-  wheelProportionalGain = 10e-1;
-  wheelSpeedErrorIntegral = 0e-1;
+  wheelProportionalGain = 15e-1;
+  wheelSpeedErrorIntegral = 30e-1;
   Wheel.begin();
   Gyroscope.begin();
   Magnetometer.begin();
