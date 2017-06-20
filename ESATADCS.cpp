@@ -60,7 +60,7 @@ void ESATADCS::begin()
   useWheel = true;
   wheelDerivativeGain = 0e-1;
   wheelIntegralGain = 10e-3;
-  wheelProportionalGain = 10e-3;
+  wheelProportionalGain = 10e-1;
   wheelSpeedErrorIntegral = 0.0;
   Wheel.begin();
   Gyroscope.begin();
@@ -215,7 +215,7 @@ void ESATADCS::handleMaxMagTorqueCommand(String parameters)
 
 void ESATADCS::handleWheelPDConfigCommand(String parameters)
 {
-  wheelProportionalGain = parameters.substring(0, 2).toInt() * 1e-3;
+  wheelProportionalGain = parameters.substring(0, 2).toInt() * 1e-1;
   wheelDerivativeGain = parameters.substring(2, 4).toInt() * 1e-1;
   wheelIntegralGain = parameters.substring(4, 6).toInt() * 1e-3;
 }
