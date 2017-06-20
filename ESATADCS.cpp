@@ -58,8 +58,8 @@ void ESATADCS::begin()
   targetMagnetorquerDirection = false;
   targetWheelSpeed = 0;
   useWheel = true;
-  wheelDerivativeGain = 0e-2;
-  wheelIntegralGain = 30e-1;
+  wheelDerivativeGain = 0e-1;
+  wheelIntegralGain = 30e-2;
   wheelProportionalGain = 15e-1;
   wheelSpeedErrorIntegral = 0;
   Wheel.begin();
