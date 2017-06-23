@@ -82,7 +82,7 @@ class ESATADCS
     int magneticAngle;
     int magnetorquerXPolarity;
     int magnetorquerYPolarity;
-    int oldWheelSpeed;
+    int oldWheelSpeedError;
     int rotationalSpeed;
     enum RunCode runCode;
     int sunAngle;

@@ -51,7 +51,7 @@ void ESATADCS::begin()
   enableMagnetorquerDriver = false;
   magnetorquerXPolarity = Magnetorquer.positive;
   magnetorquerYPolarity = Magnetorquer.positive;
-  oldWheelSpeed = 0;
+  oldWheelSpeedError = 0;
   runCode = REST;
   rotationalSpeed = 0;
   targetAttitude = 0;
@@ -219,7 +219,7 @@ void ESATADCS::handleWheelPDConfigCommand(String parameters)
   wheelDerivativeGain = parameters.substring(2, 4).toInt() * 1e-1;
   wheelIntegralGain = parameters.substring(4, 6).toInt() * 1e-2;
   wheelSpeedErrorIntegral = 0;
-  oldWheelSpeed = 0;
+  oldWheelSpeedError = 0;
 }
 
 void ESATADCS::handleMTQDemagCommand(String parameters)
@@ -428,11 +428,12 @@ void ESATADCS::runMaximumMagneticTorque()
 void ESATADCS::runSetWheelSpeed()
 {
   const int wheelSpeedError = targetWheelSpeed - wheelSpeed;
-  const float control = wheelProportionalGain * wheelSpeedError
-          - wheelDerivativeGain * (wheelSpeed - oldWheelSpeed)
-          + wheelIntegralGain * wheelSpeedErrorIntegral;
   wheelSpeedErrorIntegral = wheelSpeedErrorIntegral + wheelSpeedError;
-  oldWheelSpeed = wheelSpeed;
+  const int wheelSpeedErrorDerivative = wheelSpeedError - oldWheelSpeedError;
+  oldWheelSpeedError = wheelSpeedError;
+  const float control = wheelProportionalGain * wheelSpeedError
+    + wheelIntegralGain * wheelSpeedErrorIntegral
+    + wheelDerivativeGain * wheelSpeedErrorDerivative;
   Wheel.write(control);
 }
 
