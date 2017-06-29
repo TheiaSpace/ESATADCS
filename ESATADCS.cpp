@@ -100,8 +100,8 @@ void ESATADCS::handleCommand(int commandCode, String parameters)
     case MAGNETORQUER_X_POLARITY_COMMAND:
       handleMagnetorquerXPolarityCommand(parameters);
       break;
-    case MTQY_POLARITY_COMMAND:
-      handleMTQYPolarityCommand(parameters);
+    case MAGNETORQUER_Y_POLARITY_COMMAND:
+      handleMagnetorquerYPolarityCommand(parameters);
       break;
     case FOLLOW_SUN_COMMAND:
       handleFollowSunCommand(parameters);
@@ -174,7 +174,7 @@ void ESATADCS::handleMagnetorquerXPolarityCommand(String parameters)
   Magnetorquer.writeX(magnetorquerXPolarity);
 }
 
-void ESATADCS::handleMTQYPolarityCommand(String parameters)
+void ESATADCS::handleMagnetorquerYPolarityCommand(String parameters)
 {
   magnetorquerYPolarity =
     (parameters.toInt() > 0) ? Magnetorquer.positive : Magnetorquer.negative;
