@@ -52,7 +52,7 @@ class ESATADCS
       MAXIMUM_MAGNETIC_TORQUE_COMMAND = 0x9,
       WHEEL_PID_CONFIGURATION_COMMAND = 0x10,
       DEMAGNETIZE_COMMAND = 0x11,
-      WHEEL_OR_MTQ_COMMAND = 0x13,
+      WHEEL_OR_MAGNETORQUER_COMMAND = 0x13,
       WHEEL_CALIBRATION1_COMMAND = 0x21,
       WHEEL_CALIBRATION2_COMMAND = 0x22,
       WHEEL_CALIBRATION3_COMMAND = 0x23,
@@ -111,7 +111,7 @@ class ESATADCS
     void handleMaximumMagneticTorqueCommand(String parameters);
     void handleWheelPIDConfigurationCommand(String parameters);
     void handleDemagnetizeCommand(String parameters);
-    void handleWheelOrMTQCommand(String parameters);
+    void handleWheelOrMagnetorquerCommand(String parameters);
     void handleWheelCalibration1Command(String parameters);
     void handleWheelCalibration2Command(String parameters);
     void handleWheelCalibration3Command(String parameters);
