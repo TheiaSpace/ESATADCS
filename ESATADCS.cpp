@@ -112,8 +112,8 @@ void ESATADCS::handleCommand(int commandCode, String parameters)
     case SET_WHEEL_SPEED_COMMAND:
       handleSetWheelSpeedCommand(parameters);
       break;
-    case MAX_MAG_TORQUE_COMMAND:
-      handleMaxMagTorqueCommand(parameters);
+    case MAXIMUM_MAGNETIC_TORQUE_COMMAND:
+      handleMaximumMagneticTorqueCommand(parameters);
       break;
     case WHEEL_PID_CONFIGURATION_COMMAND:
       handleWheelPIDConfigurationCommand(parameters);
@@ -207,7 +207,7 @@ void ESATADCS::handleSetWheelSpeedCommand(String parameters)
   }
 }
 
-void ESATADCS::handleMaxMagTorqueCommand(String parameters)
+void ESATADCS::handleMaximumMagneticTorqueCommand(String parameters)
 {
   runCode = MAXIMUM_MAGNETIC_TORQUE;
   targetMagnetorquerDirection = !!(parameters.toInt());

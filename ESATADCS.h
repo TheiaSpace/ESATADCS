@@ -49,7 +49,7 @@ class ESATADCS
       FOLLOW_SUN_COMMAND = 0x6,
       FOLLOW_MAGNETOMETER_COMMAND = 0x7,
       SET_WHEEL_SPEED_COMMAND = 0x8,
-      MAX_MAG_TORQUE_COMMAND = 0x9,
+      MAXIMUM_MAGNETIC_TORQUE_COMMAND = 0x9,
       WHEEL_PID_CONFIGURATION_COMMAND = 0x10,
       MTQ_DEMAG_COMMAND = 0x11,
       WHEEL_OR_MTQ_COMMAND = 0x13,
@@ -108,7 +108,7 @@ class ESATADCS
     void handleFollowSunCommand(String parameters);
     void handleFollowMagnetometerCommand(String parameters);
     void handleSetWheelSpeedCommand(String parameters);
-    void handleMaxMagTorqueCommand(String parameters);
+    void handleMaximumMagneticTorqueCommand(String parameters);
     void handleWheelPIDConfigurationCommand(String parameters);
     void handleMTQDemagCommand(String parameters);
     void handleWheelOrMTQCommand(String parameters);
