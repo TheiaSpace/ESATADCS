@@ -118,8 +118,8 @@ void ESATADCS::handleCommand(int commandCode, String parameters)
     case WHEEL_PID_CONFIGURATION_COMMAND:
       handleWheelPIDConfigurationCommand(parameters);
       break;
-    case MTQ_DEMAG_COMMAND:
-      handleMTQDemagCommand(parameters);
+    case DEMAGNETIZE_COMMAND:
+      handleDemagnetizeCommand(parameters);
       break;
     case WHEEL_OR_MTQ_COMMAND:
       handleWheelOrMTQCommand(parameters);
@@ -222,7 +222,7 @@ void ESATADCS::handleWheelPIDConfigurationCommand(String parameters)
   oldWheelSpeedError = 0;
 }
 
-void ESATADCS::handleMTQDemagCommand(String parameters)
+void ESATADCS::handleDemagnetizeCommand(String parameters)
 {
   runCode = DEMAGNETIZE;
   demagnetizationIterations = parameters.toInt();
