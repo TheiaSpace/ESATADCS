@@ -97,8 +97,8 @@ void ESATADCS::handleCommand(int commandCode, String parameters)
     case ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y_COMMAND:
       handleEnableMagnetorquerXAndMagnetorquerYCommand(parameters);
       break;
-    case MTQX_POLARITY_COMMAND:
-      handleMTQXPolarityCommand(parameters);
+    case MAGNETORQUER_X_POLARITY_COMMAND:
+      handleMagnetorquerXPolarityCommand(parameters);
       break;
     case MTQY_POLARITY_COMMAND:
       handleMTQYPolarityCommand(parameters);
@@ -167,7 +167,7 @@ void ESATADCS::handleEnableMagnetorquerXAndMagnetorquerYCommand(String parameter
   Magnetorquer.writeEnable(enableMagnetorquerDriver);
 }
 
-void ESATADCS::handleMTQXPolarityCommand(String parameters)
+void ESATADCS::handleMagnetorquerXPolarityCommand(String parameters)
 {
   magnetorquerXPolarity =
     (parameters.toInt() > 0) ? Magnetorquer.positive : Magnetorquer.negative;

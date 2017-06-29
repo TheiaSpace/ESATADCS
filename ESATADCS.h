@@ -44,7 +44,7 @@ class ESATADCS
       MOTOR_DUTY_COMMAND = 0x1,
       PID_CONFIGURATION_COMMAND = 0x2,
       ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y_COMMAND = 0x3,
-      MTQX_POLARITY_COMMAND = 0x4,
+      MAGNETORQUER_X_POLARITY_COMMAND = 0x4,
       MTQY_POLARITY_COMMAND = 0x5,
       FOLLOW_SUN_COMMAND = 0x6,
       FOLLOW_MAG_COMMAND = 0x7,
@@ -103,7 +103,7 @@ class ESATADCS
     void handleMotorDutyCommand(String parameters);
     void handlePIDConfigurationCommand(String parameters);
     void handleEnableMagnetorquerXAndMagnetorquerYCommand(String parameters);
-    void handleMTQXPolarityCommand(String parameters);
+    void handleMagnetorquerXPolarityCommand(String parameters);
     void handleMTQYPolarityCommand(String parameters);
     void handleFollowSunCommand(String parameters);
     void handleFollowMagCommand(String parameters);
