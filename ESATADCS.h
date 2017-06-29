@@ -50,7 +50,7 @@ class ESATADCS
       FOLLOW_MAG_COMMAND = 0x7,
       SET_WHEEL_SPEED_COMMAND = 0x8,
       MAX_MAG_TORQUE_COMMAND = 0x9,
-      WHEEL_PD_CONFIG_COMMAND = 0x10,
+      WHEEL_PID_CONFIGURATION_COMMAND = 0x10,
       MTQ_DEMAG_COMMAND = 0x11,
       WHEEL_OR_MTQ_COMMAND = 0x13,
       WHEEL_CALIBRATION1_COMMAND = 0x21,
@@ -109,7 +109,7 @@ class ESATADCS
     void handleFollowMagCommand(String parameters);
     void handleSetWheelSpeedCommand(String parameters);
     void handleMaxMagTorqueCommand(String parameters);
-    void handleWheelPDConfigCommand(String parameters);
+    void handleWheelPIDConfigurationCommand(String parameters);
     void handleMTQDemagCommand(String parameters);
     void handleWheelOrMTQCommand(String parameters);
     void handleWheelCalibration1Command(String parameters);

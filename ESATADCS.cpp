@@ -115,8 +115,8 @@ void ESATADCS::handleCommand(int commandCode, String parameters)
     case MAX_MAG_TORQUE_COMMAND:
       handleMaxMagTorqueCommand(parameters);
       break;
-    case WHEEL_PD_CONFIG_COMMAND:
-      handleWheelPDConfigCommand(parameters);
+    case WHEEL_PID_CONFIGURATION_COMMAND:
+      handleWheelPIDConfigurationCommand(parameters);
       break;
     case MTQ_DEMAG_COMMAND:
       handleMTQDemagCommand(parameters);
@@ -213,7 +213,7 @@ void ESATADCS::handleMaxMagTorqueCommand(String parameters)
   targetMagnetorquerDirection = !!(parameters.toInt());
 }
 
-void ESATADCS::handleWheelPDConfigCommand(String parameters)
+void ESATADCS::handleWheelPIDConfigurationCommand(String parameters)
 {
   wheelProportionalGain = parameters.substring(0, 2).toInt() * 1e-1;
   wheelDerivativeGain = parameters.substring(2, 4).toInt() * 1e-1;
