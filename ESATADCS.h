@@ -47,7 +47,7 @@ class ESATADCS
       MAGNETORQUER_X_POLARITY_COMMAND = 0x4,
       MAGNETORQUER_Y_POLARITY_COMMAND = 0x5,
       FOLLOW_SUN_COMMAND = 0x6,
-      FOLLOW_MAG_COMMAND = 0x7,
+      FOLLOW_MAGNETOMETER_COMMAND = 0x7,
       SET_WHEEL_SPEED_COMMAND = 0x8,
       MAX_MAG_TORQUE_COMMAND = 0x9,
       WHEEL_PID_CONFIGURATION_COMMAND = 0x10,
@@ -106,7 +106,7 @@ class ESATADCS
     void handleMagnetorquerXPolarityCommand(String parameters);
     void handleMagnetorquerYPolarityCommand(String parameters);
     void handleFollowSunCommand(String parameters);
-    void handleFollowMagCommand(String parameters);
+    void handleFollowMagnetometerCommand(String parameters);
     void handleSetWheelSpeedCommand(String parameters);
     void handleMaxMagTorqueCommand(String parameters);
     void handleWheelPIDConfigurationCommand(String parameters);

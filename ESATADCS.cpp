@@ -106,8 +106,8 @@ void ESATADCS::handleCommand(int commandCode, String parameters)
     case FOLLOW_SUN_COMMAND:
       handleFollowSunCommand(parameters);
       break;
-    case FOLLOW_MAG_COMMAND:
-      handleFollowMagCommand(parameters);
+    case FOLLOW_MAGNETOMETER_COMMAND:
+      handleFollowMagnetometerCommand(parameters);
       break;
     case SET_WHEEL_SPEED_COMMAND:
       handleSetWheelSpeedCommand(parameters);
@@ -188,7 +188,7 @@ void ESATADCS::handleFollowSunCommand(String parameters)
   targetAttitude = constrain(rawTargetAttitude, 0, 360);
 }
 
-void ESATADCS::handleFollowMagCommand(String parameters)
+void ESATADCS::handleFollowMagnetometerCommand(String parameters)
 {
   runCode = FOLLOW_MAGNETOMETER;
   const int rawTargetAttitude = parameters.toInt();
