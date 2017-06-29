@@ -94,8 +94,8 @@ void ESATADCS::handleCommand(int commandCode, String parameters)
     case PID_CONFIGURATION_COMMAND:
       handlePIDConfigurationCommand(parameters);
       break;
-    case ENABLE_MTQX_AND_MTQY_COMMAND:
-      handleEnableMTQXAndMTQYCommand(parameters);
+    case ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y_COMMAND:
+      handleEnableMagnetorquerXAndMagnetorquerYCommand(parameters);
       break;
     case MTQX_POLARITY_COMMAND:
       handleMTQXPolarityCommand(parameters);
@@ -158,9 +158,9 @@ void ESATADCS::handlePIDConfigurationCommand(String parameters)
   attitudeIntegralGain = parameters.substring(8, 12).toInt();
 }
 
-void ESATADCS::handleEnableMTQXAndMTQYCommand(String parameters)
+void ESATADCS::handleEnableMagnetorquerXAndMagnetorquerYCommand(String parameters)
 {
-  runCode = ENABLE_MTQX_AND_MTQY;
+  runCode = ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y;
   enableMagnetorquerDriver = !!(parameters.toInt());
   Magnetorquer.writeX(magnetorquerXPolarity);
   Magnetorquer.writeY(magnetorquerYPolarity);
