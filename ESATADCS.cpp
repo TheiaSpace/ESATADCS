@@ -51,7 +51,7 @@ void ESATADCS::begin()
   enableMagnetorquerDriver = false;
   magnetorquerXPolarity = Magnetorquer.positive;
   magnetorquerYPolarity = Magnetorquer.positive;
-  oldWheelSpeed = 0;
+  oldWheelSpeedError = 0;
   runCode = REST;
   rotationalSpeed = 0;
   targetAttitude = 0;
@@ -59,9 +59,9 @@ void ESATADCS::begin()
   targetWheelSpeed = 0;
   useWheel = true;
   wheelDerivativeGain = 0e-1;
-  wheelIntegralGain = 10e-3;
-  wheelProportionalGain = 10e-3;
-  wheelSpeedErrorIntegral = 0.0;
+  wheelIntegralGain = 30e-2;
+  wheelProportionalGain = 15e-1;
+  wheelSpeedErrorIntegral = 0;
   Wheel.begin();
   Gyroscope.begin();
   Magnetometer.begin();
@@ -94,35 +94,35 @@ void ESATADCS::handleCommand(int commandCode, String parameters)
     case PID_CONFIGURATION_COMMAND:
       handlePIDConfigurationCommand(parameters);
       break;
-    case ENABLE_MTQX_AND_MTQY_COMMAND:
-      handleEnableMTQXAndMTQYCommand(parameters);
+    case ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y_COMMAND:
+      handleEnableMagnetorquerXAndMagnetorquerYCommand(parameters);
       break;
-    case MTQX_POLARITY_COMMAND:
-      handleMTQXPolarityCommand(parameters);
+    case MAGNETORQUER_X_POLARITY_COMMAND:
+      handleMagnetorquerXPolarityCommand(parameters);
       break;
-    case MTQY_POLARITY_COMMAND:
-      handleMTQYPolarityCommand(parameters);
+    case MAGNETORQUER_Y_POLARITY_COMMAND:
+      handleMagnetorquerYPolarityCommand(parameters);
       break;
     case FOLLOW_SUN_COMMAND:
       handleFollowSunCommand(parameters);
       break;
-    case FOLLOW_MAG_COMMAND:
-      handleFollowMagCommand(parameters);
+    case FOLLOW_MAGNETOMETER_COMMAND:
+      handleFollowMagnetometerCommand(parameters);
       break;
     case SET_WHEEL_SPEED_COMMAND:
       handleSetWheelSpeedCommand(parameters);
       break;
-    case MAX_MAG_TORQUE_COMMAND:
-      handleMaxMagTorqueCommand(parameters);
+    case MAXIMUM_MAGNETIC_TORQUE_COMMAND:
+      handleMaximumMagneticTorqueCommand(parameters);
       break;
-    case WHEEL_PD_CONFIG_COMMAND:
-      handleWheelPDConfigCommand(parameters);
+    case WHEEL_PID_CONFIGURATION_COMMAND:
+      handleWheelPIDConfigurationCommand(parameters);
       break;
-    case MTQ_DEMAG_COMMAND:
-      handleMTQDemagCommand(parameters);
+    case DEMAGNETIZE_COMMAND:
+      handleDemagnetizeCommand(parameters);
       break;
-    case WHEEL_OR_MTQ_COMMAND:
-      handleWheelOrMTQCommand(parameters);
+    case WHEEL_OR_MAGNETORQUER_COMMAND:
+      handleWheelOrMagnetorquerCommand(parameters);
       break;
     case WHEEL_CALIBRATION1_COMMAND:
       handleWheelCalibration1Command(parameters);
@@ -158,23 +158,23 @@ void ESATADCS::handlePIDConfigurationCommand(String parameters)
   attitudeIntegralGain = parameters.substring(8, 12).toInt();
 }
 
-void ESATADCS::handleEnableMTQXAndMTQYCommand(String parameters)
+void ESATADCS::handleEnableMagnetorquerXAndMagnetorquerYCommand(String parameters)
 {
-  runCode = ENABLE_MTQX_AND_MTQY;
+  runCode = ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y;
   enableMagnetorquerDriver = !!(parameters.toInt());
   Magnetorquer.writeX(magnetorquerXPolarity);
   Magnetorquer.writeY(magnetorquerYPolarity);
   Magnetorquer.writeEnable(enableMagnetorquerDriver);
 }
 
-void ESATADCS::handleMTQXPolarityCommand(String parameters)
+void ESATADCS::handleMagnetorquerXPolarityCommand(String parameters)
 {
   magnetorquerXPolarity =
     (parameters.toInt() > 0) ? Magnetorquer.positive : Magnetorquer.negative;
   Magnetorquer.writeX(magnetorquerXPolarity);
 }
 
-void ESATADCS::handleMTQYPolarityCommand(String parameters)
+void ESATADCS::handleMagnetorquerYPolarityCommand(String parameters)
 {
   magnetorquerYPolarity =
     (parameters.toInt() > 0) ? Magnetorquer.positive : Magnetorquer.negative;
@@ -188,7 +188,7 @@ void ESATADCS::handleFollowSunCommand(String parameters)
   targetAttitude = constrain(rawTargetAttitude, 0, 360);
 }
 
-void ESATADCS::handleFollowMagCommand(String parameters)
+void ESATADCS::handleFollowMagnetometerCommand(String parameters)
 {
   runCode = FOLLOW_MAGNETOMETER;
   const int rawTargetAttitude = parameters.toInt();
@@ -207,26 +207,28 @@ void ESATADCS::handleSetWheelSpeedCommand(String parameters)
   }
 }
 
-void ESATADCS::handleMaxMagTorqueCommand(String parameters)
+void ESATADCS::handleMaximumMagneticTorqueCommand(String parameters)
 {
   runCode = MAXIMUM_MAGNETIC_TORQUE;
   targetMagnetorquerDirection = !!(parameters.toInt());
 }
 
-void ESATADCS::handleWheelPDConfigCommand(String parameters)
+void ESATADCS::handleWheelPIDConfigurationCommand(String parameters)
 {
-  wheelProportionalGain = parameters.substring(0, 2).toInt() * 1e-3;
+  wheelProportionalGain = parameters.substring(0, 2).toInt() * 1e-1;
   wheelDerivativeGain = parameters.substring(2, 4).toInt() * 1e-1;
-  wheelIntegralGain = parameters.substring(4, 6).toInt() * 1e-3;
+  wheelIntegralGain = parameters.substring(4, 6).toInt() * 1e-2;
+  wheelSpeedErrorIntegral = 0;
+  oldWheelSpeedError = 0;
 }
 
-void ESATADCS::handleMTQDemagCommand(String parameters)
+void ESATADCS::handleDemagnetizeCommand(String parameters)
 {
   runCode = DEMAGNETIZE;
   demagnetizationIterations = parameters.toInt();
 }
 
-void ESATADCS::handleWheelOrMTQCommand(String parameters)
+void ESATADCS::handleWheelOrMagnetorquerCommand(String parameters)
 {
   useWheel = !!(parameters.toInt());
 }
@@ -426,12 +428,13 @@ void ESATADCS::runMaximumMagneticTorque()
 void ESATADCS::runSetWheelSpeed()
 {
   const int wheelSpeedError = targetWheelSpeed - wheelSpeed;
-  const float correction = wheelProportionalGain * wheelSpeedError
-                         - wheelDerivativeGain * (wheelSpeed - oldWheelSpeed)
-                         + wheelIntegralGain * wheelSpeedErrorIntegral;
   wheelSpeedErrorIntegral = wheelSpeedErrorIntegral + wheelSpeedError;
-  oldWheelSpeed = wheelSpeed;
-  Wheel.write(targetWheelSpeed + correction);
+  const int wheelSpeedErrorDerivative = wheelSpeedError - oldWheelSpeedError;
+  oldWheelSpeedError = wheelSpeedError;
+  const float control = wheelProportionalGain * wheelSpeedError
+    + wheelIntegralGain * wheelSpeedErrorIntegral
+    + wheelDerivativeGain * wheelSpeedErrorDerivative;
+  Wheel.write(control);
 }
 
 void ESATADCS::update()

@@ -43,16 +43,16 @@ class ESATADCS
     {
       MOTOR_DUTY_COMMAND = 0x1,
       PID_CONFIGURATION_COMMAND = 0x2,
-      ENABLE_MTQX_AND_MTQY_COMMAND = 0x3,
-      MTQX_POLARITY_COMMAND = 0x4,
-      MTQY_POLARITY_COMMAND = 0x5,
+      ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y_COMMAND = 0x3,
+      MAGNETORQUER_X_POLARITY_COMMAND = 0x4,
+      MAGNETORQUER_Y_POLARITY_COMMAND = 0x5,
       FOLLOW_SUN_COMMAND = 0x6,
-      FOLLOW_MAG_COMMAND = 0x7,
+      FOLLOW_MAGNETOMETER_COMMAND = 0x7,
       SET_WHEEL_SPEED_COMMAND = 0x8,
-      MAX_MAG_TORQUE_COMMAND = 0x9,
-      WHEEL_PD_CONFIG_COMMAND = 0x10,
-      MTQ_DEMAG_COMMAND = 0x11,
-      WHEEL_OR_MTQ_COMMAND = 0x13,
+      MAXIMUM_MAGNETIC_TORQUE_COMMAND = 0x9,
+      WHEEL_PID_CONFIGURATION_COMMAND = 0x10,
+      DEMAGNETIZE_COMMAND = 0x11,
+      WHEEL_OR_MAGNETORQUER_COMMAND = 0x13,
       WHEEL_CALIBRATION1_COMMAND = 0x21,
       WHEEL_CALIBRATION2_COMMAND = 0x22,
       WHEEL_CALIBRATION3_COMMAND = 0x23,
@@ -65,7 +65,7 @@ class ESATADCS
     {
       REST = 0,
       SET_MOTOR_DUTY = 1,
-      ENABLE_MTQX_AND_MTQY = 3,
+      ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y = 3,
       FOLLOW_SUN = 6,
       FOLLOW_MAGNETOMETER = 7,
       SET_WHEEL_SPEED = 8,
@@ -82,7 +82,7 @@ class ESATADCS
     int magneticAngle;
     int magnetorquerXPolarity;
     int magnetorquerYPolarity;
-    int oldWheelSpeed;
+    int oldWheelSpeedError;
     int rotationalSpeed;
     enum RunCode runCode;
     int sunAngle;
@@ -102,16 +102,16 @@ class ESATADCS
     // Commands.
     void handleMotorDutyCommand(String parameters);
     void handlePIDConfigurationCommand(String parameters);
-    void handleEnableMTQXAndMTQYCommand(String parameters);
-    void handleMTQXPolarityCommand(String parameters);
-    void handleMTQYPolarityCommand(String parameters);
+    void handleEnableMagnetorquerXAndMagnetorquerYCommand(String parameters);
+    void handleMagnetorquerXPolarityCommand(String parameters);
+    void handleMagnetorquerYPolarityCommand(String parameters);
     void handleFollowSunCommand(String parameters);
-    void handleFollowMagCommand(String parameters);
+    void handleFollowMagnetometerCommand(String parameters);
     void handleSetWheelSpeedCommand(String parameters);
-    void handleMaxMagTorqueCommand(String parameters);
-    void handleWheelPDConfigCommand(String parameters);
-    void handleMTQDemagCommand(String parameters);
-    void handleWheelOrMTQCommand(String parameters);
+    void handleMaximumMagneticTorqueCommand(String parameters);
+    void handleWheelPIDConfigurationCommand(String parameters);
+    void handleDemagnetizeCommand(String parameters);
+    void handleWheelOrMagnetorquerCommand(String parameters);
     void handleWheelCalibration1Command(String parameters);
     void handleWheelCalibration2Command(String parameters);
     void handleWheelCalibration3Command(String parameters);
