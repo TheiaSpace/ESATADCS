@@ -41,7 +41,7 @@ class ESATTachometer
     static const unsigned int countsPerRevolution = 8;
 
     // The output signal of the tachometer goes to this pin.
-    static const unsigned int pin = 34;
+    static const unsigned int pin = TCH;
 
     // Increment the counter of the tachometer.
     static void incrementCounter();
