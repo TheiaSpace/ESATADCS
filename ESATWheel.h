@@ -54,7 +54,7 @@ class ESATWheel
     static const unsigned int minimum = 1060;
 
     // The electronic speed controller is attached to this pin.
-    static const int pin = 23;
+    static const int pin = PWM;
 
     static const byte programmingAddress = 2;
     static const byte programmingRegister = 1;
