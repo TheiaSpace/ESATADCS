@@ -45,16 +45,16 @@ class ESATMagnetorquer
 
   private:
     // This pin enables the X magnetorquer.
-    static const int pinEnableX = 79;
+    static const int pinEnableX = ENMTQX;
 
     // This pin enables the X magnetorquer.
-    static const int pinEnableY = 78;
+    static const int pinEnableY = ENMTQY;
 
     // This pin activates the X magnetorquer.
-    static const int pinX = 80;
+    static const int pinX = MTQX;
 
     // This pin activates the Y magnetorquer.
-    static const int pinY = 1;
+    static const int pinY = MTQY;
 
     // Configure the control pins.
     void configurePins();
