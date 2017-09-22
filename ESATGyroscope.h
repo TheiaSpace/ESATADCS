@@ -39,7 +39,7 @@ class ESATGyroscope
     static const byte configuration = B00011000; // Full scale select:
                                                  // B11 (+2000 dps)
     static const byte configurationRegister = 27;
-    static const float gain = 131.0f - 4.775f * configuration;
+    static constexpr float gain = 131.0f - 4.775f * configuration;
     static const byte gyroscopeReadingRegister = 67;
 
     // Set the range of measurement.
