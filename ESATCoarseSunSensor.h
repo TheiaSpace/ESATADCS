@@ -33,10 +33,10 @@ class ESATCoarseSunSensor
 
   private:
     // The individual sensors are connected to these pins.
-    static const int pinXPlus = A9;
-    static const int pinXMinus = A7;
-    static const int pinYPlus = A8;
-    static const int pinYMinus = A6;
+    static const int pinXPlus = CSSXPLUS;
+    static const int pinXMinus = CSSXMINUS;
+    static const int pinYPlus = CSSYPLUS;
+    static const int pinYMinus = CSSYMINUS;
 };
 
 extern ESATCoarseSunSensor CoarseSunSensor;
