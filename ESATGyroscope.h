@@ -35,7 +35,7 @@ class ESATGyroscope
     static const byte FULL_SCALE_1000_DEGREES_PER_SECOND = B10;
     static const byte FULL_SCALE_2000_DEGREES_PER_SECOND = B11;
 
-    // True if the magnetometer is alive.
+    // True if the gyroscope is alive.
     boolean alive;
 
     // Set up the gyroscope with a full scale configuration given by
