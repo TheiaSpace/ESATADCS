@@ -17,7 +17,6 @@
  */
 
 #include "ESATCoarseSunSensor.h"
-#include "ESATMath.h"
 
 void ESATCoarseSunSensor::begin()
 {
@@ -35,7 +34,7 @@ int ESATCoarseSunSensor::read()
   const int readingYMinus = analogRead(pinYMinus);
   const int nx = readingXPlus - readingXMinus;
   const int ny = readingYPlus - readingYMinus;
-  const int reading = round(Math.atan2(ny, nx) * RAD_TO_DEG);
+  const int reading = round(atan2(ny, nx) * RAD_TO_DEG) % 360;
   return reading;
 }
 
