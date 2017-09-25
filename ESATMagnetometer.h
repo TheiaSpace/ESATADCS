@@ -22,6 +22,10 @@
 #include <Energia.h>
 
 // Magnetometer used for attitude determination.
+// The underlying hardware is the MPU-9250 3-axis
+// gyroscope, accelerometer and magnetometer chip
+// mounted on the ESATOBC board.
+// Communications are done though the OBC I2C bus.
 class ESATMagnetometer
 {
   public:
@@ -42,7 +46,8 @@ class ESATMagnetometer
     static const byte dataStatusRegister = 0x02;
     static const byte enableBypass = B00000010;
     static const byte magnetometerAddress = 0x0c;
-    static const byte readingRegister = 0x03;
+    static const byte readingXRegister = 0x03;
+    static const byte readingYRegister = 0x05;
     static const byte singleMeasurementMode = B00000001;
 
     // Get the current reading of the magnetic attitude.
