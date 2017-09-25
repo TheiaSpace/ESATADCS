@@ -56,31 +56,50 @@ int ESATMagnetometer::read()
 
 void ESATMagnetometer::setBypassMode()
 {
-  const byte errorCode = I2C.write(chipAddress, bypassRegister, enableBypass);
-  alive = (errorCode == 0);
+  ESATI2CDevice device(Wire, chipAddress);
+  device.writeByte(bypassRegister, enableBypass);
+  if (device.error)
+  {
+    alive = false;
+  }
+  else
+  {
+    alive = true;
+  }
 }
 
 void ESATMagnetometer::startReading()
 {
-  const byte errorCode = I2C.write(magnetometerAddress,
-                                   controlRegister,
-                                   singleMeasurementMode);
-  alive = (errorCode == 0);
+  ESATI2CDevice device(Wire, magnetometerAddress);
+  device.writeByte(controlRegister, singleMeasurementMode);
+  if (device.error)
+  {
+    alive = false;
+  }
+  else
+  {
+    alive = true;
+  }
 }
 
 void ESATMagnetometer::waitForReading()
 {
+  ESATI2CDevice device(Wire, magnetometerAddress);
   byte timeout = 255;
   byte readingState;
   do
   {
-    const byte errorCode = I2C.read(magnetometerAddress,
-                                    dataStatusRegister,
-                                    &readingState,
-                                    sizeof(readingState));
-    alive = (errorCode == 0);
+    readingState = device.readByte(dataStatusRegister);
   }
-  while (!(readingState & dataReady) && timeout-- && alive);
+  while (!(readingState & dataReady) && timeout-- && !device.error);
+  if (device.error)
+  {
+    alive = false;
+  }
+  else
+  {
+    alive = true;
+  }
 }
 
 ESATMagnetometer Magnetometer;
