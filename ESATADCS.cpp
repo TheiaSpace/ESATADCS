@@ -63,7 +63,7 @@ void ESATADCS::begin()
   wheelProportionalGain = 15e-1;
   wheelSpeedErrorIntegral = 0;
   Wheel.begin();
-  Gyroscope.begin();
+  Gyroscope.begin(Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
   Magnetometer.begin();
   CoarseSunSensor.begin();
   Tachometer.begin();

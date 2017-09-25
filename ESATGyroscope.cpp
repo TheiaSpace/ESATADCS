@@ -19,13 +19,17 @@
 #include "ESATGyroscope.h"
 #include <ESATI2C.h>
 
-void ESATGyroscope::begin()
+void ESATGyroscope::begin(const byte fullScaleConfiguration)
 {
-  configureRange();
+  configureRange(fullScaleConfiguration);
+  setGain(fullScaleConfiguration);
 }
 
-void ESATGyroscope::configureRange()
+void ESATGyroscope::configureRange(const byte fullScaleConfiguration)
 {
+  const byte fullScaleConfigurationOffset = 3;
+  const byte configuration =
+    fullScaleConfiguration << fullScaleConfigurationOffset;
   const byte errorCode =
     I2C.write(address, configurationRegister, configuration);
   alive = (errorCode == 0);
@@ -56,6 +60,14 @@ int ESATGyroscope::readRawSample()
   {
     return 0;
   }
+}
+
+void ESATGyroscope::setGain(const byte fullScaleConfiguration)
+{
+  const byte fullScaleConfigurationOffset = 3;
+  const byte configuration =
+    fullScaleConfiguration << fullScaleConfigurationOffset;
+  gain = 131.0f - 4.775f * configuration;
 }
 
 ESATGyroscope Gyroscope;
