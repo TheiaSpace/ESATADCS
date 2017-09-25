@@ -17,18 +17,29 @@
  */
 
 #include "ESATGyroscope.h"
-#include <ESATI2C.h>
+#include <ESATI2CDevice.h>
 
-void ESATGyroscope::begin()
+void ESATGyroscope::begin(const byte fullScaleConfiguration)
 {
-  configureRange();
+  configureRange(fullScaleConfiguration);
+  setGain(fullScaleConfiguration);
 }
 
-void ESATGyroscope::configureRange()
+void ESATGyroscope::configureRange(const byte fullScaleConfiguration)
 {
-  const byte errorCode =
-    I2C.write(address, configurationRegister, configuration);
-  alive = (errorCode == 0);
+  const byte fullScaleConfigurationOffset = 3;
+  const byte configuration =
+    fullScaleConfiguration << fullScaleConfigurationOffset;
+  ESATI2CDevice device(Wire, address);
+  device.writeByte(configurationRegister, configuration);
+  if (device.error)
+  {
+    alive = false;
+  }
+  else
+  {
+    alive = true;
+  }
 }
 
 int ESATGyroscope::read(unsigned int samples)
@@ -44,18 +55,24 @@ int ESATGyroscope::read(unsigned int samples)
 
 int ESATGyroscope::readRawSample()
 {
-  byte buffer[6];
-  const byte errorCode =
-    I2C.read(address, gyroscopeReadingRegister, buffer, sizeof(buffer));
-  alive = (errorCode == 0);
-  if (alive)
+  ESATI2CDevice device(Wire, address);
+  const word reading = device.readBigEndianWord(gyroscopeReadingRegister);
+  if (device.error)
   {
-    return (buffer[4] << 8) | buffer[5];
+    alive = false;
   }
   else
   {
-    return 0;
+    alive = true;
   }
+  return int(reading);
+}
+
+void ESATGyroscope::setGain(const byte fullScaleConfiguration)
+{
+  const word fullScaleTable[] = { 250, 500, 1000, 2000 };
+  const word fullScale = fullScaleTable[fullScaleConfiguration];
+  gain = 32768.0 / fullScale;
 }
 
 ESATGyroscope Gyroscope;

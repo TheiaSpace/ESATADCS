@@ -22,31 +22,52 @@
 #include <Energia.h>
 
 // Gyroscope used for measuring the angular speed.
+// The underlying hardware is the MPU-9250 3-axis
+// gyroscope, accelerometer and magnetometer chip
+// mounted on the ESATOBC board.
+// Communications are done though the OBC I2C bus.
 class ESATGyroscope
 {
   public:
-    // True if the magnetometer is alive.
+    // Full scale configurations.
+    static const byte FULL_SCALE_250_DEGREES_PER_SECOND = B00;
+    static const byte FULL_SCALE_500_DEGREES_PER_SECOND = B01;
+    static const byte FULL_SCALE_1000_DEGREES_PER_SECOND = B10;
+    static const byte FULL_SCALE_2000_DEGREES_PER_SECOND = B11;
+
+    // True if the gyroscope is alive.
     boolean alive;
 
-    // Set up the gyroscope.
-    void begin();
+    // Set up the gyroscope with a full scale configuration given by
+    // one of the FULL_SCALE_X_DEGREES_PER_SECOND constants.
+    void begin(byte fullScaleConfiguration);
 
     // Read the gyroscope.  Return the average of a number of samples.
     int read(unsigned int samples);
 
   private:
+    // I2C address of the gyroscope.
     static const byte address = 0x69;
-    static const byte configuration = B00011000; // Full scale select:
-                                                 // B11 (+2000 dps)
-    static const byte configurationRegister = 27;
-    static constexpr float gain = 131.0f - 4.775f * configuration;
-    static const byte gyroscopeReadingRegister = 67;
 
-    // Set the range of measurement.
-    void configureRange();
+    // Register number of the configuration of the gyroscope.
+    static const byte configurationRegister = 27;
+
+    // Register number of the reading of the gyroscope.
+    static const byte gyroscopeReadingRegister = 71;
+
+    // Gain for internal conversions.  Set by setFullScale().
+    double gain;
+
+    // Configure the range of measurement of the gyroscope according
+    // to the full scale configuration.
+    void configureRange(byte fullScaleConfiguration);
 
     // Read a raw sample.
     int readRawSample();
+
+    // Set the gain for internal conversions according to the full
+    // scale configuration.
+    void setGain(byte fullScaleConfiguration);
 };
 
 extern ESATGyroscope Gyroscope;
