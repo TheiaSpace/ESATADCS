@@ -18,6 +18,7 @@
 
 #include "ESATMagnetometer.h"
 #include <ESATI2C.h>
+#include <ESATI2CDevice.h>
 #include <ESATMath.h>
 
 void ESATMagnetometer::begin()
@@ -27,23 +28,22 @@ void ESATMagnetometer::begin()
 
 int ESATMagnetometer::getReading()
 {
-  byte rawReading[6];
-  const byte errorCode = I2C.read(magnetometerAddress,
-                                  readingRegister,
-                                  rawReading,
-                                  sizeof(rawReading));
-  alive = (errorCode == 0);
-  if (alive)
+  ESATI2CDevice device(Wire, magnetometerAddress);
+  const int mx = device.readLittleEndianWord(readingXRegister);
+  if (device.error)
   {
-    const int mx = *(reinterpret_cast<int*>(&(rawReading[0])));
-    const int my = *(reinterpret_cast<int*>(&(rawReading[2])));
-    const int angle = round(Math.atan2(mx, my) * RAD_TO_DEG);
-    return angle;
-  }
-  else
-  {
+    alive = false;
     return 0;
   }
+  const int my = device.readLittleEndianWord(readingYRegister);
+  if (device.error)
+  {
+    alive = false;
+    return 0;
+  }
+  alive = true;
+  const int angle = round(Math.atan2(mx, my) * RAD_TO_DEG);
+  return angle;
 }
 
 int ESATMagnetometer::read()
