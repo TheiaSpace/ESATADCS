@@ -22,6 +22,10 @@
 #include <Energia.h>
 
 // Magnetometer used for attitude determination.
+// The underlying hardware is the MPU-9250 3-axis
+// gyroscope, accelerometer and magnetometer chip
+// mounted on the ESATOBC board.
+// Communications are done though the OBC I2C bus.
 class ESATMagnetometer
 {
   public:
