@@ -48,13 +48,13 @@ int ESATGyroscope::read(unsigned int samples)
 
 int ESATGyroscope::readRawSample()
 {
-  byte buffer[6];
+  byte buffer[2];
   const byte errorCode =
     I2C.read(address, gyroscopeReadingRegister, buffer, sizeof(buffer));
   alive = (errorCode == 0);
   if (alive)
   {
-    return (buffer[4] << 8) | buffer[5];
+    return (buffer[0] << 8) | buffer[1];
   }
   else
   {

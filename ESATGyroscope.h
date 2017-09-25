@@ -53,7 +53,7 @@ class ESATGyroscope
     static const byte configurationRegister = 27;
 
     // Register number of the reading of the gyroscope.
-    static const byte gyroscopeReadingRegister = 67;
+    static const byte gyroscopeReadingRegister = 71;
 
     // Gain for internal conversions.  Set by setFullScale().
     double gain;
