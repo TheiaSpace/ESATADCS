@@ -46,8 +46,13 @@ class ESATGyroscope
     int read(unsigned int samples);
 
   private:
+    // I2C address of the gyroscope.
     static const byte address = 0x69;
+
+    // Register number of the configuration of the gyroscope.
     static const byte configurationRegister = 27;
+
+    // Register number of the reading of the gyroscope.
     static const byte gyroscopeReadingRegister = 67;
 
     // Gain for internal conversions.  Set by setFullScale().
