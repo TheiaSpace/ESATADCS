@@ -17,7 +17,6 @@
  */
 
 #include "ESATMagnetometer.h"
-#include <ESATI2C.h>
 #include <ESATI2CDevice.h>
 #include <ESATMath.h>
 
