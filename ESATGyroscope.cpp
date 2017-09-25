@@ -17,7 +17,7 @@
  */
 
 #include "ESATGyroscope.h"
-#include <ESATI2C.h>
+#include <ESATI2CDevice.h>
 
 void ESATGyroscope::begin(const byte fullScaleConfiguration)
 {
@@ -30,9 +30,16 @@ void ESATGyroscope::configureRange(const byte fullScaleConfiguration)
   const byte fullScaleConfigurationOffset = 3;
   const byte configuration =
     fullScaleConfiguration << fullScaleConfigurationOffset;
-  const byte errorCode =
-    I2C.write(address, configurationRegister, configuration);
-  alive = (errorCode == 0);
+  ESATI2CDevice device(Wire, address);
+  device.writeByte(configurationRegister, configuration);
+  if (device.error)
+  {
+    alive = false;
+  }
+  else
+  {
+    alive = true;
+  }
 }
 
 int ESATGyroscope::read(unsigned int samples)
@@ -48,18 +55,17 @@ int ESATGyroscope::read(unsigned int samples)
 
 int ESATGyroscope::readRawSample()
 {
-  byte buffer[2];
-  const byte errorCode =
-    I2C.read(address, gyroscopeReadingRegister, buffer, sizeof(buffer));
-  alive = (errorCode == 0);
-  if (alive)
+  ESATI2CDevice device(Wire, address);
+  const word reading = device.readBigEndianWord(gyroscopeReadingRegister);
+  if (device.error)
   {
-    return (buffer[0] << 8) | buffer[1];
+    alive = false;
   }
   else
   {
-    return 0;
+    alive = true;
   }
+  return int(reading);
 }
 
 void ESATGyroscope::setGain(const byte fullScaleConfiguration)
