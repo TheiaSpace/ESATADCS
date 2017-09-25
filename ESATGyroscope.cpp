@@ -64,10 +64,9 @@ int ESATGyroscope::readRawSample()
 
 void ESATGyroscope::setGain(const byte fullScaleConfiguration)
 {
-  const byte fullScaleConfigurationOffset = 3;
-  const byte configuration =
-    fullScaleConfiguration << fullScaleConfigurationOffset;
-  gain = 131.0f - 4.775f * configuration;
+  const word fullScaleTable[] = { 250, 500, 1000, 2000 };
+  const word fullScale = fullScaleTable[fullScaleConfiguration];
+  gain = 32768.0 / fullScale;
 }
 
 ESATGyroscope Gyroscope;
