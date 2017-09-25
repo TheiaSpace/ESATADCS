@@ -36,7 +36,6 @@
 #include "ESATGyroscope.h"
 #include "ESATMagnetometer.h"
 #include "ESATMagnetorquer.h"
-#include <ESATMath.h>
 #include "ESATTachometer.h"
 #include <ESATUtil.h>
 #include "ESATWheel.h"
@@ -276,8 +275,7 @@ String ESATADCS::readTelemetry()
   String telemetry;
   telemetry += Util.intToHexadecimal(wheelSpeed);
   telemetry += Util.intToHexadecimal(magneticAngle);
-  const int sunAngleRelativeToNorth =
-          Math.modulo(sunAngle - magneticAngle, 360);
+  const int sunAngleRelativeToNorth = (sunAngle - magneticAngle) % 360;
   telemetry += Util.intToHexadecimal(sunAngleRelativeToNorth);
   telemetry += Util.intToHexadecimal(rotationalSpeed);
   telemetry += Util.byteToHexadecimal(byte(0));
@@ -329,7 +327,7 @@ void ESATADCS::runAttitudeControlLoop(int currentAttitude)
   float Kp = attitudeProportionalGain;
   float Kd = attitudeDerivativeGain;
   float Ki = attitudeIntegralGain;
-  const int absoluteRotationalSpeed = int(Math.abs(rotationalSpeed));
+  const int absoluteRotationalSpeed = abs(rotationalSpeed);
   //If the rotation is faster than 40º/s no control is feasible and
   //only rotation damping is considered.
   if (absoluteRotationalSpeed > 40)
@@ -344,7 +342,7 @@ void ESATADCS::runAttitudeControlLoop(int currentAttitude)
     Kd = 0;
   }
   //If the solution is found, stop the controller to avoid instabilities
-  if (Math.abs(error) < 0.004 && absoluteRotationalSpeed <= 2)
+  if (fabs(error) < 0.004 && absoluteRotationalSpeed <= 2)
   {
     Ki = 0;
     Kp = 0;

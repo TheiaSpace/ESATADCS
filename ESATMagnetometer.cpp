@@ -18,7 +18,6 @@
 
 #include "ESATMagnetometer.h"
 #include <ESATI2CDevice.h>
-#include <ESATMath.h>
 
 void ESATMagnetometer::begin()
 {
@@ -41,7 +40,7 @@ int ESATMagnetometer::getReading()
     return 0;
   }
   alive = true;
-  const int angle = round(Math.atan2(mx, my) * RAD_TO_DEG);
+  const int angle = round(atan2(mx, my) * RAD_TO_DEG) % 360;
   return angle;
 }
 
