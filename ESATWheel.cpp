@@ -17,7 +17,6 @@
  */
 
 #include "ESATWheel.h"
-#include <ESATI2C.h>
 #include <ESATI2CDevice.h>
 #include <MspFlash.h>
 
