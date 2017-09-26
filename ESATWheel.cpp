@@ -17,8 +17,8 @@
  */
 
 #include "ESATWheel.h"
-#include <ESATI2CDevice.h>
 #include <MspFlash.h>
+#include <Wire.h>
 
 #define flash SEGMENT_D
 
@@ -76,8 +76,14 @@ void ESATWheel::programElectronicSpeedController()
 {
   // Perform the ESC programming sequence (high, low and medium again)
   writeDutyCycle(255);
-  ESATI2CDevice device(Wire, programmingAddress);
-  device.writeByte(programmingRegister, programmingMessage);
+  Wire.beginTransmission(programmingAddress);
+  Wire.write(programmingRegister);
+  Wire.write(programmingMessage);
+  const byte writeStatus = Wire.endTransmission();
+  if (writeStatus != 0)
+  {
+    return;
+  }
   delay(1000);
   delay(1000);
   writeDutyCycle(0);
