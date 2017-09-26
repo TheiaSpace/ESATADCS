@@ -17,7 +17,7 @@
  */
 
 #include "ESATGyroscope.h"
-#include <ESATI2CDevice.h>
+#include <Wire.h>
 
 void ESATGyroscope::begin(const byte fullScaleConfiguration)
 {
@@ -30,15 +30,17 @@ void ESATGyroscope::configureRange(const byte fullScaleConfiguration)
   const byte fullScaleConfigurationOffset = 3;
   const byte configuration =
     fullScaleConfiguration << fullScaleConfigurationOffset;
-  ESATI2CDevice device(Wire, address);
-  device.writeByte(configurationRegister, configuration);
-  if (device.error)
+  Wire.beginTransmission(address);
+  Wire.write(configurationRegister);
+  Wire.write(configuration);
+  const byte writeStatus = Wire.endTransmission();
+  if (writeStatus == 0)
   {
-    alive = false;
+    alive = true;
   }
   else
   {
-    alive = true;
+    alive = false;
   }
 }
 
@@ -55,17 +57,24 @@ int ESATGyroscope::read(unsigned int samples)
 
 int ESATGyroscope::readRawSample()
 {
-  ESATI2CDevice device(Wire, address);
-  const word reading = device.readBigEndianWord(gyroscopeReadingRegister);
-  if (device.error)
+  Wire.beginTransmission(address);
+  Wire.write(gyroscopeReadingRegister);
+  const byte writeStatus = Wire.endTransmission();
+  if (writeStatus != 0)
   {
     alive = false;
+    return 0;
   }
-  else
+  const byte bytesRead = Wire.requestFrom(int(address), 2);
+  if (bytesRead != 2)
   {
-    alive = true;
+    alive = false;
+    return 0;
   }
-  return int(reading);
+  alive = true;
+  const byte highByte = Wire.read();
+  const byte lowByte = Wire.read();
+  return word(highByte, lowByte);
 }
 
 void ESATGyroscope::setGain(const byte fullScaleConfiguration)
