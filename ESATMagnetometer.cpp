@@ -17,7 +17,7 @@
  */
 
 #include "ESATMagnetometer.h"
-#include <ESATI2CDevice.h>
+#include <Wire.h>
 
 void ESATMagnetometer::begin()
 {
@@ -26,20 +26,27 @@ void ESATMagnetometer::begin()
 
 int ESATMagnetometer::getReading()
 {
-  ESATI2CDevice device(Wire, magnetometerAddress);
-  const int mx = device.readLittleEndianWord(readingXRegister);
-  if (device.error)
+  Wire.beginTransmission(magnetometerAddress);
+  Wire.write(readingRegister);
+  const byte writeStatus = Wire.endTransmission();
+  if (writeStatus != 0)
   {
     alive = false;
     return 0;
   }
-  const int my = device.readLittleEndianWord(readingYRegister);
-  if (device.error)
+  const byte bytesRead = Wire.requestFrom(int(magnetometerAddress), 4);
+  if (bytesRead != 4)
   {
     alive = false;
     return 0;
   }
   alive = true;
+  const byte xLowByte = Wire.read();
+  const byte xHighByte = Wire.read();
+  const byte yLowByte = Wire.read();
+  const byte yHighByte = Wire.read();
+  const int mx = word(xHighByte, xLowByte);
+  const int my = word(yHighByte, yLowByte);
   const int angle = round(atan2(mx, my) * RAD_TO_DEG) % 360;
   return angle;
 }
@@ -54,50 +61,63 @@ int ESATMagnetometer::read()
 
 void ESATMagnetometer::setBypassMode()
 {
-  ESATI2CDevice device(Wire, chipAddress);
-  device.writeByte(bypassRegister, enableBypass);
-  if (device.error)
+  Wire.beginTransmission(chipAddress);
+  Wire.write(bypassRegister);
+  Wire.write(enableBypass);
+  const byte writeStatus = Wire.endTransmission();
+  if (writeStatus == 0)
   {
-    alive = false;
+    alive = true;
   }
   else
   {
-    alive = true;
+    alive = false;
   }
 }
 
 void ESATMagnetometer::startReading()
 {
-  ESATI2CDevice device(Wire, magnetometerAddress);
-  device.writeByte(controlRegister, singleMeasurementMode);
-  if (device.error)
+  Wire.beginTransmission(magnetometerAddress);
+  Wire.write(controlRegister);
+  Wire.write(singleMeasurementMode);
+  const byte writeStatus = Wire.endTransmission();
+  if (writeStatus == 0)
   {
-    alive = false;
+    alive = true;
   }
   else
   {
-    alive = true;
+    alive = false;
   }
 }
 
 void ESATMagnetometer::waitForReading()
 {
-  ESATI2CDevice device(Wire, magnetometerAddress);
-  byte timeout = 255;
-  byte readingState;
-  do
+  const byte timeout = 255;
+  for (int i = 0; i < timeout; i++)
   {
-    readingState = device.readByte(dataStatusRegister);
+    Wire.beginTransmission(magnetometerAddress);
+    Wire.write(dataStatusRegister);
+    const byte writeStatus = Wire.endTransmission();
+    if (writeStatus != 0)
+    {
+      alive = false;
+      return;
+    }
+    const byte bytesRead = Wire.requestFrom(int(dataStatusRegister), 1);
+    if (bytesRead != 1)
+    {
+      alive = false;
+      return;
+    }
+    const byte readingState = Wire.read();
+    if ((readingState & dataReady) != 0)
+    {
+      alive = true;
+      return;
+    }
   }
-  while (!(readingState & dataReady) && timeout-- && !device.error);
-  if (device.error)
-  {
-    alive = false;
-  }
-  else
-  {
-    alive = true;
-  }
+  alive = false;
 }
 
 ESATMagnetometer Magnetometer;
