@@ -45,6 +45,7 @@ void ESATADCS::begin()
   attitudeDerivativeGain = 4e4;
   attitudeErrorDeadband = 1;
   attitudeErrorDerivativeDeadband = 2;
+  attitudeErrorDerivativeDetumblingThreshold = 40;
   attitudeErrorIntegral = 0;
   attitudeIntegralGain = 0.0;
   attitudeProportionalGain = 1e3;
@@ -130,6 +131,9 @@ void ESATADCS::handleCommand(ESATCCSDSPacket& packet)
     break;
   case ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND:
     handleAttitudeControllerSetDeadbandCommand(packet);
+    break;
+  case ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD_COMMAND:
+    handleAttitudeControllerSetDetumblingThresholdCommand(packet);
     break;
   case WHEEL_SET_DUTY_CYCLE_COMMAND:
     handleWheelSetDutyCycleCommand(packet);
@@ -237,6 +241,12 @@ void ESATADCS::handleAttitudeControllerSetDeadbandCommand(ESATCCSDSPacket& packe
 {
   attitudeErrorDeadband = packet.readWord();
   attitudeErrorDerivativeDeadband = packet.readWord();
+}
+
+void ESATADCS::handleAttitudeControllerSetDetumblingThresholdCommand(ESATCCSDSPacket& packet)
+
+{
+  attitudeErrorDerivativeDetumblingThreshold = packet.readWord();
 }
 
 void ESATADCS::handleWheelSetDutyCycleCommand(ESATCCSDSPacket& packet)
@@ -454,9 +464,7 @@ void ESATADCS::runAttitudeControlLoop(int currentAttitude)
   float Kd = attitudeDerivativeGain;
   float Ki = attitudeIntegralGain;
   const int absoluteAttitudeErrorDerivative = abs(attitudeErrorDerivative);
-  //If the rotation is faster than 40º/s no control is feasible and
-  //only rotation damping is considered.
-  if (absoluteAttitudeErrorDerivative > 40)
+  if (absoluteAttitudeErrorDerivative > attitudeErrorDerivativeDetumblingThreshold)
   {
     Ki = 0;
     Kp = 0;

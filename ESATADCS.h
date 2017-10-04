@@ -53,6 +53,7 @@ class ESATADCS
       ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND = 0x13,
       ATTITUDE_CONTROLLER_USE_WHEEL_OR_MAGNETORQUER_COMMAND = 0x14,
       ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND = 0x15,
+      ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD_COMMAND = 0x16,
       WHEEL_SET_DUTY_CYCLE_COMMAND = 0x20,
       WHEEL_SET_SPEED_COMMAND = 0x21,
       WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND = 0x30,
@@ -130,6 +131,7 @@ class ESATADCS
     float attitudeDerivativeGain;
     word attitudeErrorDeadband;
     word attitudeErrorDerivativeDeadband;
+    word attitudeErrorDerivativeDetumblingThreshold;
     float attitudeErrorIntegral;
     float attitudeIntegralGain;
     float attitudeProportionalGain;
@@ -169,6 +171,7 @@ class ESATADCS
     void handleAttitudeControllerUseGyroscopeCommand(ESATCCSDSPacket& packet);
     void handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESATCCSDSPacket& packet);
     void handleAttitudeControllerSetDeadbandCommand(ESATCCSDSPacket& packet);
+    void handleAttitudeControllerSetDetumblingThresholdCommand(ESATCCSDSPacket& packet);
     void handleWheelSetDutyCycleCommand(ESATCCSDSPacket& packet);
     void handleWheelSetSpeedCommand(ESATCCSDSPacket& packet);
     void handleWheelControllerSetProportionalGainCommand(ESATCCSDSPacket& packet);
