@@ -90,7 +90,7 @@ void ESATADCS::blinkSequence()
 
 void ESATADCS::handleCommand(ESATCCSDSPacket& packet)
 {
-  if (packet.bufferLength < MINIMUM_COMMAND_PACKET_LENGTH)
+  if (packet.readPayloadDataLength() < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
   {
     return;
   }

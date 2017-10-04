@@ -94,10 +94,12 @@ class ESATADCS
     const byte MINOR_VERSION_NUMBER = 0;
     const byte PATCH_VERSION_NUMBER = 0;
 
-    // Minimum command packet length:
-    // - Primary header (6 bytes).
-    // - Secondary header (4 bytes).
-    const byte MINIMUM_COMMAND_PACKET_LENGTH = 10;
+    // Minimum command payload data length in bytes:
+    // - Major version number (1 byte).
+    // - Minor version number (1 byte).
+    // - Patch version number (1 byte).
+    // - Command code (1 byte).
+    static const byte MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH = 4;
 
     float attitudeDerivativeGain;
     float attitudeErrorIntegral;
