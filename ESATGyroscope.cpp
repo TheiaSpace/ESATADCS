@@ -21,6 +21,7 @@
 
 void ESATGyroscope::begin(const byte fullScaleConfiguration)
 {
+  error = false;
   configureRange(fullScaleConfiguration);
   setGain(fullScaleConfiguration);
 }
@@ -34,13 +35,9 @@ void ESATGyroscope::configureRange(const byte fullScaleConfiguration)
   Wire.write(configurationRegister);
   Wire.write(configuration);
   const byte writeStatus = Wire.endTransmission();
-  if (writeStatus == 0)
+  if (writeStatus != 0)
   {
-    alive = true;
-  }
-  else
-  {
-    alive = false;
+    error = true;
   }
 }
 
@@ -62,16 +59,15 @@ int ESATGyroscope::readRawSample()
   const byte writeStatus = Wire.endTransmission();
   if (writeStatus != 0)
   {
-    alive = false;
+    error = true;
     return 0;
   }
   const byte bytesRead = Wire.requestFrom(int(address), 2);
   if (bytesRead != 2)
   {
-    alive = false;
+    error = true;
     return 0;
   }
-  alive = true;
   const byte highByte = Wire.read();
   const byte lowByte = Wire.read();
   return word(highByte, lowByte);

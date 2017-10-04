@@ -339,6 +339,7 @@ void ESATADCS::readSensors()
   wheelSpeed = Tachometer.read();
   Magnetorquer.writeEnable(false);
   delay(20);
+  Gyroscope.error = false;
   rotationalSpeed = Gyroscope.read(3);
   magneticAngle = Magnetometer.read();
   Magnetorquer.writeEnable(enableMagnetorquerDriver);
@@ -381,7 +382,7 @@ void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(enableMagnetorquerDriver);
   packet.writeByte(byte(magnetorquerXPolarity));
   packet.writeByte(byte(magnetorquerYPolarity));
-  packet.writeBoolean(Gyroscope.alive);
+  packet.writeBoolean(Gyroscope.error);
   packet.writeBoolean(Magnetometer.alive);
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
 }

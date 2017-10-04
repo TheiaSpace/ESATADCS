@@ -35,14 +35,16 @@ class ESATGyroscope
     static const byte FULL_SCALE_1000_DEGREES_PER_SECOND = B10;
     static const byte FULL_SCALE_2000_DEGREES_PER_SECOND = B11;
 
-    // True if the gyroscope is alive.
-    boolean alive;
+    // True after a read error.  Must be reset manually.
+    boolean error;
 
     // Set up the gyroscope with a full scale configuration given by
     // one of the FULL_SCALE_X_DEGREES_PER_SECOND constants.
+    // Set the error flag on error.
     void begin(byte fullScaleConfiguration);
 
     // Read the gyroscope.  Return the average of a number of samples.
+    // Set the error flag on error.
     int read(unsigned int samples);
 
   private:
@@ -60,9 +62,11 @@ class ESATGyroscope
 
     // Configure the range of measurement of the gyroscope according
     // to the full scale configuration.
+    // Set the error flag on error.
     void configureRange(byte fullScaleConfiguration);
 
     // Read a raw sample.
+    // Set the error flag on error.
     int readRawSample();
 
     // Set the gain for internal conversions according to the full
