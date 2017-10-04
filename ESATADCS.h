@@ -87,12 +87,12 @@ class ESATADCS
     };
 
     // Unique identifier of the subsystem.
-    const byte SUBSYSTEM_IDENTIFIER = 1;
+    static const byte SUBSYSTEM_IDENTIFIER = 1;
 
     // Version numbers.
-    const byte MAJOR_VERSION_NUMBER = 3;
-    const byte MINOR_VERSION_NUMBER = 0;
-    const byte PATCH_VERSION_NUMBER = 0;
+    static const byte MAJOR_VERSION_NUMBER = 3;
+    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte PATCH_VERSION_NUMBER = 0;
 
     // Minimum command payload data length in bytes:
     // - Major version number (1 byte).
