@@ -478,11 +478,6 @@ void ESATADCS::runAttitudeControlLoop(int currentAttitude)
   float actuation = Kp * attitudeError
                   + Kd * rotationalSpeed
                   + Ki * attitudeErrorIntegral;
-  //If going against the wheel, increase actuation to magnify results
-  if (actuation < 0)
-  {
-    actuation *= 3;
-  }
   attitudeErrorIntegral = attitudeErrorIntegral + attitudeError;
   if (useWheel)
   {
