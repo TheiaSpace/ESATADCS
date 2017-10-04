@@ -29,8 +29,8 @@
 class ESATMagnetometer
 {
   public:
-    // True if the magnetometer is alive.
-    boolean alive;
+    // True after a read error.  Must be reset manually.
+    boolean error;
 
     // Set up the magnetometer.
     void begin();
@@ -50,15 +50,19 @@ class ESATMagnetometer
     static const byte singleMeasurementMode = B00000001;
 
     // Get the current reading of the magnetic attitude.
+    // Set the error flag on error.
     int getReading();
 
     // Configure the magnetometer in bypass mode.
+    // Set the error flag on error.
     void setBypassMode();
 
     // Start a new reading of the magnetic attitude.
+    // Set the error flag on error.
     void startReading();
 
     // Wait for the reading process to finish.
+    // Set the error flag on error.
     void waitForReading();
 };
 
