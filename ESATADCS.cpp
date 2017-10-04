@@ -90,7 +90,7 @@ void ESATADCS::blinkSequence()
 
 void ESATADCS::handleCommand(ESATCCSDSPacket& packet)
 {
-  if (packet.readPayloadDataLength() < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
+  if (packet.readPacketDataLength() < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
   {
     return;
   }
@@ -351,7 +351,7 @@ void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
 {
   newTelemetryPacket = false;
   packet.clear();
-  if (packet.bufferLength < packet.PRIMARY_HEADER_LENGTH)
+  if (packet.bufferLength < HOUSEKEEPING_TELEMETRY_PACKET_LENGTH)
   {
     return;
   }
