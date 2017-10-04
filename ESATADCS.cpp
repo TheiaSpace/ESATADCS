@@ -43,6 +43,8 @@
 void ESATADCS::begin()
 {
   attitudeDerivativeGain = 4e4;
+  attitudeErrorDeadband = 1;
+  attitudeErrorDerivativeDeadband = 2;
   attitudeErrorIntegral = 0;
   attitudeIntegralGain = 0.0;
   attitudeProportionalGain = 1e3;
@@ -125,6 +127,9 @@ void ESATADCS::handleCommand(ESATCCSDSPacket& packet)
     break;
   case ATTITUDE_CONTROLLER_USE_WHEEL_OR_MAGNETORQUER_COMMAND:
     handleAttitudeControllerUseWheelOrMagnetorquerCommand(packet);
+    break;
+  case ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND:
+    handleAttitudeControllerSetDeadbandCommand(packet);
     break;
   case WHEEL_SET_DUTY_CYCLE_COMMAND:
     handleWheelSetDutyCycleCommand(packet);
@@ -226,6 +231,12 @@ void ESATADCS::handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESATCCSDSPa
   {
     useWheel = false;
   }
+}
+
+void ESATADCS::handleAttitudeControllerSetDeadbandCommand(ESATCCSDSPacket& packet)
+{
+  attitudeErrorDeadband = packet.readWord();
+  attitudeErrorDerivativeDeadband = packet.readWord();
 }
 
 void ESATADCS::handleWheelSetDutyCycleCommand(ESATCCSDSPacket& packet)
@@ -450,14 +461,8 @@ void ESATADCS::runAttitudeControlLoop(int currentAttitude)
     Ki = 0;
     Kp = 0;
   }
-  //If the rotation speed is smaller than 2º/seconds, forget the
-  //derivative gain (TBC)
-  if (absoluteAttitudeErrorDerivative <= 2)
-  {
-    Kd = 0;
-  }
-  //If the solution is found, stop the controller to avoid instabilities
-  if (abs(attitudeError) < 1 && absoluteAttitudeErrorDerivative <= 2)
+  if ((abs(attitudeError) < attitudeErrorDeadband)
+      && (absoluteAttitudeErrorDerivative < attitudeErrorDerivativeDeadband))
   {
     Ki = 0;
     Kp = 0;

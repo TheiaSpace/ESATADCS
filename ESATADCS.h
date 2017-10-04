@@ -52,6 +52,7 @@ class ESATADCS
       ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND = 0x12,
       ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND = 0x13,
       ATTITUDE_CONTROLLER_USE_WHEEL_OR_MAGNETORQUER_COMMAND = 0x14,
+      ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND = 0x15,
       WHEEL_SET_DUTY_CYCLE_COMMAND = 0x20,
       WHEEL_SET_SPEED_COMMAND = 0x21,
       WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND = 0x30,
@@ -127,6 +128,8 @@ class ESATADCS
     static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 52;
 
     float attitudeDerivativeGain;
+    word attitudeErrorDeadband;
+    word attitudeErrorDerivativeDeadband;
     float attitudeErrorIntegral;
     float attitudeIntegralGain;
     float attitudeProportionalGain;
@@ -165,6 +168,7 @@ class ESATADCS
     void handleAttitudeControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet);
     void handleAttitudeControllerUseGyroscopeCommand(ESATCCSDSPacket& packet);
     void handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESATCCSDSPacket& packet);
+    void handleAttitudeControllerSetDeadbandCommand(ESATCCSDSPacket& packet);
     void handleWheelSetDutyCycleCommand(ESATCCSDSPacket& packet);
     void handleWheelSetSpeedCommand(ESATCCSDSPacket& packet);
     void handleWheelControllerSetProportionalGainCommand(ESATCCSDSPacket& packet);
