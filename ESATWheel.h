@@ -42,7 +42,7 @@ class ESATWheel
     void saveCalibration();
 
     // Set the speed of the wheel.
-    void write(int rpm);
+    void write(word rpm);
 
     // Set the duty cycle of the electronic speed controller.
     void writeDutyCycle(byte dutyCycle);

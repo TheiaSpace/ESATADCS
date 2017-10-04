@@ -57,9 +57,9 @@ void ESATWheel::saveCalibration()
               sizeof(calibration));
 }
 
-void ESATWheel::write(int rpm)
+void ESATWheel::write(const word rpm)
 {
-  const float unconstrainedDutyCycle = 
+  const float unconstrainedDutyCycle =
     (calibration[0] + rpm * (calibration[1] + rpm * calibration[2]));
   const byte dutyCycle =
           constrain(round(unconstrainedDutyCycle), 0, 255);
