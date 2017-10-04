@@ -363,43 +363,26 @@ void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(MINOR_VERSION_NUMBER);
   packet.writeByte(PATCH_VERSION_NUMBER);
   packet.writeByte(HOUSEKEEPING);
-  packet.writeWord(wheelSpeed);
+  packet.writeByte(byte(runCode));
+  packet.writeWord(targetAttitude);
   packet.writeWord(magneticAngle);
   packet.writeWord(sunAngle);
   packet.writeWord(rotationalSpeed);
+  packet.writeFloat(attitudeProportionalGain);
+  packet.writeFloat(attitudeIntegralGain);
+  packet.writeFloat(attitudeDerivativeGain);
+  packet.writeBoolean(useGyroscope);
+  packet.writeBoolean(useWheel);
+  packet.writeByte(wheelDutyCycle);
+  packet.writeWord(wheelSpeed);
+  packet.writeFloat(wheelProportionalGain);
+  packet.writeFloat(wheelIntegralGain);
+  packet.writeFloat(wheelDerivativeGain);
   packet.writeByte(enableMagnetorquerDriver);
-  if (magnetorquerXPolarity == Magnetorquer.positive)
-  {
-    packet.writeByte(1);
-  }
-  else
-  {
-    packet.writeByte(0);
-  }
-  if (magnetorquerYPolarity == Magnetorquer.positive)
-  {
-    packet.writeByte(1);
-  }
-  else
-  {
-    packet.writeByte(0);
-  }
-  if (Gyroscope.alive)
-  {
-    packet.writeByte(1);
-  }
-  else
-  {
-    packet.writeByte(0);
-  }
-  if (Magnetometer.alive)
-  {
-    packet.writeByte(1);
-  }
-  else
-  {
-    packet.writeByte(0);
-  }
+  packet.writeByte(byte(magnetorquerXPolarity));
+  packet.writeByte(byte(magnetorquerYPolarity));
+  packet.writeBoolean(Gyroscope.alive);
+  packet.writeBoolean(Magnetometer.alive);
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
 }
 
