@@ -50,6 +50,7 @@ void ESATADCS::begin()
   enableMagnetorquerDriver = false;
   magnetorquerXPolarity = Magnetorquer.positive;
   magnetorquerYPolarity = Magnetorquer.positive;
+  newTelemetryPacket = false;
   oldAttitudeError = 0;
   oldWheelSpeedError = 0;
   runCode = REST;
@@ -57,6 +58,7 @@ void ESATADCS::begin()
   targetAttitude = 0;
   targetMagnetorquerDirection = false;
   targetWheelSpeed = 0;
+  telemetrySequenceCount = 0;
   useGyroscope = true;
   useWheel = true;
   wheelDerivativeGain = 0;
@@ -345,6 +347,7 @@ void ESATADCS::readSensors()
 
 void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
 {
+  newTelemetryPacket = false;
   packet.clear();
   if (packet.bufferLength < packet.PRIMARY_HEADER_LENGTH)
   {
@@ -365,10 +368,39 @@ void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeWord(sunAngle);
   packet.writeWord(rotationalSpeed);
   packet.writeByte(enableMagnetorquerDriver);
-  packet.writeByte((magnetorquerXPolarity == Magnetorquer.positive) ? 1 : 0);
-  packet.writeByte((magnetorquerYPolarity == Magnetorquer.positive) ? 1 : 0);
-  packet.writeByte(Gyroscope.alive ? 1 : 0);
-  packet.writeByte(Magnetometer.alive ? 1 : 0);
+  if (magnetorquerXPolarity == Magnetorquer.positive)
+  {
+    packet.writeByte(1);
+  }
+  else
+  {
+    packet.writeByte(0);
+  }
+  if (magnetorquerYPolarity == Magnetorquer.positive)
+  {
+    packet.writeByte(1);
+  }
+  else
+  {
+    packet.writeByte(0);
+  }
+  if (Gyroscope.alive)
+  {
+    packet.writeByte(1);
+  }
+  else
+  {
+    packet.writeByte(0);
+  }
+  if (Magnetometer.alive)
+  {
+    packet.writeByte(1);
+  }
+  else
+  {
+    packet.writeByte(0);
+  }
+  telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
 }
 
 void ESATADCS::run()
@@ -563,10 +595,16 @@ void ESATADCS::runRest()
   Wheel.writeDutyCycle(wheelDutyCycle);
 }
 
+boolean ESATADCS::telemetryAvailable()
+{
+  return newTelemetryPacket;
+}
+
 void ESATADCS::update()
 {
   readSensors();
   run();
+  newTelemetryPacket = true;
 }
 
 ESATADCS ADCS;

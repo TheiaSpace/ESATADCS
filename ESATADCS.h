@@ -100,6 +100,7 @@ class ESATADCS
     int magneticAngle;
     int magnetorquerXPolarity;
     int magnetorquerYPolarity;
+    boolean newTelemetryPacket;
     int oldAttitudeError;
     int oldWheelSpeedError;
     int rotationalSpeed;
@@ -108,6 +109,7 @@ class ESATADCS
     int targetAttitude;
     boolean targetMagnetorquerDirection;
     int targetWheelSpeed;
+    word telemetrySequenceCount;
     boolean useGyroscope;
     boolean useWheel;
     float wheelDerivativeGain;
