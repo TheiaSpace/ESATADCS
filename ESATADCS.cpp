@@ -58,7 +58,7 @@ void ESATADCS::begin()
   targetAttitude = 0;
   targetMagnetorquerDirection = false;
   targetWheelSpeed = 0;
-  telemetrySequenceCount = 0;
+  telemetryPacketSequenceCount = 0;
   useGyroscope = true;
   useWheel = true;
   wheelDerivativeGain = 0;
@@ -132,13 +132,13 @@ void ESATADCS::handleCommand(ESATCCSDSPacket& packet)
   case WHEEL_SET_SPEED_COMMAND:
     handleWheelSetSpeedCommand(packet);
     break;
-  case WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND(packet):
+  case WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND:
     handleWheelControllerSetProportionalGainCommand(packet);
     break;
-  case WHEEL_CONTROLLER_SET_INTEGRAL_GAIN_COMMADN(packet):
+  case WHEEL_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND:
     handleWheelControllerSetIntegralGainCommand(packet);
     break;
-  case WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND(packet):
+  case WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
     handleWheelControllerSetDerivativeGainCommand(packet);
     break;
   case MAGNETORQUER_ENABLE_COMMAND:
@@ -309,7 +309,7 @@ void ESATADCS::handleMagnetorquerSetYPolarityCommand(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATADCS::handleMagnetorquerApplyMaximumCommand(ESATCCSDSPacket& packet)
+void ESATADCS::handleMagnetorquerApplyMaximumTorqueCommand(ESATCCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_APPLY_MAXIMUM_TORQUE;
   const byte parameter = packet.readWord();
@@ -323,7 +323,7 @@ void ESATADCS::handleMagnetorquerApplyMaximumCommand(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATADCS::handleMagnetorquerDemagnetizeCommand(ESATCCSDPacket& packet)
+void ESATADCS::handleMagnetorquerDemagnetizeCommand(ESATCCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_DEMAGNETIZE;
   demagnetizationIterations = packet.readWord();
@@ -487,17 +487,24 @@ void ESATADCS::runAttitudeControlLoop(int currentAttitude)
   {
     actuation *= 3;
   }
-  attitudeErrorIntegral += error;
+  attitudeErrorIntegral = attitudeErrorIntegral + attitudeError;
   //Selection of preferred actuation
   if (useWheel)
   {
     targetWheelSpeed = constrain(wheelSpeed + actuation, 0, 8000);
-    runSetWheelSpeed();
+    runWheelSetSpeed();
   }
   else
   {
-    targetMagnetorquerDirection = (actuation < 0);
-    runMaximumMagneticTorque();
+    if (actuation > 0)
+    {
+      targetMagnetorquerDirection = false;
+    }
+    else
+    {
+      targetMagnetorquerDirection = true;
+    }
+    runMagnetorquerApplyMaximumTorque();
   }
 }
 
@@ -513,7 +520,7 @@ void ESATADCS::runFollowSun()
 
 void ESATADCS::runWheelSetDutyCycle()
 {
-  wheel.writeDutyCycle(wheelDutyCycle);
+  Wheel.writeDutyCycle(wheelDutyCycle);
 }
 
 void ESATADCS::runWheelSetSpeed()

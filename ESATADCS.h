@@ -18,7 +18,7 @@
 
 #ifndef ESATADCS_h
 #define ESATADCS_h
-#include <Energia.h
+#include <Energia.h>
 #include <ESATCCSDSPacket.h>
 
 class ESATADCS
@@ -62,7 +62,7 @@ class ESATADCS
       MAGNETORQUER_SET_Y_POLARITY_COMMAND = 0x42,
       MAGNETORQUER_APPLY_MAXIMUM_TORQUE_COMMAND = 0x43,
       MAGNETORQUER_DEMAGNETIZE_COMMAND = 0x44,
-      REST_COMMAND = 0xFF;
+      REST_COMMAND = 0xFF,
     };
 
     // Telemetry packet identifiers.
@@ -85,6 +85,14 @@ class ESATADCS
       MAGNETORQUER_DEMAGNETIZE = 0x44,
       REST = 0xFF,
     };
+
+    // Unique identifier of the subsystem.
+    const byte SUBSYSTEM_IDENTIFIER = 1;
+
+    // Version numbers.
+    const byte MAJOR_VERSION_NUMBER = 3;
+    const byte MINOR_VERSION_NUMBER = 0;
+    const byte PATCH_VERSION_NUMBER = 0;
 
     // Minimum command packet length:
     // - Primary header (6 bytes).
@@ -109,7 +117,7 @@ class ESATADCS
     int targetAttitude;
     boolean targetMagnetorquerDirection;
     int targetWheelSpeed;
-    word telemetrySequenceCount;
+    word telemetryPacketSequenceCount;
     boolean useGyroscope;
     boolean useWheel;
     float wheelDerivativeGain;
@@ -130,17 +138,17 @@ class ESATADCS
     void handleAttitudeControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet);
     void handleAttitudeControllerUseGyroscopeCommand(ESATCCSDSPacket& packet);
     void handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESATCCSDSPacket& packet);
-    void handleWheelSetDutyCycle(ESATCCSDSPacket& packet);
+    void handleWheelSetDutyCycleCommand(ESATCCSDSPacket& packet);
     void handleWheelSetSpeedCommand(ESATCCSDSPacket& packet);
     void handleWheelControllerSetProportionalGainCommand(ESATCCSDSPacket& packet);
     void handleWheelControllerSetIntegralGainCommand(ESATCCSDSPacket& packet);
     void handleWheelControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet);
-    void handleMagnetorquerEnable(ESATCCSDSPacket& packet);
+    void handleMagnetorquerEnableCommand(ESATCCSDSPacket& packet);
     void handleMagnetorquerSetXPolarityCommand(ESATCCSDSPacket& packet);
     void handleMagnetorquerSetYPolarityCommand(ESATCCSDSPacket& packet);
     void handleMagnetorquerApplyMaximumTorqueCommand(ESATCCSDSPacket& packet);
     void handleMagnetorquerDemagnetizeCommand(ESATCCSDSPacket& packet);
-    void handleRestCommand(ESATCCSDPacket& packet);
+    void handleRestCommand(ESATCCSDSPacket& packet);
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();
@@ -178,6 +186,8 @@ class ESATADCS
     // Demagnetize the magnetorquers.
     void runMagnetorquerDemagnetize();
 
+    // Rest.
+    void runRest();
 };
 
 
