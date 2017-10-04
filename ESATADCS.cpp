@@ -463,20 +463,18 @@ void ESATADCS::runAttitudeControlLoop(int currentAttitude)
   float Kp = attitudeProportionalGain;
   float Kd = attitudeDerivativeGain;
   float Ki = attitudeIntegralGain;
-  const int absoluteAttitudeErrorDerivative = abs(attitudeErrorDerivative);
-  if (absoluteAttitudeErrorDerivative > attitudeErrorDerivativeDetumblingThreshold)
-  {
-    Ki = 0;
-    Kp = 0;
-  }
   if ((abs(attitudeError) < attitudeErrorDeadband)
-      && (absoluteAttitudeErrorDerivative < attitudeErrorDerivativeDeadband))
+      && (abs(attitudeErrorDerivative) < attitudeErrorDerivativeDeadband))
   {
     Ki = 0;
     Kp = 0;
     Kd = 0;
   }
-  //PID control itself
+  if (abs(attitudeErrorDerivative) > attitudeErrorDerivativeDetumblingThreshold)
+  {
+    Ki = 0;
+    Kp = 0;
+  }
   float actuation = Kp * attitudeError
                   + Kd * rotationalSpeed
                   + Ki * attitudeErrorIntegral;
@@ -486,7 +484,6 @@ void ESATADCS::runAttitudeControlLoop(int currentAttitude)
     actuation *= 3;
   }
   attitudeErrorIntegral = attitudeErrorIntegral + attitudeError;
-  //Selection of preferred actuation
   if (useWheel)
   {
     targetWheelSpeed = constrain(wheelSpeed + actuation, 0, 8000);
