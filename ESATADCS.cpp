@@ -91,7 +91,7 @@ void ESATADCS::blinkSequence()
   }
 }
 
-void ESATADCS::handleCommand(ESATCCSDSPacket& packet)
+void ESATADCS::handleTelecommand(ESATCCSDSPacket& packet)
 {
   if (packet.readPacketDataLength() < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
   {

@@ -31,7 +31,7 @@ class ESATADCS
     void begin();
 
     // Handle a telecommand.
-    void handleCommand(ESATCCSDSPacket& packet);
+    void handleTelecommand(ESATCCSDSPacket& packet);
 
     // Fill a packet with the next ADCS telemetry packet available.
     void readTelemetry(ESATCCSDSPacket& packet);
