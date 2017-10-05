@@ -39,15 +39,15 @@ class ESATMagnetometer
     int read();
 
   private:
-    static const byte bypassRegister = 55;
-    static const byte chipAddress = 0x69;
-    static const byte controlRegister = 0x0A;
-    static const byte dataReady = B00000001;
-    static const byte dataStatusRegister = 0x02;
-    static const byte enableBypass = B00000010;
-    static const byte magnetometerAddress = 0x0C;
-    static const byte readingRegister = 0x03;
-    static const byte singleMeasurementMode = B00000001;
+    static const byte BYPASS_REGISTER = 55;
+    static const byte CHIP_ADDRESS = 0x69;
+    static const byte CONTROL_REGISTER = 0x0A;
+    static const byte DATA_READY = B00000001;
+    static const byte DATA_STATUS_REGISTER = 0x02;
+    static const byte ENABLE_BYPASS = B00000010;
+    static const byte MAGNETOMETER_ADDRESS = 0x0C;
+    static const byte READING_REGISTER = 0x03;
+    static const byte SINGLE_MEASUREMENT_MODE = B00000001;
 
     // Get the current reading of the magnetic attitude.
     // Set the error flag on error.
