@@ -91,6 +91,11 @@ void ESATADCS::blinkSequence()
   }
 }
 
+word ESATADCS::getApplicationProcessIdentifier()
+{
+  return APPLICATION_PROCESS_IDENTIFIER;
+}
+
 void ESATADCS::handleTelecommand(ESATCCSDSPacket& packet)
 {
   if (packet.readPacketDataLength() < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
@@ -379,7 +384,7 @@ void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELEMETRY);
   packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
-  packet.writeApplicationProcessIdentifier(SUBSYSTEM_IDENTIFIER);
+  packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(telemetryPacketSequenceCount);
   packet.writeByte(MAJOR_VERSION_NUMBER);

@@ -33,6 +33,9 @@ class ESATADCS
     // Handle a telecommand.
     void handleTelecommand(ESATCCSDSPacket& packet);
 
+    // Return the unique identifier of the ADCS.
+    word getApplicationProcessIdentifier();
+
     // Fill a packet with the next ADCS telemetry packet available.
     void readTelemetry(ESATCCSDSPacket& packet);
 
@@ -89,7 +92,7 @@ class ESATADCS
     };
 
     // Unique identifier of the subsystem.
-    static const byte SUBSYSTEM_IDENTIFIER = 1;
+    static const byte APPLICATION_PROCESS_IDENTIFIER = 3;
 
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 3;
