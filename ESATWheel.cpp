@@ -18,10 +18,7 @@
 
 #include "ESATWheel.h"
 #include <ESATCCSDSPacket.h>
-#include <MspFlash.h>
 #include <Wire.h>
-
-#define flash SEGMENT_D
 
 void ESATWheel::begin()
 {
