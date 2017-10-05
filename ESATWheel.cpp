@@ -24,8 +24,7 @@ void ESATWheel::begin()
 {
   calibration[0] = 1.28e2;
   calibration[1] = 1.90e-2;
-  pinMode(PIN
-          , OUTPUT);
+  pinMode(PIN, OUTPUT);
   electronicSpeedController.attach(PIN);
   delay(1000);
   programElectronicSpeedController();
