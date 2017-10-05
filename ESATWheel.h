@@ -26,20 +26,8 @@
 class ESATWheel
 {
   public:
-    // Coefficients of the calibration curve.
-    float calibration[3];
-
     // Set up the wheel controller.
     void begin();
-
-    // Set the calibration curve to its default value.
-    void defaultCalibration();
-
-    // Load the calibration curve from flash.
-    void loadCalibration();
-
-    // Save the calibration curve to flash.
-    void saveCalibration();
 
     // Set the speed of the wheel.
     void write(word rpm);
@@ -59,6 +47,9 @@ class ESATWheel
     static const byte programmingAddress = 2;
     static const byte programmingRegister = 1;
     static const byte programmingMessage = 0;
+
+    // RPM to duty cycle calibration coefficients.
+    float calibration[2];
 
     // Servo object for commanding the electronic speed controller.
     Servo electronicSpeedController;

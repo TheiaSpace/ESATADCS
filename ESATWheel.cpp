@@ -24,43 +24,18 @@
 
 void ESATWheel::begin()
 {
+  calibration[0] = 1.28e2;
+  calibration[1] = 1.90e-2;
   pinMode(pin, OUTPUT);
-  loadCalibration();
   electronicSpeedController.attach(pin);
   delay(1000);
   programElectronicSpeedController();
 }
 
-void ESATWheel::defaultCalibration()
-{
-  calibration[0] = 128.0;
-  calibration[1] = 1.9e-2;
-  calibration[2] = 0;
-}
-
-void ESATWheel::loadCalibration()
-{
-  Flash.read(flash,
-             reinterpret_cast<unsigned char*>(calibration),
-             sizeof(calibration));
-  if (calibration[0] < 1)
-  {
-    defaultCalibration();
-  }
-}
-
-void ESATWheel::saveCalibration()
-{
-  Flash.erase(flash);
-  Flash.write(flash,
-              reinterpret_cast<unsigned char*>(calibration),
-              sizeof(calibration));
-}
-
 void ESATWheel::write(const word rpm)
 {
   const float unconstrainedDutyCycle =
-    (calibration[0] + rpm * (calibration[1] + rpm * calibration[2]));
+    calibration[0] + rpm * calibration[1];
   const byte dutyCycle =
           constrain(round(unconstrainedDutyCycle), 0, 255);
   writeDutyCycle(dutyCycle);
