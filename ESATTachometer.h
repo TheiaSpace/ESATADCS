@@ -38,10 +38,10 @@ class ESATTachometer
 
     // The rotating wheel has several marks, so the tachometer gives
     // as many counts per revolution.
-    static const unsigned int countsPerRevolution = 8;
+    static const unsigned int COUNTS_PER_REVOLUTION = 8;
 
     // The output signal of the tachometer goes to this pin.
-    static const unsigned int pin = TCH;
+    static const unsigned int PIN = TCH;
 
     // Increment the counter of the tachometer.
     static void incrementCounter();
