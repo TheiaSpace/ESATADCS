@@ -26,23 +26,11 @@
 class ESATWheel
 {
   public:
-    // Coefficients of the calibration curve.
-    float calibration[3];
-
     // Set up the wheel controller.
     void begin();
 
-    // Set the calibration curve to its default value.
-    void defaultCalibration();
-
-    // Load the calibration curve from flash.
-    void loadCalibration();
-
-    // Save the calibration curve to flash.
-    void saveCalibration();
-
     // Set the speed of the wheel.
-    void write(int rpm);
+    void write(word rpm);
 
     // Set the duty cycle of the electronic speed controller.
     void writeDutyCycle(byte dutyCycle);
@@ -56,15 +44,27 @@ class ESATWheel
     // The electronic speed controller is attached to this pin.
     static const int pin = PWM;
 
-    static const byte programmingAddress = 2;
-    static const byte programmingRegister = 1;
-    static const byte programmingMessage = 0;
+    // Power line switch on message.
+    static const byte POWER_LINE_ADDRESS = 2;
+    static const byte POWER_LINE_REGISTER = 0;
+    static const byte POWER_LINE_IDENTIFIER = 2;
+    static const byte POWER_LINE_MAJOR_VERSION_NUMBER = 2;
+    static const byte POWER_LINE_MINOR_VERSION_NUMBER = 0;
+    static const byte POWER_LINE_PATCH_VERSION_NUMBER = 0;
+    static const byte POWER_LINE_COMMAND_CODE = 1;
+    static const byte POWER_LINE_COMMAND_BUFFER_LENGTH = 11;
+
+    // RPM to duty cycle calibration coefficients.
+    float calibration[2];
 
     // Servo object for commanding the electronic speed controller.
     Servo electronicSpeedController;
 
     // Run the programming sequence of the electronic speed controller.
     void programElectronicSpeedController();
+
+    // Switch on or off the electronic speed controller.
+    void switchElectronicSpeedController(boolean on);
 };
 
 extern ESATWheel Wheel;

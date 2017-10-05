@@ -17,6 +17,7 @@
  */
 
 #include "ESATWheel.h"
+#include <ESATCCSDSPacket.h>
 #include <MspFlash.h>
 #include <Wire.h>
 
@@ -24,43 +25,18 @@
 
 void ESATWheel::begin()
 {
+  calibration[0] = 1.28e2;
+  calibration[1] = 1.90e-2;
   pinMode(pin, OUTPUT);
-  loadCalibration();
   electronicSpeedController.attach(pin);
   delay(1000);
   programElectronicSpeedController();
 }
 
-void ESATWheel::defaultCalibration()
+void ESATWheel::write(const word rpm)
 {
-  calibration[0] = 128.0;
-  calibration[1] = 1.9e-2;
-  calibration[2] = 0;
-}
-
-void ESATWheel::loadCalibration()
-{
-  Flash.read(flash,
-             reinterpret_cast<unsigned char*>(calibration),
-             sizeof(calibration));
-  if (calibration[0] < 1)
-  {
-    defaultCalibration();
-  }
-}
-
-void ESATWheel::saveCalibration()
-{
-  Flash.erase(flash);
-  Flash.write(flash,
-              reinterpret_cast<unsigned char*>(calibration),
-              sizeof(calibration));
-}
-
-void ESATWheel::write(int rpm)
-{
-  const float unconstrainedDutyCycle = 
-    (calibration[0] + rpm * (calibration[1] + rpm * calibration[2]));
+  const float unconstrainedDutyCycle =
+    calibration[0] + rpm * calibration[1];
   const byte dutyCycle =
           constrain(round(unconstrainedDutyCycle), 0, 255);
   writeDutyCycle(dutyCycle);
@@ -75,21 +51,40 @@ void ESATWheel::writeDutyCycle(byte dutyCycle)
 void ESATWheel::programElectronicSpeedController()
 {
   // Perform the ESC programming sequence (high, low and medium again)
+  switchElectronicSpeedController(false);
+  delay(1000);
   writeDutyCycle(255);
-  Wire.beginTransmission(programmingAddress);
-  Wire.write(programmingRegister);
-  Wire.write(programmingMessage);
-  const byte writeStatus = Wire.endTransmission();
-  if (writeStatus != 0)
-  {
-    return;
-  }
-  delay(1000);
-  delay(1000);
+  switchElectronicSpeedController(true);
+  delay(2000);
   writeDutyCycle(0);
   delay(1000);
   writeDutyCycle(128);
   delay(1000);
+}
+
+void ESATWheel::switchElectronicSpeedController(boolean on)
+{
+  byte buffer[POWER_LINE_COMMAND_BUFFER_LENGTH];
+  ESATCCSDSPacket packet(buffer, POWER_LINE_COMMAND_BUFFER_LENGTH);
+  packet.clear();
+  packet.writePacketVersionNumber(0);
+  packet.writePacketType(packet.TELECOMMAND);
+  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
+  packet.writeApplicationProcessIdentifier(POWER_LINE_IDENTIFIER);
+  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
+  packet.writePacketSequenceCount(0);
+  packet.writeByte(POWER_LINE_MAJOR_VERSION_NUMBER);
+  packet.writeByte(POWER_LINE_MINOR_VERSION_NUMBER);
+  packet.writeByte(POWER_LINE_PATCH_VERSION_NUMBER);
+  packet.writeByte(POWER_LINE_COMMAND_CODE);
+  packet.writeBoolean(on);
+  Wire.beginTransmission(POWER_LINE_ADDRESS);
+  (void) Wire.write(POWER_LINE_REGISTER);
+  for (int i = 0; i < POWER_LINE_COMMAND_BUFFER_LENGTH; i++)
+  {
+    (void) Wire.write(packet.buffer[i]);
+  }
+  (void) Wire.endTransmission();
 }
 
 ESATWheel Wheel;

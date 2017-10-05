@@ -21,6 +21,7 @@
 
 void ESATMagnetometer::begin()
 {
+  error = false;
   setBypassMode();
 }
 
@@ -31,16 +32,15 @@ int ESATMagnetometer::getReading()
   const byte writeStatus = Wire.endTransmission();
   if (writeStatus != 0)
   {
-    alive = false;
+    error = true;
     return 0;
   }
   const byte bytesRead = Wire.requestFrom(int(magnetometerAddress), 4);
   if (bytesRead != 4)
   {
-    alive = false;
+    error = true;
     return 0;
   }
-  alive = true;
   const byte xLowByte = Wire.read();
   const byte xHighByte = Wire.read();
   const byte yLowByte = Wire.read();
@@ -65,13 +65,9 @@ void ESATMagnetometer::setBypassMode()
   Wire.write(bypassRegister);
   Wire.write(enableBypass);
   const byte writeStatus = Wire.endTransmission();
-  if (writeStatus == 0)
+  if (writeStatus != 0)
   {
-    alive = true;
-  }
-  else
-  {
-    alive = false;
+    error = true;
   }
 }
 
@@ -81,13 +77,9 @@ void ESATMagnetometer::startReading()
   Wire.write(controlRegister);
   Wire.write(singleMeasurementMode);
   const byte writeStatus = Wire.endTransmission();
-  if (writeStatus == 0)
+  if (writeStatus != 0)
   {
-    alive = true;
-  }
-  else
-  {
-    alive = false;
+    error = true;
   }
 }
 
@@ -101,23 +93,22 @@ void ESATMagnetometer::waitForReading()
     const byte writeStatus = Wire.endTransmission();
     if (writeStatus != 0)
     {
-      alive = false;
+      error = true;
       return;
     }
     const byte bytesRead = Wire.requestFrom(int(dataStatusRegister), 1);
     if (bytesRead != 1)
     {
-      alive = false;
+      error = true;
       return;
     }
     const byte readingState = Wire.read();
     if ((readingState & dataReady) != 0)
     {
-      alive = true;
       return;
     }
   }
-  alive = false;
+  error = true;
 }
 
 ESATMagnetometer Magnetometer;

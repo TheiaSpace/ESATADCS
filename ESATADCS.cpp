@@ -43,6 +43,9 @@
 void ESATADCS::begin()
 {
   attitudeDerivativeGain = 4e4;
+  attitudeErrorDeadband = 1;
+  attitudeErrorDerivativeDeadband = 2;
+  attitudeErrorDerivativeDetumblingThreshold = 40;
   attitudeErrorIntegral = 0;
   attitudeIntegralGain = 0.0;
   attitudeProportionalGain = 1e3;
@@ -50,17 +53,23 @@ void ESATADCS::begin()
   enableMagnetorquerDriver = false;
   magnetorquerXPolarity = Magnetorquer.positive;
   magnetorquerYPolarity = Magnetorquer.positive;
+  newTelemetryPacket = false;
+  oldAttitudeError = 0;
   oldWheelSpeedError = 0;
   runCode = REST;
   rotationalSpeed = 0;
   targetAttitude = 0;
   targetMagnetorquerDirection = false;
   targetWheelSpeed = 0;
+  telemetryPacketSequenceCount = 0;
+  useGyroscope = true;
   useWheel = true;
-  wheelDerivativeGain = 0e-1;
-  wheelIntegralGain = 30e-2;
-  wheelProportionalGain = 15e-1;
+  wheelDerivativeGain = 0;
+  wheelIntegralGain = 8.5e-4;
+  wheelProportionalGain = 8.5e-3;
   wheelSpeedErrorIntegral = 0;
+  wheelDutyCycle = 128;
+  wheelSpeed = 0;
   Wheel.begin();
   Gyroscope.begin(Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
   Magnetometer.begin();
@@ -82,180 +91,273 @@ void ESATADCS::blinkSequence()
   }
 }
 
-void ESATADCS::handleCommand(int commandCode, String parameters)
+word ESATADCS::getApplicationProcessIdentifier()
 {
-  delay(5);
+  return APPLICATION_PROCESS_IDENTIFIER;
+}
+
+void ESATADCS::handleTelecommand(ESATCCSDSPacket& packet)
+{
+  if (packet.readPacketDataLength() < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
+  {
+    return;
+  }
+  packet.rewind();
+  const byte majorVersionNumber = packet.readByte();
+  const byte minorVersionNumber = packet.readByte();
+  const byte patchVersionNumber = packet.readByte();
+  if (majorVersionNumber < MAJOR_VERSION_NUMBER)
+  {
+    return;
+  }
+  const byte commandCode = packet.readByte();
   switch (commandCode)
   {
-    case MOTOR_DUTY_COMMAND:
-      handleMotorDutyCommand(parameters);
-      break;
-    case PID_CONFIGURATION_COMMAND:
-      handlePIDConfigurationCommand(parameters);
-      break;
-    case ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y_COMMAND:
-      handleEnableMagnetorquerXAndMagnetorquerYCommand(parameters);
-      break;
-    case MAGNETORQUER_X_POLARITY_COMMAND:
-      handleMagnetorquerXPolarityCommand(parameters);
-      break;
-    case MAGNETORQUER_Y_POLARITY_COMMAND:
-      handleMagnetorquerYPolarityCommand(parameters);
-      break;
-    case FOLLOW_SUN_COMMAND:
-      handleFollowSunCommand(parameters);
-      break;
-    case FOLLOW_MAGNETOMETER_COMMAND:
-      handleFollowMagnetometerCommand(parameters);
-      break;
-    case SET_WHEEL_SPEED_COMMAND:
-      handleSetWheelSpeedCommand(parameters);
-      break;
-    case MAXIMUM_MAGNETIC_TORQUE_COMMAND:
-      handleMaximumMagneticTorqueCommand(parameters);
-      break;
-    case WHEEL_PID_CONFIGURATION_COMMAND:
-      handleWheelPIDConfigurationCommand(parameters);
-      break;
-    case DEMAGNETIZE_COMMAND:
-      handleDemagnetizeCommand(parameters);
-      break;
-    case WHEEL_OR_MAGNETORQUER_COMMAND:
-      handleWheelOrMagnetorquerCommand(parameters);
-      break;
-    case WHEEL_CALIBRATION1_COMMAND:
-      handleWheelCalibration1Command(parameters);
-      break;
-    case WHEEL_CALIBRATION2_COMMAND:
-      handleWheelCalibration2Command(parameters);
-      break;
-    case WHEEL_CALIBRATION3_COMMAND:
-      handleWheelCalibration3Command(parameters);
-      break;
-    case FLASH_WRITE_COMMAND:
-      handleFlashWriteCommand(parameters);
-      break;
-    case FLASH_WRITE_DEFAULTS_COMMAND:
-      handleFlashWriteDefaultsCommand(parameters);
-      break;
-    default:
-      break;
+  case FOLLOW_MAGNETOMETER_COMMAND:
+    handleFollowMagnetometerCommand(packet);
+    break;
+  case FOLLOW_SUN_COMMAND:
+    handleFollowSunCommand(packet);
+    break;
+  case ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND:
+    handleAttitudeControllerSetProportionalGainCommand(packet);
+    break;
+  case ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND:
+    handleAttitudeControllerSetIntegralGainCommand(packet);
+    break;
+  case ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
+    handleAttitudeControllerSetDerivativeGainCommand(packet);
+    break;
+  case ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND:
+    handleAttitudeControllerUseGyroscopeCommand(packet);
+    break;
+  case ATTITUDE_CONTROLLER_USE_WHEEL_OR_MAGNETORQUER_COMMAND:
+    handleAttitudeControllerUseWheelOrMagnetorquerCommand(packet);
+    break;
+  case ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND:
+    handleAttitudeControllerSetDeadbandCommand(packet);
+    break;
+  case ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD_COMMAND:
+    handleAttitudeControllerSetDetumblingThresholdCommand(packet);
+    break;
+  case WHEEL_SET_DUTY_CYCLE_COMMAND:
+    handleWheelSetDutyCycleCommand(packet);
+    break;
+  case WHEEL_SET_SPEED_COMMAND:
+    handleWheelSetSpeedCommand(packet);
+    break;
+  case WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND:
+    handleWheelControllerSetProportionalGainCommand(packet);
+    break;
+  case WHEEL_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND:
+    handleWheelControllerSetIntegralGainCommand(packet);
+    break;
+  case WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
+    handleWheelControllerSetDerivativeGainCommand(packet);
+    break;
+  case MAGNETORQUER_ENABLE_COMMAND:
+    handleMagnetorquerEnableCommand(packet);
+    break;
+  case MAGNETORQUER_SET_X_POLARITY_COMMAND:
+    handleMagnetorquerSetXPolarityCommand(packet);
+    break;
+  case MAGNETORQUER_SET_Y_POLARITY_COMMAND:
+    handleMagnetorquerSetYPolarityCommand(packet);
+    break;
+  case MAGNETORQUER_APPLY_MAXIMUM_TORQUE_COMMAND:
+    handleMagnetorquerApplyMaximumTorqueCommand(packet);
+    break;
+  case MAGNETORQUER_DEMAGNETIZE_COMMAND:
+    handleMagnetorquerDemagnetizeCommand(packet);
+    break;
+  case REST_COMMAND:
+    handleRestCommand(packet);
+  default:
+    break;
   }
 }
 
-void ESATADCS::handleMotorDutyCommand(String parameters)
-{
-  runCode = SET_MOTOR_DUTY;
-  const int dutyCycle = constrain(parameters.toInt(), 0, 255);
-  Wheel.writeDutyCycle(dutyCycle);
-}
-
-void ESATADCS::handlePIDConfigurationCommand(String parameters)
-{
-  attitudeProportionalGain = parameters.substring(0, 4).toInt();
-  attitudeDerivativeGain = parameters.substring(4, 8).toInt() * 1e1;
-  attitudeIntegralGain = parameters.substring(8, 12).toInt();
-}
-
-void ESATADCS::handleEnableMagnetorquerXAndMagnetorquerYCommand(String parameters)
-{
-  runCode = ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y;
-  enableMagnetorquerDriver = !!(parameters.toInt());
-  Magnetorquer.writeX(magnetorquerXPolarity);
-  Magnetorquer.writeY(magnetorquerYPolarity);
-  Magnetorquer.writeEnable(enableMagnetorquerDriver);
-}
-
-void ESATADCS::handleMagnetorquerXPolarityCommand(String parameters)
-{
-  magnetorquerXPolarity =
-    (parameters.toInt() > 0) ? Magnetorquer.positive : Magnetorquer.negative;
-  Magnetorquer.writeX(magnetorquerXPolarity);
-}
-
-void ESATADCS::handleMagnetorquerYPolarityCommand(String parameters)
-{
-  magnetorquerYPolarity =
-    (parameters.toInt() > 0) ? Magnetorquer.positive : Magnetorquer.negative;
-  Magnetorquer.writeY(magnetorquerYPolarity);
-}
-
-void ESATADCS::handleFollowSunCommand(String parameters)
-{
-  runCode = FOLLOW_SUN;
-  const int rawTargetAttitude = parameters.toInt();
-  targetAttitude = constrain(rawTargetAttitude, 0, 360);
-}
-
-void ESATADCS::handleFollowMagnetometerCommand(String parameters)
+void ESATADCS::handleFollowMagnetometerCommand(ESATCCSDSPacket& packet)
 {
   runCode = FOLLOW_MAGNETOMETER;
-  const int rawTargetAttitude = parameters.toInt();
-  targetAttitude = constrain(rawTargetAttitude, 0, 360);
+  const word rawTargetAttitude = packet.readWord();
+  targetAttitude = rawTargetAttitude % 360;
+  attitudeErrorIntegral = 0;
+  oldAttitudeError = 0;
 }
 
-void ESATADCS::handleSetWheelSpeedCommand(String parameters)
+void ESATADCS::handleFollowSunCommand(ESATCCSDSPacket& packet)
 {
-  runCode = SET_WHEEL_SPEED;
-  int rawTargetWheelSpeed = parameters.toInt();
-  targetWheelSpeed = constrain(rawTargetWheelSpeed, -8000, 8000);
+  runCode = FOLLOW_SUN;
+  const word rawTargetAttitude = packet.readWord();
+  targetAttitude = rawTargetAttitude % 360;
+  attitudeErrorIntegral = 0;
+  oldAttitudeError = 0;
+}
+
+void ESATADCS::handleAttitudeControllerSetProportionalGainCommand(ESATCCSDSPacket& packet)
+{
+  attitudeProportionalGain = packet.readFloat();
+  attitudeErrorIntegral = 0;
+  oldAttitudeError = 0;
+}
+
+void ESATADCS::handleAttitudeControllerSetIntegralGainCommand(ESATCCSDSPacket& packet)
+{
+  attitudeIntegralGain = packet.readFloat();
+  attitudeErrorIntegral = 0;
+  oldAttitudeError = 0;
+}
+
+void ESATADCS::handleAttitudeControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet)
+{
+  attitudeIntegralGain = packet.readFloat();
+  attitudeErrorIntegral = 0;
+  oldAttitudeError = 0;
+}
+
+void ESATADCS::handleAttitudeControllerUseGyroscopeCommand(ESATCCSDSPacket& packet)
+{
+  const byte parameter = packet.readByte();
+  if (parameter > 0)
+  {
+    useGyroscope = true;
+  }
+  else
+  {
+    useGyroscope = false;
+  }
+}
+
+void ESATADCS::handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESATCCSDSPacket& packet)
+{
+  const byte parameter = packet.readByte();
+  if (parameter > 0)
+  {
+    useWheel = true;
+  }
+  else
+  {
+    useWheel = false;
+  }
+}
+
+void ESATADCS::handleAttitudeControllerSetDeadbandCommand(ESATCCSDSPacket& packet)
+{
+  attitudeErrorDeadband = packet.readWord();
+  attitudeErrorDerivativeDeadband = packet.readWord();
+}
+
+void ESATADCS::handleAttitudeControllerSetDetumblingThresholdCommand(ESATCCSDSPacket& packet)
+
+{
+  attitudeErrorDerivativeDetumblingThreshold = packet.readWord();
+}
+
+void ESATADCS::handleWheelSetDutyCycleCommand(ESATCCSDSPacket& packet)
+{
+  runCode = WHEEL_SET_DUTY_CYCLE;
+  wheelDutyCycle = packet.readByte();
+}
+
+void ESATADCS::handleWheelSetSpeedCommand(ESATCCSDSPacket& packet)
+{
+  runCode = WHEEL_SET_SPEED;
+  word rawTargetWheelSpeed = packet.readWord();
+  targetWheelSpeed = constrain(rawTargetWheelSpeed, 0, 8000);
   if (targetWheelSpeed == 0)
   {
-    runCode = SET_MOTOR_DUTY;
+    runCode = WHEEL_SET_DUTY_CYCLE;
     Wheel.writeDutyCycle(128);
   }
 }
 
-void ESATADCS::handleMaximumMagneticTorqueCommand(String parameters)
+void ESATADCS::handleWheelControllerSetProportionalGainCommand(ESATCCSDSPacket& packet)
 {
-  runCode = MAXIMUM_MAGNETIC_TORQUE;
-  targetMagnetorquerDirection = !!(parameters.toInt());
-}
-
-void ESATADCS::handleWheelPIDConfigurationCommand(String parameters)
-{
-  wheelProportionalGain = parameters.substring(0, 2).toInt() * 1e-1;
-  wheelDerivativeGain = parameters.substring(2, 4).toInt() * 1e-1;
-  wheelIntegralGain = parameters.substring(4, 6).toInt() * 1e-2;
+  wheelProportionalGain = packet.readFloat();
   wheelSpeedErrorIntegral = 0;
   oldWheelSpeedError = 0;
 }
 
-void ESATADCS::handleDemagnetizeCommand(String parameters)
+void ESATADCS::handleWheelControllerSetIntegralGainCommand(ESATCCSDSPacket& packet)
 {
-  runCode = DEMAGNETIZE;
-  demagnetizationIterations = parameters.toInt();
+  wheelIntegralGain = packet.readFloat();
+  wheelSpeedErrorIntegral = 0;
+  oldWheelSpeedError = 0;
 }
 
-void ESATADCS::handleWheelOrMagnetorquerCommand(String parameters)
+void ESATADCS::handleWheelControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet)
 {
-  useWheel = !!(parameters.toInt());
+  wheelDerivativeGain = packet.readFloat();
+  wheelSpeedErrorIntegral = 0;
+  oldWheelSpeedError = 0;
 }
 
-void ESATADCS::handleWheelCalibration1Command(String parameters)
+void ESATADCS::handleMagnetorquerEnableCommand(ESATCCSDSPacket& packet)
 {
-  Wheel.calibration[0] = parameters.substring(0, 5).toInt() * 0.1;
+  runCode = MAGNETORQUER_ENABLE;
+  const byte parameter = packet.readByte();
+  if (parameter > 0)
+  {
+    enableMagnetorquerDriver = true;
+  }
+  else
+  {
+    enableMagnetorquerDriver = false;
+  }
 }
 
-void ESATADCS::handleWheelCalibration2Command(String parameters)
+void ESATADCS::handleMagnetorquerSetXPolarityCommand(ESATCCSDSPacket& packet)
 {
-  Wheel.calibration[1] = 1e-5 * parameters.substring(0, 5).toInt();
+  runCode = MAGNETORQUER_SET_X_POLARITY;
+  const byte parameter = packet.readByte();
+  if (parameter > 0)
+  {
+    magnetorquerXPolarity = Magnetorquer.positive;
+  }
+  else
+  {
+    magnetorquerYPolarity = Magnetorquer.negative;
+  }
 }
 
-void ESATADCS::handleWheelCalibration3Command(String parameters)
+void ESATADCS::handleMagnetorquerSetYPolarityCommand(ESATCCSDSPacket& packet)
 {
-  Wheel.calibration[2] = 1e-9 * parameters.substring(6, 11).toInt();
+  runCode = MAGNETORQUER_SET_Y_POLARITY;
+  const byte parameter = packet.readByte();
+  if (parameter > 0)
+  {
+    magnetorquerYPolarity = Magnetorquer.positive;
+  }
+  else
+  {
+    magnetorquerYPolarity = Magnetorquer.negative;
+  }
 }
 
-void ESATADCS::handleFlashWriteCommand(String parameter)
+void ESATADCS::handleMagnetorquerApplyMaximumTorqueCommand(ESATCCSDSPacket& packet)
 {
-  Wheel.saveCalibration();
+  runCode = MAGNETORQUER_APPLY_MAXIMUM_TORQUE;
+  const byte parameter = packet.readWord();
+  if (parameter > 0)
+  {
+    targetMagnetorquerDirection = true;
+  }
+  else
+  {
+    targetMagnetorquerDirection = false;
+  }
 }
 
-void ESATADCS::handleFlashWriteDefaultsCommand(String parameter)
+void ESATADCS::handleMagnetorquerDemagnetizeCommand(ESATCCSDSPacket& packet)
 {
-  Wheel.defaultCalibration();
-  Wheel.saveCalibration();
+  runCode = MAGNETORQUER_DEMAGNETIZE;
+  demagnetizationIterations = packet.readWord();
+}
+
+void ESATADCS::handleRestCommand(ESATCCSDSPacket& packet)
+{
+  runCode = REST;
 }
 
 void ESATADCS::readSensors()
@@ -263,129 +365,142 @@ void ESATADCS::readSensors()
   wheelSpeed = Tachometer.read();
   Magnetorquer.writeEnable(false);
   delay(20);
+  Gyroscope.error = false;
   rotationalSpeed = Gyroscope.read(3);
+  Magnetometer.error = false;
   magneticAngle = Magnetometer.read();
   Magnetorquer.writeEnable(enableMagnetorquerDriver);
   sunAngle = CoarseSunSensor.read();
-  inertialMeasurementUnitAlive = Gyroscope.alive && Magnetometer.alive;
 }
 
-String ESATADCS::readTelemetry()
+void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
 {
-  String telemetry;
-  telemetry += Util.intToHexadecimal(wheelSpeed);
-  telemetry += Util.intToHexadecimal(magneticAngle);
-  const int sunAngleRelativeToNorth = (sunAngle - magneticAngle) % 360;
-  telemetry += Util.intToHexadecimal(sunAngleRelativeToNorth);
-  telemetry += Util.intToHexadecimal(rotationalSpeed);
-  telemetry += Util.byteToHexadecimal(byte(0));
-  const byte magnetorquerStatus =
-    (enableMagnetorquerDriver ? 100 : 0)
-    + ((magnetorquerXPolarity == Magnetorquer.positive) ? 10 : 0)
-    + ((magnetorquerYPolarity == Magnetorquer.positive) ? 1 : 0);
-  telemetry += Util.byteToHexadecimal(magnetorquerStatus);
-  telemetry += Util.intToHexadecimal(sunAngle);
-  return telemetry;
+  newTelemetryPacket = false;
+  packet.clear();
+  if (packet.bufferLength < HOUSEKEEPING_TELEMETRY_PACKET_LENGTH)
+  {
+    return;
+  }
+  packet.writePacketVersionNumber(0);
+  packet.writePacketType(packet.TELEMETRY);
+  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
+  packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
+  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
+  packet.writePacketSequenceCount(telemetryPacketSequenceCount);
+  packet.writeByte(MAJOR_VERSION_NUMBER);
+  packet.writeByte(MINOR_VERSION_NUMBER);
+  packet.writeByte(PATCH_VERSION_NUMBER);
+  packet.writeByte(HOUSEKEEPING);
+  packet.writeByte(byte(runCode));
+  packet.writeWord(targetAttitude);
+  packet.writeWord(magneticAngle);
+  packet.writeWord(sunAngle);
+  packet.writeWord(rotationalSpeed);
+  packet.writeFloat(attitudeProportionalGain);
+  packet.writeFloat(attitudeIntegralGain);
+  packet.writeFloat(attitudeDerivativeGain);
+  packet.writeBoolean(useGyroscope);
+  packet.writeBoolean(useWheel);
+  packet.writeByte(wheelDutyCycle);
+  packet.writeWord(wheelSpeed);
+  packet.writeFloat(wheelProportionalGain);
+  packet.writeFloat(wheelIntegralGain);
+  packet.writeFloat(wheelDerivativeGain);
+  packet.writeByte(enableMagnetorquerDriver);
+  packet.writeByte(byte(magnetorquerXPolarity));
+  packet.writeByte(byte(magnetorquerYPolarity));
+  packet.writeBoolean(Gyroscope.error);
+  packet.writeBoolean(Magnetometer.error);
+  telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
 }
 
 void ESATADCS::run()
 {
   switch (runCode)
   {
-    case FOLLOW_SUN:
-      runFollowSun();
-      break;
-    case FOLLOW_MAGNETOMETER:
-      runFollowMagnetometer();
-      break;
-    case MAXIMUM_MAGNETIC_TORQUE:
-      runMaximumMagneticTorque();
-      break;
-    case DEMAGNETIZE:
-      runDemagnetize();
-      break;
-    case SET_WHEEL_SPEED:
-      runSetWheelSpeed();
-      break;
-    default:
-      break;
+  case FOLLOW_MAGNETOMETER:
+    runFollowMagnetometer();
+    break;
+  case FOLLOW_SUN:
+    runFollowSun();
+    break;
+  case WHEEL_SET_DUTY_CYCLE:
+    runWheelSetDutyCycle();
+    break;
+  case WHEEL_SET_SPEED:
+    runWheelSetSpeed();
+    break;
+  case MAGNETORQUER_ENABLE:
+    runMagnetorquerEnable();
+    break;
+  case MAGNETORQUER_APPLY_MAXIMUM_TORQUE:
+    runMagnetorquerApplyMaximumTorque();
+    break;
+  case MAGNETORQUER_DEMAGNETIZE:
+    runMagnetorquerDemagnetize();
+    break;
+  default:
+    runRest();
+    break;
   }
 }
 
 void ESATADCS::runAttitudeControlLoop(int currentAttitude)
 {
-  int angleError = targetAttitude - currentAttitude;
-  if (angleError > 180)
+  int attitudeError = targetAttitude - currentAttitude;
+  if (attitudeError > 180)
   {
-    angleError = angleError - 360;
+    attitudeError = attitudeError - 360;
   }
-  else if (angleError < -180)
+  else if (attitudeError < -180)
   {
-    angleError = angleError + 360;
+    attitudeError = attitudeError + 360;
   }
-  const float error = angleError / 360.;
-  float Kp = attitudeProportionalGain;
-  float Kd = attitudeDerivativeGain;
-  float Ki = attitudeIntegralGain;
-  const int absoluteRotationalSpeed = abs(rotationalSpeed);
-  //If the rotation is faster than 40º/s no control is feasible and
-  //only rotation damping is considered.
-  if (absoluteRotationalSpeed > 40)
+  int attitudeErrorDerivative;
+  if (useGyroscope)
   {
-    Ki = 0;
-    Kp = 0;
-  }
-  //If the rotation speed is smaller than 2º/seconds, forget the
-  //derivative gain (TBC)
-  if (absoluteRotationalSpeed <= 2)
-  {
-    Kd = 0;
-  }
-  //If the solution is found, stop the controller to avoid instabilities
-  if (fabs(error) < 0.004 && absoluteRotationalSpeed <= 2)
-  {
-    Ki = 0;
-    Kp = 0;
-    Kd = 0;
-  }
-  //PID control itself
-  float actuation = 2 * Kp * error
-                  + Kd * (rotationalSpeed / 1800.)
-                  + Ki * attitudeErrorIntegral;
-  //If going against the wheel, increase actuation to magnify results
-  if (actuation < 0)
-  {
-    actuation *= 3;
-  }
-  attitudeErrorIntegral += error;
-  //Selection of preferred actuation
-  if (useWheel)
-  {
-    targetWheelSpeed = constrain(wheelSpeed + actuation, -8000, 8000);
-    runSetWheelSpeed();
+    attitudeErrorDerivative = rotationalSpeed;
   }
   else
   {
-    targetMagnetorquerDirection = (actuation < 0);
-    runMaximumMagneticTorque();
+    attitudeErrorDerivative = attitudeError - oldAttitudeError;
   }
-}
-
-void ESATADCS::runDemagnetize()
-{
-  Magnetorquer.writeEnable(true);
-  for (unsigned int i = 0; i < demagnetizationIterations; i++)
+  float Kp = attitudeProportionalGain;
+  float Kd = attitudeDerivativeGain;
+  float Ki = attitudeIntegralGain;
+  if ((abs(attitudeError) < attitudeErrorDeadband)
+      && (abs(attitudeErrorDerivative) < attitudeErrorDerivativeDeadband))
   {
-    Magnetorquer.writeX(Magnetorquer.positive);
-    Magnetorquer.writeY(Magnetorquer.positive);
-    delay(20);
-    Magnetorquer.writeX(Magnetorquer.negative);
-    Magnetorquer.writeY(Magnetorquer.negative);
-    delay(20);
+    Ki = 0;
+    Kp = 0;
+    Kd = 0;
   }
-  Magnetorquer.writeEnable(false);
-  enableMagnetorquerDriver = false;
-  runCode = REST;
+  if (abs(attitudeErrorDerivative) > attitudeErrorDerivativeDetumblingThreshold)
+  {
+    Ki = 0;
+    Kp = 0;
+  }
+  float actuation = Kp * attitudeError
+                  + Kd * rotationalSpeed
+                  + Ki * attitudeErrorIntegral;
+  attitudeErrorIntegral = attitudeErrorIntegral + attitudeError;
+  if (useWheel)
+  {
+    targetWheelSpeed = constrain(wheelSpeed + actuation, 0, 8000);
+    runWheelSetSpeed();
+  }
+  else
+  {
+    if (actuation > 0)
+    {
+      targetMagnetorquerDirection = false;
+    }
+    else
+    {
+      targetMagnetorquerDirection = true;
+    }
+    runMagnetorquerApplyMaximumTorque();
+  }
 }
 
 void ESATADCS::runFollowMagnetometer()
@@ -398,7 +513,41 @@ void ESATADCS::runFollowSun()
   runAttitudeControlLoop(sunAngle);
 }
 
-void ESATADCS::runMaximumMagneticTorque()
+void ESATADCS::runWheelSetDutyCycle()
+{
+  Wheel.writeDutyCycle(wheelDutyCycle);
+}
+
+void ESATADCS::runWheelSetSpeed()
+{
+  const int wheelSpeedError = targetWheelSpeed - wheelSpeed;
+  wheelSpeedErrorIntegral = wheelSpeedErrorIntegral + wheelSpeedError;
+  const int wheelSpeedErrorDerivative = wheelSpeedError - oldWheelSpeedError;
+  oldWheelSpeedError = wheelSpeedError;
+  const float control = wheelProportionalGain * wheelSpeedError
+    + wheelIntegralGain * wheelSpeedErrorIntegral
+    + wheelDerivativeGain * wheelSpeedErrorDerivative;
+  Wheel.write(control);
+}
+
+void ESATADCS::runMagnetorquerEnable()
+{
+  Magnetorquer.writeX(magnetorquerXPolarity);
+  Magnetorquer.writeY(magnetorquerYPolarity);
+  Magnetorquer.writeEnable(enableMagnetorquerDriver);
+}
+
+void ESATADCS::runMagnetorquerSetXPolarity()
+{
+  Magnetorquer.writeX(magnetorquerXPolarity);
+}
+
+void ESATADCS::runMagnetorquerSetYPolarity()
+{
+  Magnetorquer.writeY(magnetorquerYPolarity);
+}
+
+void ESATADCS::runMagnetorquerApplyMaximumTorque()
 {
   const bool activationsX[4] = {
           targetMagnetorquerDirection,
@@ -423,22 +572,41 @@ void ESATADCS::runMaximumMagneticTorque()
   Magnetorquer.writeEnable(enableMagnetorquerDriver);
 }
 
-void ESATADCS::runSetWheelSpeed()
+void ESATADCS::runMagnetorquerDemagnetize()
 {
-  const int wheelSpeedError = targetWheelSpeed - wheelSpeed;
-  wheelSpeedErrorIntegral = wheelSpeedErrorIntegral + wheelSpeedError;
-  const int wheelSpeedErrorDerivative = wheelSpeedError - oldWheelSpeedError;
-  oldWheelSpeedError = wheelSpeedError;
-  const float control = wheelProportionalGain * wheelSpeedError
-    + wheelIntegralGain * wheelSpeedErrorIntegral
-    + wheelDerivativeGain * wheelSpeedErrorDerivative;
-  Wheel.write(control);
+  Magnetorquer.writeEnable(true);
+  for (long  i = 0; i < demagnetizationIterations; i++)
+  {
+    Magnetorquer.writeX(Magnetorquer.positive);
+    Magnetorquer.writeY(Magnetorquer.positive);
+    delay(20);
+    Magnetorquer.writeX(Magnetorquer.negative);
+    Magnetorquer.writeY(Magnetorquer.negative);
+    delay(20);
+  }
+  Magnetorquer.writeEnable(false);
+  enableMagnetorquerDriver = false;
+  runCode = REST;
+}
+
+void ESATADCS::runRest()
+{
+  enableMagnetorquerDriver = false;
+  Magnetorquer.writeEnable(false);
+  wheelDutyCycle = 128;
+  Wheel.writeDutyCycle(wheelDutyCycle);
+}
+
+boolean ESATADCS::telemetryAvailable()
+{
+  return newTelemetryPacket;
 }
 
 void ESATADCS::update()
 {
   readSensors();
   run();
+  newTelemetryPacket = true;
 }
 
 ESATADCS ADCS;

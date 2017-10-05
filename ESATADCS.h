@@ -19,6 +19,7 @@
 #ifndef ESATADCS_h
 #define ESATADCS_h
 #include <Energia.h>
+#include <ESATCCSDSPacket.h>
 
 class ESATADCS
 {
@@ -30,10 +31,16 @@ class ESATADCS
     void begin();
 
     // Handle a telecommand.
-    void handleCommand(int commandCode, String parameters);
+    void handleTelecommand(ESATCCSDSPacket& packet);
 
-    // Return the telemetry of the ADCS.
-    String readTelemetry();
+    // Return the unique identifier of the ADCS.
+    word getApplicationProcessIdentifier();
+
+    // Fill a packet with the next ADCS telemetry packet available.
+    void readTelemetry(ESATCCSDSPacket& packet);
+
+    // Return true if there is a new telemetry packet available.
+    boolean telemetryAvailable();
 
     void update();
 
@@ -41,47 +48,103 @@ class ESATADCS
     // Command codes.
     enum CommandCode
     {
-      MOTOR_DUTY_COMMAND = 0x1,
-      PID_CONFIGURATION_COMMAND = 0x2,
-      ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y_COMMAND = 0x3,
-      MAGNETORQUER_X_POLARITY_COMMAND = 0x4,
-      MAGNETORQUER_Y_POLARITY_COMMAND = 0x5,
-      FOLLOW_SUN_COMMAND = 0x6,
-      FOLLOW_MAGNETOMETER_COMMAND = 0x7,
-      SET_WHEEL_SPEED_COMMAND = 0x8,
-      MAXIMUM_MAGNETIC_TORQUE_COMMAND = 0x9,
-      WHEEL_PID_CONFIGURATION_COMMAND = 0x10,
-      DEMAGNETIZE_COMMAND = 0x11,
-      WHEEL_OR_MAGNETORQUER_COMMAND = 0x13,
-      WHEEL_CALIBRATION1_COMMAND = 0x21,
-      WHEEL_CALIBRATION2_COMMAND = 0x22,
-      WHEEL_CALIBRATION3_COMMAND = 0x23,
-      FLASH_WRITE_COMMAND = 0x24,
-      FLASH_WRITE_DEFAULTS_COMMAND = 0x25
+      FOLLOW_MAGNETOMETER_COMMAND = 0x00,
+      FOLLOW_SUN_COMMAND = 0x01,
+      ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND = 0x10,
+      ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND = 0x11,
+      ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND = 0x12,
+      ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND = 0x13,
+      ATTITUDE_CONTROLLER_USE_WHEEL_OR_MAGNETORQUER_COMMAND = 0x14,
+      ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND = 0x15,
+      ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD_COMMAND = 0x16,
+      WHEEL_SET_DUTY_CYCLE_COMMAND = 0x20,
+      WHEEL_SET_SPEED_COMMAND = 0x21,
+      WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND = 0x30,
+      WHEEL_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND = 0x31,
+      WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND = 0x32,
+      MAGNETORQUER_ENABLE_COMMAND = 0x40,
+      MAGNETORQUER_SET_X_POLARITY_COMMAND = 0x41,
+      MAGNETORQUER_SET_Y_POLARITY_COMMAND = 0x42,
+      MAGNETORQUER_APPLY_MAXIMUM_TORQUE_COMMAND = 0x43,
+      MAGNETORQUER_DEMAGNETIZE_COMMAND = 0x44,
+      REST_COMMAND = 0xFF,
+    };
+
+    // Telemetry packet identifiers.
+    enum TelemetryPacketIdentifier
+    {
+      HOUSEKEEPING = 0,
     };
 
     // Run codes.
     enum RunCode
     {
-      REST = 0,
-      SET_MOTOR_DUTY = 1,
-      ENABLE_MAGNETORQUER_X_AND_MAGNETORQUER_Y = 3,
-      FOLLOW_SUN = 6,
-      FOLLOW_MAGNETOMETER = 7,
-      SET_WHEEL_SPEED = 8,
-      MAXIMUM_MAGNETIC_TORQUE = 9,
-      DEMAGNETIZE = 11,
+      FOLLOW_MAGNETOMETER = 0x00,
+      FOLLOW_SUN = 0x01,
+      WHEEL_SET_DUTY_CYCLE = 0x20,
+      WHEEL_SET_SPEED = 0x21,
+      MAGNETORQUER_ENABLE = 0x40,
+      MAGNETORQUER_SET_X_POLARITY = 0x41,
+      MAGNETORQUER_SET_Y_POLARITY = 0x42,
+      MAGNETORQUER_APPLY_MAXIMUM_TORQUE = 0x43,
+      MAGNETORQUER_DEMAGNETIZE = 0x44,
+      REST = 0xFF,
     };
 
+    // Unique identifier of the subsystem.
+    static const byte APPLICATION_PROCESS_IDENTIFIER = 3;
+
+    // Version numbers.
+    static const byte MAJOR_VERSION_NUMBER = 3;
+    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte PATCH_VERSION_NUMBER = 0;
+
+    // Minimum command payload data length in bytes:
+    // - Major version number (1 byte).
+    // - Minor version number (1 byte).
+    // - Patch version number (1 byte).
+    // - Command code (1 byte).
+    static const byte MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH = 4;
+
+    // Size of the housekeeping telemetry packet in bytes:
+    // - Primary header (6 bytes).
+    // - Secondary header (4 bytes).
+    // - Mode of operation (1 byte).
+    // - Target attitude (2 bytes).
+    // - Magnetic angle (2 bytes).
+    // - Sun angle (2 bytes).
+    // - Rotational speed (2 bytes).
+    // - Attitude proportional gain (4 bytes).
+    // - Attitude integral gain (4 bytes).
+    // - Attitude derivative gain (4 bytes).
+    // - Gyroscope usage for attitude error derivative determination (1 byte).
+    // - Wheel or magnetorquer usage for attitude control (1 byte).
+    // - Wheel duty cycle (1 byte).
+    // - Wheel speed (1 byte).
+    // - Wheel proportional gain (4 bytes).
+    // - Wheel integral gain (4 bytes).
+    // - Wheel derivative gain (4 bytes).
+    // - Magnetorquer driver state (1 byte).
+    // - Magnetorquer X polarity (1 byte).
+    // - Magnetorquer Y polarity (1 byte).
+    // - Gyroscope error (1 byte).
+    // - Magnetometer error (1 byte).
+    static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 52;
+
     float attitudeDerivativeGain;
+    word attitudeErrorDeadband;
+    word attitudeErrorDerivativeDeadband;
+    word attitudeErrorDerivativeDetumblingThreshold;
     float attitudeErrorIntegral;
     float attitudeIntegralGain;
     float attitudeProportionalGain;
-    int demagnetizationIterations;
+    word demagnetizationIterations;
     boolean enableMagnetorquerDriver;
     int magneticAngle;
     int magnetorquerXPolarity;
     int magnetorquerYPolarity;
+    boolean newTelemetryPacket;
+    int oldAttitudeError;
     int oldWheelSpeedError;
     int rotationalSpeed;
     enum RunCode runCode;
@@ -89,10 +152,13 @@ class ESATADCS
     int targetAttitude;
     boolean targetMagnetorquerDirection;
     int targetWheelSpeed;
+    word telemetryPacketSequenceCount;
+    boolean useGyroscope;
     boolean useWheel;
     float wheelDerivativeGain;
     float wheelIntegralGain;
     float wheelProportionalGain;
+    byte wheelDutyCycle;
     unsigned int wheelSpeed;
     float wheelSpeedErrorIntegral;
 
@@ -100,23 +166,26 @@ class ESATADCS
     void blinkSequence();
 
     // Commands.
-    void handleMotorDutyCommand(String parameters);
-    void handlePIDConfigurationCommand(String parameters);
-    void handleEnableMagnetorquerXAndMagnetorquerYCommand(String parameters);
-    void handleMagnetorquerXPolarityCommand(String parameters);
-    void handleMagnetorquerYPolarityCommand(String parameters);
-    void handleFollowSunCommand(String parameters);
-    void handleFollowMagnetometerCommand(String parameters);
-    void handleSetWheelSpeedCommand(String parameters);
-    void handleMaximumMagneticTorqueCommand(String parameters);
-    void handleWheelPIDConfigurationCommand(String parameters);
-    void handleDemagnetizeCommand(String parameters);
-    void handleWheelOrMagnetorquerCommand(String parameters);
-    void handleWheelCalibration1Command(String parameters);
-    void handleWheelCalibration2Command(String parameters);
-    void handleWheelCalibration3Command(String parameters);
-    void handleFlashWriteCommand(String parameters);
-    void handleFlashWriteDefaultsCommand(String parameters);
+    void handleFollowMagnetometerCommand(ESATCCSDSPacket& packet);
+    void handleFollowSunCommand(ESATCCSDSPacket& packet);
+    void handleAttitudeControllerSetProportionalGainCommand(ESATCCSDSPacket& packet);
+    void handleAttitudeControllerSetIntegralGainCommand(ESATCCSDSPacket& packet);
+    void handleAttitudeControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet);
+    void handleAttitudeControllerUseGyroscopeCommand(ESATCCSDSPacket& packet);
+    void handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESATCCSDSPacket& packet);
+    void handleAttitudeControllerSetDeadbandCommand(ESATCCSDSPacket& packet);
+    void handleAttitudeControllerSetDetumblingThresholdCommand(ESATCCSDSPacket& packet);
+    void handleWheelSetDutyCycleCommand(ESATCCSDSPacket& packet);
+    void handleWheelSetSpeedCommand(ESATCCSDSPacket& packet);
+    void handleWheelControllerSetProportionalGainCommand(ESATCCSDSPacket& packet);
+    void handleWheelControllerSetIntegralGainCommand(ESATCCSDSPacket& packet);
+    void handleWheelControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet);
+    void handleMagnetorquerEnableCommand(ESATCCSDSPacket& packet);
+    void handleMagnetorquerSetXPolarityCommand(ESATCCSDSPacket& packet);
+    void handleMagnetorquerSetYPolarityCommand(ESATCCSDSPacket& packet);
+    void handleMagnetorquerApplyMaximumTorqueCommand(ESATCCSDSPacket& packet);
+    void handleMagnetorquerDemagnetizeCommand(ESATCCSDSPacket& packet);
+    void handleRestCommand(ESATCCSDSPacket& packet);
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();
@@ -133,14 +202,29 @@ class ESATADCS
     // Attitude control relative to the Sun.
     void runFollowSun();
 
-    // Demagnetize the magnetorquers.
-    void runDemagnetize();
-
-    // Rotate using the magnetorquers.
-    void runMaximumMagneticTorque();
+    // Set the duty cycle of the wheel.
+    void runWheelSetDutyCycle();
 
     // Set the rotational speed of the wheel.
-    void runSetWheelSpeed();
+    void runWheelSetSpeed();
+
+    // Enable the magnetorquers.
+    void runMagnetorquerEnable();
+
+    // Set the polarity of the X magnetorquer.
+    void runMagnetorquerSetXPolarity();
+
+    // Set the polarity of the Y magnetorquer.
+    void runMagnetorquerSetYPolarity();
+
+    // Rotate using the magnetorquers.
+    void runMagnetorquerApplyMaximumTorque();
+
+    // Demagnetize the magnetorquers.
+    void runMagnetorquerDemagnetize();
+
+    // Rest.
+    void runRest();
 };
 
 
