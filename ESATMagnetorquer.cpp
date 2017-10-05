@@ -26,26 +26,48 @@ void ESATMagnetorquer::begin()
 
 void ESATMagnetorquer::configurePins()
 {
-  pinMode(pinEnableX, OUTPUT);
-  pinMode(pinEnableY, OUTPUT);
-  pinMode(pinX, OUTPUT);
-  pinMode(pinY, OUTPUT);
+  pinMode(PIN_ENABLE_X, OUTPUT);
+  pinMode(PIN_ENABLE_Y, OUTPUT);
+  pinMode(PIN_X_POLARITY, OUTPUT);
+  pinMode(PIN_Y_POLARITY, OUTPUT);
 }
 
 void ESATMagnetorquer::writeEnable(boolean enable)
 {
-  digitalWrite(pinEnableX, enable ? HIGH : LOW);
-  digitalWrite(pinEnableY, enable ? HIGH : LOW);
+  if (enable)
+  {
+    digitalWrite(PIN_ENABLE_X, HIGH);
+    digitalWrite(PIN_ENABLE_Y, HIGH);
+  }
+  else
+  {
+    digitalWrite(PIN_ENABLE_X, LOW);
+    digitalWrite(PIN_ENABLE_Y, LOW);
+  }
 }
 
-void ESATMagnetorquer::writeX(int polarity)
+void ESATMagnetorquer::writeX(ESATMagnetorquer::Polarity polarity)
 {
-  digitalWrite(pinX, polarity);
+  if (polarity == NEGATIVE)
+  {
+    digitalWrite(PIN_X_POLARITY, LOW);
+  }
+  else
+  {
+    digitalWrite(PIN_X_POLARITY, HIGH);
+  }
 }
 
-void ESATMagnetorquer::writeY(int polarity)
+void ESATMagnetorquer::writeY(ESATMagnetorquer::Polarity polarity)
 {
-  digitalWrite(pinY, polarity);
+  if (polarity == NEGATIVE)
+  {
+    digitalWrite(PIN_Y_POLARITY, LOW);
+  }
+  else
+  {
+    digitalWrite(PIN_Y_POLARITY, HIGH);
+  }
 }
 
 ESATMagnetorquer Magnetorquer;

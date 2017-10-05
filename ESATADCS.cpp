@@ -51,8 +51,8 @@ void ESATADCS::begin()
   attitudeProportionalGain = 1e3;
   demagnetizationIterations = 0;
   enableMagnetorquerDriver = false;
-  magnetorquerXPolarity = Magnetorquer.positive;
-  magnetorquerYPolarity = Magnetorquer.positive;
+  magnetorquerXPolarity = Magnetorquer.POSITIVE;
+  magnetorquerYPolarity = Magnetorquer.POSITIVE;
   newTelemetryPacket = false;
   oldAttitudeError = 0;
   oldWheelSpeedError = 0;
@@ -85,8 +85,16 @@ void ESATADCS::blinkSequence()
   for (int i = 0; i < 32; i++)
   {
     const int state = ((sequence>>i) & 1);
-    Magnetorquer.writeX(state);
-    Magnetorquer.writeY(state);
+    if (state == 1)
+    {
+      Magnetorquer.writeX(Magnetorquer.POSITIVE);
+      Magnetorquer.writeY(Magnetorquer.POSITIVE);
+    }
+    else
+    {
+      Magnetorquer.writeX(Magnetorquer.NEGATIVE);
+      Magnetorquer.writeY(Magnetorquer.NEGATIVE);
+    }
     delay(50);
   }
 }
@@ -313,11 +321,11 @@ void ESATADCS::handleMagnetorquerSetXPolarityCommand(ESATCCSDSPacket& packet)
   const byte parameter = packet.readByte();
   if (parameter > 0)
   {
-    magnetorquerXPolarity = Magnetorquer.positive;
+    magnetorquerXPolarity = Magnetorquer.POSITIVE;
   }
   else
   {
-    magnetorquerYPolarity = Magnetorquer.negative;
+    magnetorquerYPolarity = Magnetorquer.NEGATIVE;
   }
 }
 
@@ -327,11 +335,11 @@ void ESATADCS::handleMagnetorquerSetYPolarityCommand(ESATCCSDSPacket& packet)
   const byte parameter = packet.readByte();
   if (parameter > 0)
   {
-    magnetorquerYPolarity = Magnetorquer.positive;
+    magnetorquerYPolarity = Magnetorquer.POSITIVE;
   }
   else
   {
-    magnetorquerYPolarity = Magnetorquer.negative;
+    magnetorquerYPolarity = Magnetorquer.NEGATIVE;
   }
 }
 
@@ -532,19 +540,46 @@ void ESATADCS::runWheelSetSpeed()
 
 void ESATADCS::runMagnetorquerEnable()
 {
-  Magnetorquer.writeX(magnetorquerXPolarity);
-  Magnetorquer.writeY(magnetorquerYPolarity);
-  Magnetorquer.writeEnable(enableMagnetorquerDriver);
+  if (magnetorquerXPolarity > 0)
+  {
+    Magnetorquer.writeX(Magnetorquer.POSITIVE);
+  }
+  else
+  {
+    Magnetorquer.writeX(Magnetorquer.NEGATIVE);
+  }
+  if (magnetorquerYPolarity > 0)
+  {
+    Magnetorquer.writeY(Magnetorquer.POSITIVE);
+  }
+  else
+  {
+    Magnetorquer.writeY(Magnetorquer.NEGATIVE);
+  }
 }
 
 void ESATADCS::runMagnetorquerSetXPolarity()
 {
-  Magnetorquer.writeX(magnetorquerXPolarity);
+  if (magnetorquerXPolarity > 0)
+  {
+    Magnetorquer.writeX(Magnetorquer.POSITIVE);
+  }
+  else
+  {
+    Magnetorquer.writeX(Magnetorquer.NEGATIVE);
+  }
 }
 
 void ESATADCS::runMagnetorquerSetYPolarity()
 {
-  Magnetorquer.writeY(magnetorquerYPolarity);
+  if (magnetorquerYPolarity > 0)
+  {
+    Magnetorquer.writeY(Magnetorquer.POSITIVE);
+  }
+  else
+  {
+    Magnetorquer.writeY(Magnetorquer.NEGATIVE);
+  }
 }
 
 void ESATADCS::runMagnetorquerApplyMaximumTorque()
@@ -562,13 +597,27 @@ void ESATADCS::runMagnetorquerApplyMaximumTorque()
           !targetMagnetorquerDirection
   };
   const long quadrant = map(magneticAngle % 360, 0, 360, 0, 4);
-  magnetorquerXPolarity =
-    activationsX[quadrant] ? Magnetorquer.positive : Magnetorquer.negative;
-  magnetorquerYPolarity =
-    activationsY[quadrant] ? Magnetorquer.positive : Magnetorquer.negative;
+  if (activationsX[quadrant])
+  {
+    magnetorquerXPolarity = Magnetorquer.POSITIVE;
+    Magnetorquer.writeX(Magnetorquer.POSITIVE);
+  }
+  else
+  {
+    magnetorquerXPolarity = Magnetorquer.NEGATIVE;
+    Magnetorquer.writeX(Magnetorquer.NEGATIVE);
+  }
+  if (activationsY[quadrant])
+  {
+    magnetorquerYPolarity = Magnetorquer.POSITIVE;
+    Magnetorquer.writeY(Magnetorquer.POSITIVE);
+  }
+  else
+  {
+    magnetorquerYPolarity = Magnetorquer.NEGATIVE;
+    Magnetorquer.writeY(Magnetorquer.NEGATIVE);
+  }
   enableMagnetorquerDriver = true;
-  Magnetorquer.writeX(magnetorquerXPolarity);
-  Magnetorquer.writeY(magnetorquerYPolarity);
   Magnetorquer.writeEnable(enableMagnetorquerDriver);
 }
 
@@ -577,11 +626,11 @@ void ESATADCS::runMagnetorquerDemagnetize()
   Magnetorquer.writeEnable(true);
   for (long  i = 0; i < demagnetizationIterations; i++)
   {
-    Magnetorquer.writeX(Magnetorquer.positive);
-    Magnetorquer.writeY(Magnetorquer.positive);
+    Magnetorquer.writeX(Magnetorquer.POSITIVE);
+    Magnetorquer.writeY(Magnetorquer.POSITIVE);
     delay(20);
-    Magnetorquer.writeX(Magnetorquer.negative);
-    Magnetorquer.writeY(Magnetorquer.negative);
+    Magnetorquer.writeX(Magnetorquer.NEGATIVE);
+    Magnetorquer.writeY(Magnetorquer.NEGATIVE);
     delay(20);
   }
   Magnetorquer.writeEnable(false);
