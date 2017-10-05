@@ -38,11 +38,11 @@ class ESATWheel
   private:
     // Maximum and minimum pulse widths
     // for the electronic speed controller.
-    static const unsigned int maximum = 1860;
-    static const unsigned int minimum = 1060;
+    static const unsigned int MAXIMUM = 1860;
+    static const unsigned int MINIMUM = 1060;
 
     // The electronic speed controller is attached to this pin.
-    static const int pin = PWM;
+    static const int PIN = PWM;
 
     // Power line switch on message.
     static const byte POWER_LINE_ADDRESS = 2;

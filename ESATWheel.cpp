@@ -27,8 +27,9 @@ void ESATWheel::begin()
 {
   calibration[0] = 1.28e2;
   calibration[1] = 1.90e-2;
-  pinMode(pin, OUTPUT);
-  electronicSpeedController.attach(pin);
+  pinMode(PIN
+          , OUTPUT);
+  electronicSpeedController.attach(PIN);
   delay(1000);
   programElectronicSpeedController();
 }
@@ -44,7 +45,7 @@ void ESATWheel::write(const word rpm)
 
 void ESATWheel::writeDutyCycle(byte dutyCycle)
 {
-  const unsigned int microseconds = map(dutyCycle, 0, 255, minimum, maximum);
+  const unsigned int microseconds = map(dutyCycle, 0, 255, MINIMUM, MAXIMUM);
   electronicSpeedController.writeMicroseconds(microseconds);
 }
 
