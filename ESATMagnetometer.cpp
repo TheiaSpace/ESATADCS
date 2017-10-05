@@ -27,15 +27,15 @@ void ESATMagnetometer::begin()
 
 int ESATMagnetometer::getReading()
 {
-  Wire.beginTransmission(magnetometerAddress);
-  Wire.write(readingRegister);
+  Wire.beginTransmission(MAGNETOMETER_ADDRESS);
+  Wire.write(READING_REGISTER);
   const byte writeStatus = Wire.endTransmission();
   if (writeStatus != 0)
   {
     error = true;
     return 0;
   }
-  const byte bytesRead = Wire.requestFrom(int(magnetometerAddress), 4);
+  const byte bytesRead = Wire.requestFrom(int(MAGNETOMETER_ADDRESS), 4);
   if (bytesRead != 4)
   {
     error = true;
@@ -61,9 +61,9 @@ int ESATMagnetometer::read()
 
 void ESATMagnetometer::setBypassMode()
 {
-  Wire.beginTransmission(chipAddress);
-  Wire.write(bypassRegister);
-  Wire.write(enableBypass);
+  Wire.beginTransmission(CHIP_ADDRESS);
+  Wire.write(BYPASS_REGISTER);
+  Wire.write(ENABLE_BYPASS);
   const byte writeStatus = Wire.endTransmission();
   if (writeStatus != 0)
   {
@@ -73,9 +73,9 @@ void ESATMagnetometer::setBypassMode()
 
 void ESATMagnetometer::startReading()
 {
-  Wire.beginTransmission(magnetometerAddress);
-  Wire.write(controlRegister);
-  Wire.write(singleMeasurementMode);
+  Wire.beginTransmission(MAGNETOMETER_ADDRESS);
+  Wire.write(CONTROL_REGISTER);
+  Wire.write(SINGLE_MEASUREMENT_MODE);
   const byte writeStatus = Wire.endTransmission();
   if (writeStatus != 0)
   {
@@ -88,22 +88,22 @@ void ESATMagnetometer::waitForReading()
   const byte timeout = 255;
   for (int i = 0; i < timeout; i++)
   {
-    Wire.beginTransmission(magnetometerAddress);
-    Wire.write(dataStatusRegister);
+    Wire.beginTransmission(MAGNETOMETER_ADDRESS);
+    Wire.write(DATA_STATUS_REGISTER);
     const byte writeStatus = Wire.endTransmission();
     if (writeStatus != 0)
     {
       error = true;
       return;
     }
-    const byte bytesRead = Wire.requestFrom(int(dataStatusRegister), 1);
+    const byte bytesRead = Wire.requestFrom(int(DATA_STATUS_REGISTER), 1);
     if (bytesRead != 1)
     {
       error = true;
       return;
     }
     const byte readingState = Wire.read();
-    if ((readingState & dataReady) != 0)
+    if ((readingState & DATA_READY) != 0)
     {
       return;
     }

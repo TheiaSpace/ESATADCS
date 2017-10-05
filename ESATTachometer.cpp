@@ -23,8 +23,8 @@ void ESATTachometer::begin()
   count = 0;
   previousCount = 0;
   previousReadingTime = 0;
-  pinMode(pin, INPUT_PULLUP);
-  attachInterrupt(pin, incrementCounter, FALLING);
+  pinMode(PIN, INPUT_PULLUP);
+  attachInterrupt(PIN, incrementCounter, FALLING);
 }
 
 void ESATTachometer::incrementCounter()
@@ -38,8 +38,9 @@ unsigned int ESATTachometer::read()
   const unsigned long ellapsedMilliseconds = currentTime - previousReadingTime;
   previousReadingTime = currentTime;
   const unsigned long millisecondsPerMinute = 60000;
-  const unsigned int reading = (long(millisecondsPerMinute / countsPerRevolution)
-          * long(count - previousCount)) / ellapsedMilliseconds;
+  const unsigned int reading =
+    (long(millisecondsPerMinute / COUNTS_PER_REVOLUTION)
+     * long(count - previousCount)) / ellapsedMilliseconds;
   previousCount = count;
   return reading;
 }

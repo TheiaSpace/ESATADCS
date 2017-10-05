@@ -25,11 +25,11 @@
 class ESATMagnetorquer
 {
   public:
-    enum
+    enum Polarity
     {
-      negative = LOW,
-      positive = HIGH,
-    } Polarity;
+      NEGATIVE = -1,
+      POSITIVE = 1,
+    };
 
     // Set up the magnetorquers.
     void begin();
@@ -38,23 +38,23 @@ class ESATMagnetorquer
     void writeEnable(boolean enable);
 
     // Set the polarity of the X-axis magnetorquer.
-    void writeX(int polarity);
+    void writeX(Polarity polarity);
 
     // Set the polarity of the Y-axis magnetorquer.
-    void writeY(int polarity);
+    void writeY(Polarity polarity);
 
   private:
     // This pin enables the X magnetorquer.
-    static const int pinEnableX = ENMTQX;
+    static const int PIN_ENABLE_X = ENMTQX;
 
     // This pin enables the X magnetorquer.
-    static const int pinEnableY = ENMTQY;
+    static const int PIN_ENABLE_Y = ENMTQY;
 
     // This pin activates the X magnetorquer.
-    static const int pinX = MTQX;
+    static const int PIN_X_POLARITY = MTQX;
 
     // This pin activates the Y magnetorquer.
-    static const int pinY = MTQY;
+    static const int PIN_Y_POLARITY = MTQY;
 
     // Configure the control pins.
     void configurePins();

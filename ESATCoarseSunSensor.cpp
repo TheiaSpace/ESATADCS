@@ -20,18 +20,18 @@
 
 void ESATCoarseSunSensor::begin()
 {
-  pinMode(pinXPlus, INPUT);
-  pinMode(pinXMinus, INPUT);
-  pinMode(pinYPlus, INPUT);
-  pinMode(pinYMinus, INPUT);
+  pinMode(PIN_X_PLUS, INPUT);
+  pinMode(PIN_X_MINUS, INPUT);
+  pinMode(PIN_Y_PLUS, INPUT);
+  pinMode(PIN_Y_MINUS, INPUT);
 }
 
 int ESATCoarseSunSensor::read()
 {
-  const int readingXPlus = analogRead(pinXPlus);
-  const int readingXMinus = analogRead(pinXMinus);
-  const int readingYPlus = analogRead(pinYPlus);
-  const int readingYMinus = analogRead(pinYMinus);
+  const int readingXPlus = analogRead(PIN_X_PLUS);
+  const int readingXMinus = analogRead(PIN_X_MINUS);
+  const int readingYPlus = analogRead(PIN_Y_PLUS);
+  const int readingYMinus = analogRead(PIN_Y_MINUS);
   const int nx = readingXPlus - readingXMinus;
   const int ny = readingYPlus - readingYMinus;
   const int reading = round(atan2(ny, nx) * RAD_TO_DEG) % 360;
