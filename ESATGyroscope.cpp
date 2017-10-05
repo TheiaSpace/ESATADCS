@@ -31,8 +31,8 @@ void ESATGyroscope::configureRange(const byte fullScaleConfiguration)
   const byte fullScaleConfigurationOffset = 3;
   const byte configuration =
     fullScaleConfiguration << fullScaleConfigurationOffset;
-  Wire.beginTransmission(address);
-  Wire.write(configurationRegister);
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(CONFIGURATION_REGISTER);
   Wire.write(configuration);
   const byte writeStatus = Wire.endTransmission();
   if (writeStatus != 0)
@@ -54,15 +54,15 @@ int ESATGyroscope::read(unsigned int samples)
 
 int ESATGyroscope::readRawSample()
 {
-  Wire.beginTransmission(address);
-  Wire.write(gyroscopeReadingRegister);
+  Wire.beginTransmission(ADDRESS);
+  Wire.write(GYROSCOPE_READING_REGISTER);
   const byte writeStatus = Wire.endTransmission();
   if (writeStatus != 0)
   {
     error = true;
     return 0;
   }
-  const byte bytesRead = Wire.requestFrom(int(address), 2);
+  const byte bytesRead = Wire.requestFrom(int(ADDRESS), 2);
   if (bytesRead != 2)
   {
     error = true;
