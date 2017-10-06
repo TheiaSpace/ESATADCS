@@ -92,7 +92,7 @@ class ESATADCS
     };
 
     // Unique identifier of the subsystem.
-    static const byte APPLICATION_PROCESS_IDENTIFIER = 3;
+    static const byte APPLICATION_PROCESS_IDENTIFIER = 2;
 
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 3;
