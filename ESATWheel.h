@@ -46,7 +46,8 @@ class ESATWheel
 
     // Power line switch on message.
     static const byte POWER_LINE_ADDRESS = 2;
-    static const byte POWER_LINE_REGISTER = 0;
+    static const byte POWER_LINE_TELECOMMAND_PRIMARY_HEADER_REGISTER = 0;
+    static const byte POWER_LINE_TELECOMMAND_PACKET_DATA_REGISTER = 1;
     static const byte POWER_LINE_IDENTIFIER = 2;
     static const byte POWER_LINE_MAJOR_VERSION_NUMBER = 2;
     static const byte POWER_LINE_MINOR_VERSION_NUMBER = 0;
