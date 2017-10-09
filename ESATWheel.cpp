@@ -18,6 +18,7 @@
 
 #include "ESATWheel.h"
 #include <ESATCCSDSPacket.h>
+#include <ESATI2CMaster.h>
 #include <Wire.h>
 
 void ESATWheel::begin()
@@ -75,25 +76,12 @@ void ESATWheel::switchElectronicSpeedController(boolean on)
   packet.writeByte(POWER_LINE_PATCH_VERSION_NUMBER);
   packet.writeByte(POWER_LINE_COMMAND_CODE);
   packet.writeBoolean(on);
-  Wire.beginTransmission(POWER_LINE_ADDRESS);
-  (void) Wire.write(POWER_LINE_TELECOMMAND_PRIMARY_HEADER_REGISTER);
-  for (int index = 0; index < packet.PRIMARY_HEADER_LENGTH; index++)
-  {
-    (void) Wire.write(packet.buffer[index]);
-  }
-  const byte headerWriteStatus = Wire.endTransmission();
-  if (headerWriteStatus != 0)
-  {
-    return;
-  }
-  const word packetDataLength = packet.readPacketDataLength();
-  Wire.beginTransmission(POWER_LINE_ADDRESS);
-  (void) Wire.write(POWER_LINE_TELECOMMAND_PACKET_DATA_REGISTER);
-  for (long index = 0; index < packetDataLength; index++)
-  {
-    (void) Wire.write(packet.readByte());
-  }
-  (void) Wire.endTransmission();
+  packet.updatePacketDataLength();
+  I2CMaster.writeTelecommand(Wire,
+                             POWER_LINE_ADDRESS,
+                             packet,
+                             POWER_LINE_TRIES,
+                             POWER_LINE_MILLISECONDS_BETWEEN_RETRIES);
 }
 
 ESATWheel Wheel;

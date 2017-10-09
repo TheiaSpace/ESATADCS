@@ -48,12 +48,14 @@ class ESATWheel
     static const byte POWER_LINE_ADDRESS = 2;
     static const byte POWER_LINE_TELECOMMAND_PRIMARY_HEADER_REGISTER = 0;
     static const byte POWER_LINE_TELECOMMAND_PACKET_DATA_REGISTER = 1;
-    static const byte POWER_LINE_IDENTIFIER = 2;
+    static const byte POWER_LINE_IDENTIFIER = 1;
     static const byte POWER_LINE_MAJOR_VERSION_NUMBER = 2;
     static const byte POWER_LINE_MINOR_VERSION_NUMBER = 0;
     static const byte POWER_LINE_PATCH_VERSION_NUMBER = 0;
     static const byte POWER_LINE_COMMAND_CODE = 1;
-    static const byte POWER_LINE_COMMAND_BUFFER_LENGTH = 11;
+    static const byte POWER_LINE_COMMAND_BUFFER_LENGTH = 5;
+    static const byte POWER_LINE_TRIES = 10;
+    static const byte POWER_LINE_MILLISECONDS_BETWEEN_RETRIES = 10;
 
     // RPM to duty cycle calibration coefficients.
     float calibration[2];

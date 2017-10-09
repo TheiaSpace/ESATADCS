@@ -385,7 +385,7 @@ void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
 {
   newTelemetryPacket = false;
   packet.clear();
-  if (packet.bufferLength < HOUSEKEEPING_TELEMETRY_PACKET_LENGTH)
+  if (packet.packetDataBufferLength < HOUSEKEEPING_TELEMETRY_PACKET_LENGTH)
   {
     return;
   }
@@ -419,6 +419,7 @@ void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(byte(magnetorquerYPolarity));
   packet.writeBoolean(Gyroscope.error);
   packet.writeBoolean(Magnetometer.error);
+  packet.updatePacketDataLength();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
 }
 
