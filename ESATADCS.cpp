@@ -424,6 +424,10 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeBoolean(Gyroscope.error);
   packet.writeBoolean(Magnetometer.error);
   packet.updatePacketDataLength();
+  if (packet.readPacketDataLength() > packet.packetDataBufferLength)
+  {
+    return false;
+  }
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
 }
