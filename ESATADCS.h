@@ -37,7 +37,9 @@ class ESATADCS
     word getApplicationProcessIdentifier();
 
     // Fill a packet with the next ADCS telemetry packet available.
-    void readTelemetry(ESATCCSDSPacket& packet);
+    // Return true if the operation was successful;
+    // otherwise return false.
+    boolean readTelemetry(ESATCCSDSPacket& packet);
 
     // Return true if there is a new telemetry packet available.
     boolean telemetryAvailable();
