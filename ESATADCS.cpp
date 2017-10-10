@@ -381,13 +381,17 @@ void ESATADCS::readSensors()
   sunAngle = CoarseSunSensor.read();
 }
 
-void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
 {
+  if (!newTelemetryPacket)
+  {
+    return false;
+  }
   newTelemetryPacket = false;
   packet.clear();
-  if (packet.bufferLength < HOUSEKEEPING_TELEMETRY_PACKET_LENGTH)
+  if (packet.packetDataBufferLength < HOUSEKEEPING_TELEMETRY_PACKET_LENGTH)
   {
-    return;
+    return false;
   }
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELEMETRY);
@@ -419,7 +423,13 @@ void ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(byte(magnetorquerYPolarity));
   packet.writeBoolean(Gyroscope.error);
   packet.writeBoolean(Magnetometer.error);
+  packet.updatePacketDataLength();
+  if (packet.readPacketDataLength() > packet.packetDataBufferLength)
+  {
+    return false;
+  }
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+  return true;
 }
 
 void ESATADCS::run()
