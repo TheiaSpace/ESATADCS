@@ -39,6 +39,8 @@
 #include "ESATTachometer.h"
 #include <ESATUtil.h>
 #include "ESATWheel.h"
+#include "ESATTimestamp.h"
+#include "ESATClock.h"
 
 void ESATADCS::begin()
 {
@@ -111,6 +113,15 @@ void ESATADCS::handleTelecommand(ESATCCSDSPacket& packet)
     return;
   }
   packet.rewind();
+  ESATTimestamp Timestamp;
+  Timestamp.year = packet.readWord() - 2000;
+  Timestamp.month = packet.readByte();
+  Timestamp.day = packet.readByte();
+  Timestamp.hours = packet.readByte();
+  Timestamp.minutes = packet.readByte();
+  Timestamp.seconds = packet.readByte();
+  // Nothing to do with this timestamp until the scheduled
+  // commands are implemented
   const byte majorVersionNumber = packet.readByte();
   const byte minorVersionNumber = packet.readByte();
   const byte patchVersionNumber = packet.readByte();
@@ -393,12 +404,23 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   {
     return false;
   }
+  ESATTimestamp Timestamp = Clock.read();
+  if(Clock.error)
+  {
+    return false;
+  }
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELEMETRY);
   packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
   packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(telemetryPacketSequenceCount);
+  packet.writeWord((word)Timestamp.year + 2000);
+  packet.writeByte(Timestamp.month);
+  packet.writeByte(Timestamp.day);
+  packet.writeByte(Timestamp.hours);
+  packet.writeByte(Timestamp.minutes);
+  packet.writeByte(Timestamp.seconds);
   packet.writeByte(MAJOR_VERSION_NUMBER);
   packet.writeByte(MINOR_VERSION_NUMBER);
   packet.writeByte(PATCH_VERSION_NUMBER);
