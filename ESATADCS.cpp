@@ -418,12 +418,14 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   {
     return false;
   }
+  // Primary header
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELEMETRY);
   packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
   packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(telemetryPacketSequenceCount);
+  // Secondary header
   packet.writeWord((word)Timestamp.year + 2000);
   packet.writeByte(Timestamp.month);
   packet.writeByte(Timestamp.day);
@@ -434,6 +436,7 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(MINOR_VERSION_NUMBER);
   packet.writeByte(PATCH_VERSION_NUMBER);
   packet.writeByte(HOUSEKEEPING);
+  // User data
   packet.writeByte(byte(runCode));
   packet.writeWord(targetAttitude);
   packet.writeWord(magneticAngle);
@@ -454,6 +457,7 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(byte(magnetorquerYPolarity));
   packet.writeBoolean(Gyroscope.error);
   packet.writeBoolean(Magnetometer.error);
+  // end of user data
   packet.updatePacketDataLength();
   if (packet.readPacketDataLength() > packet.packetDataBufferLength)
   {
