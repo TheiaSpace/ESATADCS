@@ -18,7 +18,7 @@
 
 #ifndef ESATADCS_h
 #define ESATADCS_h
-#include <Energia.h>
+#include <Arduino.h>
 #include <ESATCCSDSPacket.h>
 
 class ESATADCS

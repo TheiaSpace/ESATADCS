@@ -19,7 +19,7 @@
 #ifndef ESATGyroscope_h
 #define ESATGyroscope_h
 
-#include <Energia.h>
+#include <Arduino.h>
 
 // Gyroscope used for measuring the angular speed.
 // The underlying hardware is the MPU-9250 3-axis

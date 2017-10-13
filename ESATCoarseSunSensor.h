@@ -19,7 +19,7 @@
 #ifndef ESATCoarseSunSensor_h
 #define ESATCoarseSunSensor_h
 
-#include <Energia.h>
+#include <Arduino.h>
 
 // Coarse sun sensor used for attitude determination.
 class ESATCoarseSunSensor
