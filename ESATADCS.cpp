@@ -122,24 +122,12 @@ void ESATADCS::handleTelecommand(ESATCCSDSPacket& packet)
   {
     return;
   }
-  ESATTimestamp Timestamp;
-  Timestamp.year = packet.readWord() - 2000;
-  Timestamp.month = packet.readByte();
-  Timestamp.day = packet.readByte();
-  Timestamp.hours = packet.readByte();
-  Timestamp.minutes = packet.readByte();
-  Timestamp.seconds = packet.readByte();
-  // Nothing to do with this timestamp until the scheduled
-  // commands are implemented
-  const byte majorVersionNumber = packet.readByte();
-  const byte minorVersionNumber = packet.readByte();
-  const byte patchVersionNumber = packet.readByte();
-  if (majorVersionNumber < MAJOR_VERSION_NUMBER)
+  const ESATCCSDSSecondaryHeader secondaryHeader = packet.readSecondaryHeader();
+  if (secondaryHeader.majorVersionNumber < MAJOR_VERSION_NUMBER)
   {
     return;
   }
-  const byte commandCode = packet.readByte();
-  switch (commandCode)
+  switch (secondaryHeader.packetIdentifier)
   {
   case FOLLOW_MAGNETOMETER_COMMAND:
     handleFollowMagnetometerCommand(packet);
@@ -426,16 +414,15 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(telemetryPacketSequenceCount);
   // Secondary header
-  packet.writeWord((word)Timestamp.year + 2000);
-  packet.writeByte(Timestamp.month);
-  packet.writeByte(Timestamp.day);
-  packet.writeByte(Timestamp.hours);
-  packet.writeByte(Timestamp.minutes);
-  packet.writeByte(Timestamp.seconds);
-  packet.writeByte(MAJOR_VERSION_NUMBER);
-  packet.writeByte(MINOR_VERSION_NUMBER);
-  packet.writeByte(PATCH_VERSION_NUMBER);
-  packet.writeByte(HOUSEKEEPING);
+  ESATCCSDSSecondaryHeader secondaryHeader;
+  secondaryHeader.preamble =
+    secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
+  secondaryHeader.timestamp = Timestamp;
+  secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
+  secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
+  secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
+  secondaryHeader.packetIdentifier = HOUSEKEEPING;
+  packet.writeSecondaryHeader(secondaryHeader);
   // User data
   packet.writeByte(byte(runCode));
   packet.writeWord(targetAttitude);
