@@ -62,7 +62,7 @@ void ESATWheel::programElectronicSpeedController()
 
 void ESATWheel::switchElectronicSpeedController(boolean on)
 {
-  const byte packetDataBufferLength = ESATCCSDSSecondaryHeader::LENGTH;
+  const byte packetDataBufferLength = ESATCCSDSSecondaryHeader::LENGTH + 1;
   byte buffer[packetDataBufferLength];
   ESATCCSDSPacket packet(buffer, packetDataBufferLength);
   packet.clear();
