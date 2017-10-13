@@ -62,8 +62,9 @@ void ESATWheel::programElectronicSpeedController()
 
 void ESATWheel::switchElectronicSpeedController(boolean on)
 {
-  byte buffer[POWER_LINE_COMMAND_BUFFER_LENGTH];
-  ESATCCSDSPacket packet(buffer, POWER_LINE_COMMAND_BUFFER_LENGTH);
+  const byte packetDataBufferLength = ESATCCSDSSecondaryHeader::LENGTH;
+  byte buffer[packetDataBufferLength];
+  ESATCCSDSPacket packet(buffer, packetDataBufferLength);
   packet.clear();
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELECOMMAND);
@@ -71,10 +72,12 @@ void ESATWheel::switchElectronicSpeedController(boolean on)
   packet.writeApplicationProcessIdentifier(POWER_LINE_IDENTIFIER);
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(0);
-  packet.writeByte(POWER_LINE_MAJOR_VERSION_NUMBER);
-  packet.writeByte(POWER_LINE_MINOR_VERSION_NUMBER);
-  packet.writeByte(POWER_LINE_PATCH_VERSION_NUMBER);
-  packet.writeByte(POWER_LINE_COMMAND_CODE);
+  ESATCCSDSSecondaryHeader secondaryHeader;
+  secondaryHeader.majorVersionNumber = POWER_LINE_MAJOR_VERSION_NUMBER;
+  secondaryHeader.minorVersionNumber = POWER_LINE_MINOR_VERSION_NUMBER;
+  secondaryHeader.patchVersionNumber = POWER_LINE_PATCH_VERSION_NUMBER;
+  secondaryHeader.packetIdentifier = POWER_LINE_COMMAND_CODE;
+  packet.writeSecondaryHeader(secondaryHeader);
   packet.writeBoolean(on);
   packet.updatePacketDataLength();
   I2CMaster.writeTelecommand(Wire,
