@@ -19,7 +19,7 @@
 #ifndef ESATTachometer_h
 #define ESATTachometer_h
 
-#include <Energia.h>
+#include <Arduino.h>
 
 // Tachometer used for reading the speed of the rotating wheel.
 class ESATTachometer

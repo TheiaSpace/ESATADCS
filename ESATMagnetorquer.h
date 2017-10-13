@@ -19,7 +19,7 @@
 #ifndef ESATMagnetorquer_h
 #define ESATMagnetorquer_h
 
-#include <Energia.h>
+#include <Arduino.h>
 
 // Magnetorquers used for attitude control.
 class ESATMagnetorquer

@@ -19,7 +19,7 @@
 #ifndef ESATWheel_h
 #define ESATWheel_h
 
-#include <Energia.h>
+#include <Arduino.h>
 #include <ESATCCSDSSecondaryHeader.h>
 #include <Servo.h>
 

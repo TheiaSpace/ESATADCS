@@ -19,7 +19,7 @@
 #ifndef ESATMagnetometer_h
 #define ESATMagnetometer_h
 
-#include <Energia.h>
+#include <Arduino.h>
 
 // Magnetometer used for attitude determination.
 // The underlying hardware is the MPU-9250 3-axis
