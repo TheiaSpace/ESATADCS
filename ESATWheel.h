@@ -20,6 +20,7 @@
 #define ESATWheel_h
 
 #include <Energia.h>
+#include <ESATCCSDSSecondaryHeader.h>
 #include <Servo.h>
 
 // Rotating wheel.
@@ -53,7 +54,6 @@ class ESATWheel
     static const byte POWER_LINE_MINOR_VERSION_NUMBER = 0;
     static const byte POWER_LINE_PATCH_VERSION_NUMBER = 0;
     static const byte POWER_LINE_COMMAND_CODE = 1;
-    static const byte POWER_LINE_COMMAND_BUFFER_LENGTH = 5;
     static const byte POWER_LINE_TRIES = 10;
     static const byte POWER_LINE_MILLISECONDS_BETWEEN_RETRIES = 10;
 
