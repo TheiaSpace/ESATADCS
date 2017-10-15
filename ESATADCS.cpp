@@ -40,7 +40,7 @@
 #include <ESATUtil.h>
 #include "ESATWheel.h"
 #include "ESATTimestamp.h"
-#include "ESATClock.h"
+#include "ESATOBCClock.h"
 
 void ESATADCS::begin()
 {
@@ -401,8 +401,8 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   {
     return false;
   }
-  ESATTimestamp Timestamp = Clock.read();
-  if(Clock.error)
+  ESATTimestamp Timestamp = OBCClock.read();
+  if(OBCClock.error)
   {
     return false;
   }
