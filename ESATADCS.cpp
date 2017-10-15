@@ -402,7 +402,7 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
     return false;
   }
   ESATTimestamp Timestamp = OBCClock.read();
-  if(OBCClock.error)
+  if (OBCClock.error)
   {
     return false;
   }
