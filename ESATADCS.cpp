@@ -406,14 +406,14 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   {
     return false;
   }
-  // Primary header
+  // Primary header.
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELEMETRY);
   packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
   packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(telemetryPacketSequenceCount);
-  // Secondary header
+  // Secondary header.
   ESATCCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
@@ -423,7 +423,7 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
   secondaryHeader.packetIdentifier = HOUSEKEEPING;
   packet.writeSecondaryHeader(secondaryHeader);
-  // User data
+  // User data.
   packet.writeByte(byte(runCode));
   packet.writeWord(targetAttitude);
   packet.writeWord(magneticAngle);
@@ -444,7 +444,7 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(byte(magnetorquerYPolarity));
   packet.writeBoolean(Gyroscope.error);
   packet.writeBoolean(Magnetometer.error);
-  // end of user data
+  // End of user data.
   packet.updatePacketDataLength();
   if (packet.readPacketDataLength() > packet.packetDataBufferLength)
   {
