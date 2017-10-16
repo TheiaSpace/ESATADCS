@@ -129,67 +129,67 @@ void ESATADCS::handleTelecommand(ESATCCSDSPacket& packet)
   }
   switch (secondaryHeader.packetIdentifier)
   {
-  case FOLLOW_MAGNETOMETER_COMMAND:
-    handleFollowMagnetometerCommand(packet);
-    break;
-  case FOLLOW_SUN_COMMAND:
-    handleFollowSunCommand(packet);
-    break;
-  case ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND:
-    handleAttitudeControllerSetProportionalGainCommand(packet);
-    break;
-  case ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND:
-    handleAttitudeControllerSetIntegralGainCommand(packet);
-    break;
-  case ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
-    handleAttitudeControllerSetDerivativeGainCommand(packet);
-    break;
-  case ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND:
-    handleAttitudeControllerUseGyroscopeCommand(packet);
-    break;
-  case ATTITUDE_CONTROLLER_USE_WHEEL_OR_MAGNETORQUER_COMMAND:
-    handleAttitudeControllerUseWheelOrMagnetorquerCommand(packet);
-    break;
-  case ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND:
-    handleAttitudeControllerSetDeadbandCommand(packet);
-    break;
-  case ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD_COMMAND:
-    handleAttitudeControllerSetDetumblingThresholdCommand(packet);
-    break;
-  case WHEEL_SET_DUTY_CYCLE_COMMAND:
-    handleWheelSetDutyCycleCommand(packet);
-    break;
-  case WHEEL_SET_SPEED_COMMAND:
-    handleWheelSetSpeedCommand(packet);
-    break;
-  case WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND:
-    handleWheelControllerSetProportionalGainCommand(packet);
-    break;
-  case WHEEL_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND:
-    handleWheelControllerSetIntegralGainCommand(packet);
-    break;
-  case WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
-    handleWheelControllerSetDerivativeGainCommand(packet);
-    break;
-  case MAGNETORQUER_ENABLE_COMMAND:
-    handleMagnetorquerEnableCommand(packet);
-    break;
-  case MAGNETORQUER_SET_X_POLARITY_COMMAND:
-    handleMagnetorquerSetXPolarityCommand(packet);
-    break;
-  case MAGNETORQUER_SET_Y_POLARITY_COMMAND:
-    handleMagnetorquerSetYPolarityCommand(packet);
-    break;
-  case MAGNETORQUER_APPLY_MAXIMUM_TORQUE_COMMAND:
-    handleMagnetorquerApplyMaximumTorqueCommand(packet);
-    break;
-  case MAGNETORQUER_DEMAGNETIZE_COMMAND:
-    handleMagnetorquerDemagnetizeCommand(packet);
-    break;
-  case REST_COMMAND:
-    handleRestCommand(packet);
-  default:
-    break;
+    case FOLLOW_MAGNETOMETER_COMMAND:
+      handleFollowMagnetometerCommand(packet);
+      break;
+    case FOLLOW_SUN_COMMAND:
+      handleFollowSunCommand(packet);
+      break;
+    case ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND:
+      handleAttitudeControllerSetProportionalGainCommand(packet);
+      break;
+    case ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND:
+      handleAttitudeControllerSetIntegralGainCommand(packet);
+      break;
+    case ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
+      handleAttitudeControllerSetDerivativeGainCommand(packet);
+      break;
+    case ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND:
+      handleAttitudeControllerUseGyroscopeCommand(packet);
+      break;
+    case ATTITUDE_CONTROLLER_USE_WHEEL_OR_MAGNETORQUER_COMMAND:
+      handleAttitudeControllerUseWheelOrMagnetorquerCommand(packet);
+      break;
+    case ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND:
+      handleAttitudeControllerSetDeadbandCommand(packet);
+      break;
+    case ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD_COMMAND:
+      handleAttitudeControllerSetDetumblingThresholdCommand(packet);
+      break;
+    case WHEEL_SET_DUTY_CYCLE_COMMAND:
+      handleWheelSetDutyCycleCommand(packet);
+      break;
+    case WHEEL_SET_SPEED_COMMAND:
+      handleWheelSetSpeedCommand(packet);
+      break;
+    case WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND:
+      handleWheelControllerSetProportionalGainCommand(packet);
+      break;
+    case WHEEL_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND:
+      handleWheelControllerSetIntegralGainCommand(packet);
+      break;
+    case WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
+      handleWheelControllerSetDerivativeGainCommand(packet);
+      break;
+    case MAGNETORQUER_ENABLE_COMMAND:
+      handleMagnetorquerEnableCommand(packet);
+      break;
+    case MAGNETORQUER_SET_X_POLARITY_COMMAND:
+      handleMagnetorquerSetXPolarityCommand(packet);
+      break;
+    case MAGNETORQUER_SET_Y_POLARITY_COMMAND:
+      handleMagnetorquerSetYPolarityCommand(packet);
+      break;
+    case MAGNETORQUER_APPLY_MAXIMUM_TORQUE_COMMAND:
+      handleMagnetorquerApplyMaximumTorqueCommand(packet);
+      break;
+    case MAGNETORQUER_DEMAGNETIZE_COMMAND:
+      handleMagnetorquerDemagnetizeCommand(packet);
+      break;
+    case REST_COMMAND:
+      handleRestCommand(packet);
+    default:
+      break;
   }
 }
 
