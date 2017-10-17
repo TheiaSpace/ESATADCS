@@ -96,7 +96,7 @@ void ESATMagnetometer::waitForReading()
       error = true;
       return;
     }
-    const byte bytesRead = Wire.requestFrom(int(DATA_STATUS_REGISTER), 1);
+    const byte bytesRead = Wire.requestFrom(int(MAGNETOMETER_ADDRESS), 1);
     if (bytesRead != 1)
     {
       error = true;
