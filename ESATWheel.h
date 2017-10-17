@@ -46,7 +46,7 @@ class ESATWheel
     static const int PIN = PWM;
 
     // Power line switch on message.
-    static const byte POWER_LINE_ADDRESS = 2;
+    static const byte POWER_LINE_ADDRESS = 1;
     static const byte POWER_LINE_TELECOMMAND_PRIMARY_HEADER_REGISTER = 0;
     static const byte POWER_LINE_TELECOMMAND_PACKET_DATA_REGISTER = 1;
     static const byte POWER_LINE_IDENTIFIER = 1;
