@@ -83,6 +83,7 @@ void ESATWheel::switchElectronicSpeedController(boolean on)
   I2CMaster.writeTelecommand(Wire,
                              POWER_LINE_ADDRESS,
                              packet,
+                             POWER_LINE_MILLISECONDS_AFTER_WRITES,
                              POWER_LINE_TRIES,
                              POWER_LINE_MILLISECONDS_BETWEEN_RETRIES);
 }
