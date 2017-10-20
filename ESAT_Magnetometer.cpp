@@ -16,16 +16,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATMagnetometer.h"
+#include "ESAT_Magnetometer.h"
 #include <Wire.h>
 
-void ESATMagnetometer::begin()
+void ESAT_MagnetometerClass::begin()
 {
   error = false;
   setBypassMode();
 }
 
-int ESATMagnetometer::getReading()
+int ESAT_MagnetometerClass::getReading()
 {
   Wire.beginTransmission(MAGNETOMETER_ADDRESS);
   Wire.write(READING_REGISTER);
@@ -51,7 +51,7 @@ int ESATMagnetometer::getReading()
   return angle;
 }
 
-int ESATMagnetometer::read()
+int ESAT_MagnetometerClass::read()
 {
   setBypassMode();
   startReading();
@@ -59,7 +59,7 @@ int ESATMagnetometer::read()
   return getReading();
 }
 
-void ESATMagnetometer::setBypassMode()
+void ESAT_MagnetometerClass::setBypassMode()
 {
   Wire.beginTransmission(CHIP_ADDRESS);
   Wire.write(BYPASS_REGISTER);
@@ -71,7 +71,7 @@ void ESATMagnetometer::setBypassMode()
   }
 }
 
-void ESATMagnetometer::startReading()
+void ESAT_MagnetometerClass::startReading()
 {
   Wire.beginTransmission(MAGNETOMETER_ADDRESS);
   Wire.write(CONTROL_REGISTER);
@@ -83,7 +83,7 @@ void ESATMagnetometer::startReading()
   }
 }
 
-void ESATMagnetometer::waitForReading()
+void ESAT_MagnetometerClass::waitForReading()
 {
   const byte timeout = 255;
   for (int i = 0; i < timeout; i++)
@@ -111,4 +111,4 @@ void ESATMagnetometer::waitForReading()
   error = true;
 }
 
-ESATMagnetometer Magnetometer;
+ESAT_MagnetometerClass ESAT_Magnetometer;

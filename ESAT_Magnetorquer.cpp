@@ -16,15 +16,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATMagnetorquer.h"
+#include "ESAT_Magnetorquer.h"
 
-void ESATMagnetorquer::begin()
+void ESAT_MagnetorquerClass::begin()
 {
   configurePins();
   writeEnable(false);
 }
 
-void ESATMagnetorquer::configurePins()
+void ESAT_MagnetorquerClass::configurePins()
 {
   pinMode(PIN_ENABLE_X, OUTPUT);
   pinMode(PIN_ENABLE_Y, OUTPUT);
@@ -32,7 +32,7 @@ void ESATMagnetorquer::configurePins()
   pinMode(PIN_Y_POLARITY, OUTPUT);
 }
 
-void ESATMagnetorquer::writeEnable(boolean enable)
+void ESAT_MagnetorquerClass::writeEnable(boolean enable)
 {
   if (enable)
   {
@@ -46,7 +46,7 @@ void ESATMagnetorquer::writeEnable(boolean enable)
   }
 }
 
-void ESATMagnetorquer::writeX(ESATMagnetorquer::Polarity polarity)
+void ESAT_MagnetorquerClass::writeX(ESAT_MagnetorquerClass::Polarity polarity)
 {
   if (polarity == NEGATIVE)
   {
@@ -58,7 +58,7 @@ void ESATMagnetorquer::writeX(ESATMagnetorquer::Polarity polarity)
   }
 }
 
-void ESATMagnetorquer::writeY(ESATMagnetorquer::Polarity polarity)
+void ESAT_MagnetorquerClass::writeY(ESAT_MagnetorquerClass::Polarity polarity)
 {
   if (polarity == NEGATIVE)
   {
@@ -70,4 +70,4 @@ void ESATMagnetorquer::writeY(ESATMagnetorquer::Polarity polarity)
   }
 }
 
-ESATMagnetorquer Magnetorquer;
+ESAT_MagnetorquerClass ESAT_Magnetorquer;

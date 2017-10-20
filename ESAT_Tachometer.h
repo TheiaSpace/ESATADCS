@@ -16,13 +16,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATTachometer_h
-#define ESATTachometer_h
+#ifndef ESAT_Tachometer_h
+#define ESAT_Tachometer_h
 
 #include <Arduino.h>
 
 // Tachometer used for reading the speed of the rotating wheel.
-class ESATTachometer
+// Use the global instance ESAT_Tachometer.
+class ESAT_TachometerClass
 {
   public:
     // Start the tachometer.
@@ -47,6 +48,7 @@ class ESATTachometer
     static void incrementCounter();
 };
 
-extern ESATTachometer Tachometer;
+// Global instance of the tachometer library.
+extern ESAT_TachometerClass ESAT_Tachometer;
 
-#endif
+#endif /* ESAT_Tachometer_h */

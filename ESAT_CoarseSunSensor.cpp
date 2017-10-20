@@ -16,9 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATCoarseSunSensor.h"
+#include "ESAT_CoarseSunSensor.h"
 
-void ESATCoarseSunSensor::begin()
+void ESAT_CoarseSunSensorClass::begin()
 {
   pinMode(PIN_X_PLUS, INPUT);
   pinMode(PIN_X_MINUS, INPUT);
@@ -26,7 +26,7 @@ void ESATCoarseSunSensor::begin()
   pinMode(PIN_Y_MINUS, INPUT);
 }
 
-int ESATCoarseSunSensor::read()
+int ESAT_CoarseSunSensorClass::read()
 {
   const int readingXPlus = analogRead(PIN_X_PLUS);
   const int readingXMinus = analogRead(PIN_X_MINUS);
@@ -38,4 +38,4 @@ int ESATCoarseSunSensor::read()
   return reading;
 }
 
-ESATCoarseSunSensor CoarseSunSensor;
+ESAT_CoarseSunSensorClass ESAT_CoarseSunSensor;

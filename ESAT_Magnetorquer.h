@@ -16,13 +16,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATMagnetorquer_h
-#define ESATMagnetorquer_h
+#ifndef ESAT_Magnetorquer_h
+#define ESAT_Magnetorquer_h
 
 #include <Arduino.h>
 
 // Magnetorquers used for attitude control.
-class ESATMagnetorquer
+// Use the global instance ESAT_Magnetorquer.
+class ESAT_MagnetorquerClass
 {
   public:
     enum Polarity
@@ -60,6 +61,7 @@ class ESATMagnetorquer
     void configurePins();
 };
 
-extern ESATMagnetorquer Magnetorquer;
+// Global instance of the magnetorquer library.
+extern ESAT_MagnetorquerClass ESAT_Magnetorquer;
 
-#endif
+#endif /* ESAT_Magnetorquer_h */

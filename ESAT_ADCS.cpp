@@ -31,18 +31,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATADCS.h"
-#include "ESATCoarseSunSensor.h"
-#include "ESATGyroscope.h"
-#include "ESATMagnetometer.h"
-#include "ESATMagnetorquer.h"
-#include "ESATTachometer.h"
-#include <ESATUtil.h>
-#include "ESATWheel.h"
-#include "ESATTimestamp.h"
-#include "ESATOBCClock.h"
+#include "ESAT_ADCS.h"
+#include "ESAT_CoarseSunSensor.h"
+#include "ESAT_Gyroscope.h"
+#include "ESAT_Magnetometer.h"
+#include "ESAT_Magnetorquer.h"
+#include "ESAT_Tachometer.h"
+#include <ESAT_Util.h>
+#include "ESAT_Wheel.h"
+#include "ESAT_Timestamp.h"
+#include "ESAT_OBCClock.h"
 
-void ESATADCS::begin()
+void ESAT_ADCSClass::begin()
 {
   attitudeDerivativeGain = 4e4;
   attitudeErrorDeadband = 1;
@@ -53,8 +53,8 @@ void ESATADCS::begin()
   attitudeProportionalGain = 1e3;
   demagnetizationIterations = 0;
   enableMagnetorquerDriver = false;
-  magnetorquerXPolarity = Magnetorquer.POSITIVE;
-  magnetorquerYPolarity = Magnetorquer.POSITIVE;
+  magnetorquerXPolarity = ESAT_Magnetorquer.POSITIVE;
+  magnetorquerYPolarity = ESAT_Magnetorquer.POSITIVE;
   newTelemetryPacket = false;
   oldAttitudeError = 0;
   oldWheelSpeedError = 0;
@@ -72,16 +72,16 @@ void ESATADCS::begin()
   wheelSpeedErrorIntegral = 0;
   wheelDutyCycle = 128;
   wheelSpeed = 0;
-  Wheel.begin();
-  Gyroscope.begin(Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
-  Magnetometer.begin();
-  CoarseSunSensor.begin();
-  Tachometer.begin();
-  Magnetorquer.begin();
+  ESAT_Wheel.begin();
+  ESAT_Gyroscope.begin(ESAT_Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
+  ESAT_Magnetometer.begin();
+  ESAT_CoarseSunSensor.begin();
+  ESAT_Tachometer.begin();
+  ESAT_Magnetorquer.begin();
   blinkSequence();
 }
 
-void ESATADCS::blinkSequence()
+void ESAT_ADCSClass::blinkSequence()
 {
   const uint32_t sequence = 1147235945;
   for (int i = 0; i < 32; i++)
@@ -89,24 +89,24 @@ void ESATADCS::blinkSequence()
     const int state = ((sequence>>i) & 1);
     if (state == 1)
     {
-      Magnetorquer.writeX(Magnetorquer.POSITIVE);
-      Magnetorquer.writeY(Magnetorquer.POSITIVE);
+      ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
+      ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
     }
     else
     {
-      Magnetorquer.writeX(Magnetorquer.NEGATIVE);
-      Magnetorquer.writeY(Magnetorquer.NEGATIVE);
+      ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
+      ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
     }
     delay(50);
   }
 }
 
-word ESATADCS::getApplicationProcessIdentifier()
+word ESAT_ADCSClass::getApplicationProcessIdentifier()
 {
   return APPLICATION_PROCESS_IDENTIFIER;
 }
 
-void ESATADCS::handleTelecommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
   packet.rewind();
   if (packet.readApplicationProcessIdentifier()
@@ -122,7 +122,7 @@ void ESATADCS::handleTelecommand(ESATCCSDSPacket& packet)
   {
     return;
   }
-  const ESATCCSDSSecondaryHeader secondaryHeader = packet.readSecondaryHeader();
+  const ESAT_CCSDSSecondaryHeader secondaryHeader = packet.readSecondaryHeader();
   if (secondaryHeader.majorVersionNumber < MAJOR_VERSION_NUMBER)
   {
     return;
@@ -193,7 +193,7 @@ void ESATADCS::handleTelecommand(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATADCS::handleFollowMagnetometerCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleFollowMagnetometerCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = FOLLOW_MAGNETOMETER;
   const word rawTargetAttitude = packet.readWord();
@@ -202,7 +202,7 @@ void ESATADCS::handleFollowMagnetometerCommand(ESATCCSDSPacket& packet)
   oldAttitudeError = 0;
 }
 
-void ESATADCS::handleFollowSunCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleFollowSunCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = FOLLOW_SUN;
   const word rawTargetAttitude = packet.readWord();
@@ -211,28 +211,28 @@ void ESATADCS::handleFollowSunCommand(ESATCCSDSPacket& packet)
   oldAttitudeError = 0;
 }
 
-void ESATADCS::handleAttitudeControllerSetProportionalGainCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleAttitudeControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet)
 {
   attitudeProportionalGain = packet.readFloat();
   attitudeErrorIntegral = 0;
   oldAttitudeError = 0;
 }
 
-void ESATADCS::handleAttitudeControllerSetIntegralGainCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet)
 {
   attitudeIntegralGain = packet.readFloat();
   attitudeErrorIntegral = 0;
   oldAttitudeError = 0;
 }
 
-void ESATADCS::handleAttitudeControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleAttitudeControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
 {
   attitudeIntegralGain = packet.readFloat();
   attitudeErrorIntegral = 0;
   oldAttitudeError = 0;
 }
 
-void ESATADCS::handleAttitudeControllerUseGyroscopeCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleAttitudeControllerUseGyroscopeCommand(ESAT_CCSDSPacket& packet)
 {
   const byte parameter = packet.readByte();
   if (parameter > 0)
@@ -245,7 +245,7 @@ void ESATADCS::handleAttitudeControllerUseGyroscopeCommand(ESATCCSDSPacket& pack
   }
 }
 
-void ESATADCS::handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESAT_CCSDSPacket& packet)
 {
   const byte parameter = packet.readByte();
   if (parameter > 0)
@@ -258,25 +258,25 @@ void ESATADCS::handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESATCCSDSPa
   }
 }
 
-void ESATADCS::handleAttitudeControllerSetDeadbandCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleAttitudeControllerSetDeadbandCommand(ESAT_CCSDSPacket& packet)
 {
   attitudeErrorDeadband = packet.readWord();
   attitudeErrorDerivativeDeadband = packet.readWord();
 }
 
-void ESATADCS::handleAttitudeControllerSetDetumblingThresholdCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_CCSDSPacket& packet)
 
 {
   attitudeErrorDerivativeDetumblingThreshold = packet.readWord();
 }
 
-void ESATADCS::handleWheelSetDutyCycleCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = WHEEL_SET_DUTY_CYCLE;
   wheelDutyCycle = packet.readByte();
 }
 
-void ESATADCS::handleWheelSetSpeedCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = WHEEL_SET_SPEED;
   word rawTargetWheelSpeed = packet.readWord();
@@ -284,32 +284,32 @@ void ESATADCS::handleWheelSetSpeedCommand(ESATCCSDSPacket& packet)
   if (targetWheelSpeed == 0)
   {
     runCode = WHEEL_SET_DUTY_CYCLE;
-    Wheel.writeDutyCycle(128);
+    ESAT_Wheel.writeDutyCycle(128);
   }
 }
 
-void ESATADCS::handleWheelControllerSetProportionalGainCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleWheelControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet)
 {
   wheelProportionalGain = packet.readFloat();
   wheelSpeedErrorIntegral = 0;
   oldWheelSpeedError = 0;
 }
 
-void ESATADCS::handleWheelControllerSetIntegralGainCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleWheelControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet)
 {
   wheelIntegralGain = packet.readFloat();
   wheelSpeedErrorIntegral = 0;
   oldWheelSpeedError = 0;
 }
 
-void ESATADCS::handleWheelControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleWheelControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
 {
   wheelDerivativeGain = packet.readFloat();
   wheelSpeedErrorIntegral = 0;
   oldWheelSpeedError = 0;
 }
 
-void ESATADCS::handleMagnetorquerEnableCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_ENABLE;
   const byte parameter = packet.readByte();
@@ -323,35 +323,35 @@ void ESATADCS::handleMagnetorquerEnableCommand(ESATCCSDSPacket& packet)
   }
 }
 
-void ESATADCS::handleMagnetorquerSetXPolarityCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_SET_X_POLARITY;
   const byte parameter = packet.readByte();
   if (parameter > 0)
   {
-    magnetorquerXPolarity = Magnetorquer.POSITIVE;
+    magnetorquerXPolarity = ESAT_Magnetorquer.POSITIVE;
   }
   else
   {
-    magnetorquerYPolarity = Magnetorquer.NEGATIVE;
+    magnetorquerYPolarity = ESAT_Magnetorquer.NEGATIVE;
   }
 }
 
-void ESATADCS::handleMagnetorquerSetYPolarityCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleMagnetorquerSetYPolarityCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_SET_Y_POLARITY;
   const byte parameter = packet.readByte();
   if (parameter > 0)
   {
-    magnetorquerYPolarity = Magnetorquer.POSITIVE;
+    magnetorquerYPolarity = ESAT_Magnetorquer.POSITIVE;
   }
   else
   {
-    magnetorquerYPolarity = Magnetorquer.NEGATIVE;
+    magnetorquerYPolarity = ESAT_Magnetorquer.NEGATIVE;
   }
 }
 
-void ESATADCS::handleMagnetorquerApplyMaximumTorqueCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_APPLY_MAXIMUM_TORQUE;
   const byte parameter = packet.readWord();
@@ -365,31 +365,31 @@ void ESATADCS::handleMagnetorquerApplyMaximumTorqueCommand(ESATCCSDSPacket& pack
   }
 }
 
-void ESATADCS::handleMagnetorquerDemagnetizeCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleMagnetorquerDemagnetizeCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_DEMAGNETIZE;
   demagnetizationIterations = packet.readWord();
 }
 
-void ESATADCS::handleRestCommand(ESATCCSDSPacket& packet)
+void ESAT_ADCSClass::handleRestCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = REST;
 }
 
-void ESATADCS::readSensors()
+void ESAT_ADCSClass::readSensors()
 {
-  wheelSpeed = Tachometer.read();
-  Magnetorquer.writeEnable(false);
+  wheelSpeed = ESAT_Tachometer.read();
+  ESAT_Magnetorquer.writeEnable(false);
   delay(20);
-  Gyroscope.error = false;
-  rotationalSpeed = Gyroscope.read(3);
-  Magnetometer.error = false;
-  magneticAngle = Magnetometer.read();
-  Magnetorquer.writeEnable(enableMagnetorquerDriver);
-  sunAngle = CoarseSunSensor.read();
+  ESAT_Gyroscope.error = false;
+  rotationalSpeed = ESAT_Gyroscope.read(3);
+  ESAT_Magnetometer.error = false;
+  magneticAngle = ESAT_Magnetometer.read();
+  ESAT_Magnetorquer.writeEnable(enableMagnetorquerDriver);
+  sunAngle = ESAT_CoarseSunSensor.read();
 }
 
-boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
+boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
   if (!newTelemetryPacket)
   {
@@ -401,11 +401,6 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   {
     return false;
   }
-  ESATTimestamp Timestamp = OBCClock.read();
-  if (OBCClock.error)
-  {
-    return false;
-  }
   // Primary header.
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELEMETRY);
@@ -414,10 +409,10 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(telemetryPacketSequenceCount);
   // Secondary header.
-  ESATCCSDSSecondaryHeader secondaryHeader;
+  ESAT_CCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
     secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
-  secondaryHeader.timestamp = Timestamp;
+  secondaryHeader.timestamp = ESAT_OBCClock.read();
   secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
   secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
@@ -442,8 +437,8 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   packet.writeByte(enableMagnetorquerDriver);
   packet.writeByte(byte(magnetorquerXPolarity));
   packet.writeByte(byte(magnetorquerYPolarity));
-  packet.writeBoolean(Gyroscope.error);
-  packet.writeBoolean(Magnetometer.error);
+  packet.writeBoolean(ESAT_Gyroscope.error);
+  packet.writeBoolean(ESAT_Magnetometer.error);
   // End of user data.
   packet.updatePacketDataLength();
   if (packet.readPacketDataLength() > packet.packetDataBufferLength)
@@ -454,7 +449,7 @@ boolean ESATADCS::readTelemetry(ESATCCSDSPacket& packet)
   return true;
 }
 
-void ESATADCS::run()
+void ESAT_ADCSClass::run()
 {
   switch (runCode)
   {
@@ -485,7 +480,7 @@ void ESATADCS::run()
   }
 }
 
-void ESATADCS::runAttitudeControlLoop(int currentAttitude)
+void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
 {
   int attitudeError = targetAttitude - currentAttitude;
   if (attitudeError > 180)
@@ -543,22 +538,22 @@ void ESATADCS::runAttitudeControlLoop(int currentAttitude)
   }
 }
 
-void ESATADCS::runFollowMagnetometer()
+void ESAT_ADCSClass::runFollowMagnetometer()
 {
   runAttitudeControlLoop(magneticAngle);
 }
 
-void ESATADCS::runFollowSun()
+void ESAT_ADCSClass::runFollowSun()
 {
   runAttitudeControlLoop(sunAngle);
 }
 
-void ESATADCS::runWheelSetDutyCycle()
+void ESAT_ADCSClass::runWheelSetDutyCycle()
 {
-  Wheel.writeDutyCycle(wheelDutyCycle);
+  ESAT_Wheel.writeDutyCycle(wheelDutyCycle);
 }
 
-void ESATADCS::runWheelSetSpeed()
+void ESAT_ADCSClass::runWheelSetSpeed()
 {
   const int wheelSpeedError = targetWheelSpeed - wheelSpeed;
   wheelSpeedErrorIntegral = wheelSpeedErrorIntegral + wheelSpeedError;
@@ -567,54 +562,54 @@ void ESATADCS::runWheelSetSpeed()
   const float control = wheelProportionalGain * wheelSpeedError
     + wheelIntegralGain * wheelSpeedErrorIntegral
     + wheelDerivativeGain * wheelSpeedErrorDerivative;
-  Wheel.write(control);
+  ESAT_Wheel.write(control);
 }
 
-void ESATADCS::runMagnetorquerEnable()
+void ESAT_ADCSClass::runMagnetorquerEnable()
 {
   if (magnetorquerXPolarity > 0)
   {
-    Magnetorquer.writeX(Magnetorquer.POSITIVE);
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
   }
   else
   {
-    Magnetorquer.writeX(Magnetorquer.NEGATIVE);
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
   }
   if (magnetorquerYPolarity > 0)
   {
-    Magnetorquer.writeY(Magnetorquer.POSITIVE);
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
   }
   else
   {
-    Magnetorquer.writeY(Magnetorquer.NEGATIVE);
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
   }
 }
 
-void ESATADCS::runMagnetorquerSetXPolarity()
+void ESAT_ADCSClass::runMagnetorquerSetXPolarity()
 {
   if (magnetorquerXPolarity > 0)
   {
-    Magnetorquer.writeX(Magnetorquer.POSITIVE);
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
   }
   else
   {
-    Magnetorquer.writeX(Magnetorquer.NEGATIVE);
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
   }
 }
 
-void ESATADCS::runMagnetorquerSetYPolarity()
+void ESAT_ADCSClass::runMagnetorquerSetYPolarity()
 {
   if (magnetorquerYPolarity > 0)
   {
-    Magnetorquer.writeY(Magnetorquer.POSITIVE);
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
   }
   else
   {
-    Magnetorquer.writeY(Magnetorquer.NEGATIVE);
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
   }
 }
 
-void ESATADCS::runMagnetorquerApplyMaximumTorque()
+void ESAT_ADCSClass::runMagnetorquerApplyMaximumTorque()
 {
   const bool activationsX[4] = {
           targetMagnetorquerDirection,
@@ -631,63 +626,63 @@ void ESATADCS::runMagnetorquerApplyMaximumTorque()
   const long quadrant = map(magneticAngle % 360, 0, 360, 0, 4);
   if (activationsX[quadrant])
   {
-    magnetorquerXPolarity = Magnetorquer.POSITIVE;
-    Magnetorquer.writeX(Magnetorquer.POSITIVE);
+    magnetorquerXPolarity = ESAT_Magnetorquer.POSITIVE;
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
   }
   else
   {
-    magnetorquerXPolarity = Magnetorquer.NEGATIVE;
-    Magnetorquer.writeX(Magnetorquer.NEGATIVE);
+    magnetorquerXPolarity = ESAT_Magnetorquer.NEGATIVE;
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
   }
   if (activationsY[quadrant])
   {
-    magnetorquerYPolarity = Magnetorquer.POSITIVE;
-    Magnetorquer.writeY(Magnetorquer.POSITIVE);
+    magnetorquerYPolarity = ESAT_Magnetorquer.POSITIVE;
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
   }
   else
   {
-    magnetorquerYPolarity = Magnetorquer.NEGATIVE;
-    Magnetorquer.writeY(Magnetorquer.NEGATIVE);
+    magnetorquerYPolarity = ESAT_Magnetorquer.NEGATIVE;
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
   }
   enableMagnetorquerDriver = true;
-  Magnetorquer.writeEnable(enableMagnetorquerDriver);
+  ESAT_Magnetorquer.writeEnable(enableMagnetorquerDriver);
 }
 
-void ESATADCS::runMagnetorquerDemagnetize()
+void ESAT_ADCSClass::runMagnetorquerDemagnetize()
 {
-  Magnetorquer.writeEnable(true);
+  ESAT_Magnetorquer.writeEnable(true);
   for (long  i = 0; i < demagnetizationIterations; i++)
   {
-    Magnetorquer.writeX(Magnetorquer.POSITIVE);
-    Magnetorquer.writeY(Magnetorquer.POSITIVE);
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
     delay(20);
-    Magnetorquer.writeX(Magnetorquer.NEGATIVE);
-    Magnetorquer.writeY(Magnetorquer.NEGATIVE);
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
     delay(20);
   }
-  Magnetorquer.writeEnable(false);
+  ESAT_Magnetorquer.writeEnable(false);
   enableMagnetorquerDriver = false;
   runCode = REST;
 }
 
-void ESATADCS::runRest()
+void ESAT_ADCSClass::runRest()
 {
   enableMagnetorquerDriver = false;
-  Magnetorquer.writeEnable(false);
+  ESAT_Magnetorquer.writeEnable(false);
   wheelDutyCycle = 128;
-  Wheel.writeDutyCycle(wheelDutyCycle);
+  ESAT_Wheel.writeDutyCycle(wheelDutyCycle);
 }
 
-boolean ESATADCS::telemetryAvailable()
+boolean ESAT_ADCSClass::telemetryAvailable()
 {
   return newTelemetryPacket;
 }
 
-void ESATADCS::update()
+void ESAT_ADCSClass::update()
 {
   readSensors();
   run();
   newTelemetryPacket = true;
 }
 
-ESATADCS ADCS;
+ESAT_ADCSClass ESAT_ADCS;

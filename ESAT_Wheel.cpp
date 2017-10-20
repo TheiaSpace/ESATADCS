@@ -16,12 +16,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATWheel.h"
-#include <ESATCCSDSPacket.h>
-#include <ESATI2CMaster.h>
+#include "ESAT_Wheel.h"
+#include <ESAT_CCSDSPacket.h>
+#include <ESAT_I2CMaster.h>
 #include <Wire.h>
 
-void ESATWheel::begin()
+void ESAT_WheelClass::begin()
 {
   calibration[0] = 1.28e2;
   calibration[1] = 1.90e-2;
@@ -31,7 +31,7 @@ void ESATWheel::begin()
   programElectronicSpeedController();
 }
 
-void ESATWheel::write(const word rpm)
+void ESAT_WheelClass::write(const word rpm)
 {
   const float unconstrainedDutyCycle =
     calibration[0] + rpm * calibration[1];
@@ -40,13 +40,13 @@ void ESATWheel::write(const word rpm)
   writeDutyCycle(dutyCycle);
 }
 
-void ESATWheel::writeDutyCycle(byte dutyCycle)
+void ESAT_WheelClass::writeDutyCycle(byte dutyCycle)
 {
   const unsigned int microseconds = map(dutyCycle, 0, 255, MINIMUM, MAXIMUM);
   electronicSpeedController.writeMicroseconds(microseconds);
 }
 
-void ESATWheel::programElectronicSpeedController()
+void ESAT_WheelClass::programElectronicSpeedController()
 {
   // Perform the ESC programming sequence (high, low and medium again)
   switchElectronicSpeedController(false);
@@ -60,11 +60,11 @@ void ESATWheel::programElectronicSpeedController()
   delay(1000);
 }
 
-void ESATWheel::switchElectronicSpeedController(boolean on)
+void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
 {
-  const byte packetDataBufferLength = ESATCCSDSSecondaryHeader::LENGTH + 1;
+  const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
   byte buffer[packetDataBufferLength];
-  ESATCCSDSPacket packet(buffer, packetDataBufferLength);
+  ESAT_CCSDSPacket packet(buffer, packetDataBufferLength);
   packet.clear();
   packet.writePacketVersionNumber(0);
   packet.writePacketType(packet.TELECOMMAND);
@@ -72,7 +72,7 @@ void ESATWheel::switchElectronicSpeedController(boolean on)
   packet.writeApplicationProcessIdentifier(POWER_LINE_IDENTIFIER);
   packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
   packet.writePacketSequenceCount(0);
-  ESATCCSDSSecondaryHeader secondaryHeader;
+  ESAT_CCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.majorVersionNumber = POWER_LINE_MAJOR_VERSION_NUMBER;
   secondaryHeader.minorVersionNumber = POWER_LINE_MINOR_VERSION_NUMBER;
   secondaryHeader.patchVersionNumber = POWER_LINE_PATCH_VERSION_NUMBER;
@@ -80,12 +80,12 @@ void ESATWheel::switchElectronicSpeedController(boolean on)
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeBoolean(on);
   packet.updatePacketDataLength();
-  I2CMaster.writeTelecommand(Wire,
-                             POWER_LINE_ADDRESS,
-                             packet,
-                             POWER_LINE_MILLISECONDS_AFTER_WRITES,
-                             POWER_LINE_TRIES,
-                             POWER_LINE_MILLISECONDS_BETWEEN_RETRIES);
+  ESAT_I2CMaster.writeTelecommand(Wire,
+                                  POWER_LINE_ADDRESS,
+                                  packet,
+                                  POWER_LINE_MILLISECONDS_AFTER_WRITES,
+                                  POWER_LINE_TRIES,
+                                  POWER_LINE_MILLISECONDS_BETWEEN_RETRIES);
 }
 
-ESATWheel Wheel;
+ESAT_WheelClass ESAT_Wheel;
