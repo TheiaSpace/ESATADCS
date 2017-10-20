@@ -16,33 +16,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATTachometer.h"
+#ifndef ESAT_CoarseSunSensor_h
+#define ESAT_CoarseSunSensor_h
 
-void ESATTachometer::begin()
+#include <Arduino.h>
+
+// Coarse sun sensor used for attitude determination.
+class ESAT_CoarseSunSensorClass
 {
-  count = 0;
-  previousCount = 0;
-  previousReadingTime = 0;
-  pinMode(PIN, INPUT_PULLUP);
-  attachInterrupt(PIN, incrementCounter, FALLING);
-}
+  public:
+    // Set up the coarse sun sensor.
+    void begin();
 
-void ESATTachometer::incrementCounter()
-{
-  Tachometer.count = Tachometer.count + 1;
-}
+    // Read the attitude provided by the coarse sun sensors.
+    int read();
 
-unsigned int ESATTachometer::read()
-{
-  const unsigned long currentTime = millis();
-  const unsigned long ellapsedMilliseconds = currentTime - previousReadingTime;
-  previousReadingTime = currentTime;
-  const unsigned long millisecondsPerMinute = 60000;
-  const unsigned int reading =
-    (long(millisecondsPerMinute / COUNTS_PER_REVOLUTION)
-     * long(count - previousCount)) / ellapsedMilliseconds;
-  previousCount = count;
-  return reading;
-}
+  private:
+    // The individual sensors are connected to these pins.
+    static const int PIN_X_PLUS = CSSXPLUS;
+    static const int PIN_X_MINUS = CSSXMINUS;
+    static const int PIN_Y_PLUS = CSSYPLUS;
+    static const int PIN_Y_MINUS = CSSYMINUS;
+};
 
-ESATTachometer Tachometer;
+extern ESAT_CoarseSunSensorClass ESAT_CoarseSunSensor;
+
+#endif /* ESAT_CoarseSunSensor_h */

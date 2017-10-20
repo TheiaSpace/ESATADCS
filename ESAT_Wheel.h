@@ -16,15 +16,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATWheel_h
-#define ESATWheel_h
+#ifndef ESAT_Wheel_h
+#define ESAT_Wheel_h
 
 #include <Arduino.h>
-#include <ESATCCSDSSecondaryHeader.h>
+#include <ESAT_CCSDSSecondaryHeader.h>
 #include <Servo.h>
 
 // Rotating wheel.
-class ESATWheel
+// Use the global instance ESAT_Wheel.
+class ESAT_WheelClass
 {
   public:
     // Set up the wheel controller.
@@ -71,6 +72,6 @@ class ESATWheel
     void switchElectronicSpeedController(boolean on);
 };
 
-extern ESATWheel Wheel;
+extern ESAT_WheelClass ESAT_Wheel;
 
-#endif
+#endif /* ESAT_Wheel_h */

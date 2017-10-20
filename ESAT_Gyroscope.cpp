@@ -16,17 +16,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATGyroscope.h"
+#include "ESAT_Gyroscope.h"
 #include <Wire.h>
 
-void ESATGyroscope::begin(const byte fullScaleConfiguration)
+void ESAT_GyroscopeClass::begin(const byte fullScaleConfiguration)
 {
   error = false;
   configureRange(fullScaleConfiguration);
   setGain(fullScaleConfiguration);
 }
 
-void ESATGyroscope::configureRange(const byte fullScaleConfiguration)
+void ESAT_GyroscopeClass::configureRange(const byte fullScaleConfiguration)
 {
   const byte fullScaleConfigurationOffset = 3;
   const byte configuration =
@@ -41,7 +41,7 @@ void ESATGyroscope::configureRange(const byte fullScaleConfiguration)
   }
 }
 
-int ESATGyroscope::read(unsigned int samples)
+int ESAT_GyroscopeClass::read(unsigned int samples)
 {
   long cumulativeRawReading = 0;
   for (unsigned int i = 0; i < samples; i++)
@@ -52,7 +52,7 @@ int ESATGyroscope::read(unsigned int samples)
   return averageRawReading / gain;
 }
 
-int ESATGyroscope::readRawSample()
+int ESAT_GyroscopeClass::readRawSample()
 {
   Wire.beginTransmission(ADDRESS);
   Wire.write(GYROSCOPE_READING_REGISTER);
@@ -73,11 +73,11 @@ int ESATGyroscope::readRawSample()
   return word(highByte, lowByte);
 }
 
-void ESATGyroscope::setGain(const byte fullScaleConfiguration)
+void ESAT_GyroscopeClass::setGain(const byte fullScaleConfiguration)
 {
   const word fullScaleTable[] = { 250, 500, 1000, 2000 };
   const word fullScale = fullScaleTable[fullScaleConfiguration];
   gain = 32768.0 / fullScale;
 }
 
-ESATGyroscope Gyroscope;
+ESAT_GyroscopeClass ESAT_Gyroscope;

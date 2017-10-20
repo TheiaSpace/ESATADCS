@@ -16,12 +16,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATADCS_h
-#define ESATADCS_h
+#ifndef ESAT_ADCS_h
+#define ESAT_ADCS_h
 #include <Arduino.h>
-#include <ESATCCSDSPacket.h>
+#include <ESAT_CCSDSPacket.h>
 
-class ESATADCS
+// Attitude determination and control subsystem library.
+// Use the global instance ESAT_ADCS.
+class ESAT_ADCSClass
 {
   public:
     // True if the inertial measurement unit is alive.
@@ -31,7 +33,7 @@ class ESATADCS
     void begin();
 
     // Handle a telecommand.
-    void handleTelecommand(ESATCCSDSPacket& packet);
+    void handleTelecommand(ESAT_CCSDSPacket& packet);
 
     // Return the unique identifier of the ADCS.
     word getApplicationProcessIdentifier();
@@ -39,7 +41,7 @@ class ESATADCS
     // Fill a packet with the next ADCS telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
-    boolean readTelemetry(ESATCCSDSPacket& packet);
+    boolean readTelemetry(ESAT_CCSDSPacket& packet);
 
     // Return true if there is a new telemetry packet available.
     boolean telemetryAvailable();
@@ -174,26 +176,26 @@ class ESATADCS
     void blinkSequence();
 
     // Commands.
-    void handleFollowMagnetometerCommand(ESATCCSDSPacket& packet);
-    void handleFollowSunCommand(ESATCCSDSPacket& packet);
-    void handleAttitudeControllerSetProportionalGainCommand(ESATCCSDSPacket& packet);
-    void handleAttitudeControllerSetIntegralGainCommand(ESATCCSDSPacket& packet);
-    void handleAttitudeControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet);
-    void handleAttitudeControllerUseGyroscopeCommand(ESATCCSDSPacket& packet);
-    void handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESATCCSDSPacket& packet);
-    void handleAttitudeControllerSetDeadbandCommand(ESATCCSDSPacket& packet);
-    void handleAttitudeControllerSetDetumblingThresholdCommand(ESATCCSDSPacket& packet);
-    void handleWheelSetDutyCycleCommand(ESATCCSDSPacket& packet);
-    void handleWheelSetSpeedCommand(ESATCCSDSPacket& packet);
-    void handleWheelControllerSetProportionalGainCommand(ESATCCSDSPacket& packet);
-    void handleWheelControllerSetIntegralGainCommand(ESATCCSDSPacket& packet);
-    void handleWheelControllerSetDerivativeGainCommand(ESATCCSDSPacket& packet);
-    void handleMagnetorquerEnableCommand(ESATCCSDSPacket& packet);
-    void handleMagnetorquerSetXPolarityCommand(ESATCCSDSPacket& packet);
-    void handleMagnetorquerSetYPolarityCommand(ESATCCSDSPacket& packet);
-    void handleMagnetorquerApplyMaximumTorqueCommand(ESATCCSDSPacket& packet);
-    void handleMagnetorquerDemagnetizeCommand(ESATCCSDSPacket& packet);
-    void handleRestCommand(ESATCCSDSPacket& packet);
+    void handleFollowMagnetometerCommand(ESAT_CCSDSPacket& packet);
+    void handleFollowSunCommand(ESAT_CCSDSPacket& packet);
+    void handleAttitudeControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet);
+    void handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet);
+    void handleAttitudeControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet);
+    void handleAttitudeControllerUseGyroscopeCommand(ESAT_CCSDSPacket& packet);
+    void handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESAT_CCSDSPacket& packet);
+    void handleAttitudeControllerSetDeadbandCommand(ESAT_CCSDSPacket& packet);
+    void handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_CCSDSPacket& packet);
+    void handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet);
+    void handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet);
+    void handleWheelControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet);
+    void handleWheelControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet);
+    void handleWheelControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet);
+    void handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet);
+    void handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& packet);
+    void handleMagnetorquerSetYPolarityCommand(ESAT_CCSDSPacket& packet);
+    void handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacket& packet);
+    void handleMagnetorquerDemagnetizeCommand(ESAT_CCSDSPacket& packet);
+    void handleRestCommand(ESAT_CCSDSPacket& packet);
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();
@@ -235,7 +237,7 @@ class ESATADCS
     void runRest();
 };
 
+// Global instance of the ADCS library.
+extern ESAT_ADCSClass ESAT_ADCS;
 
-extern ESATADCS ADCS;
-
-#endif
+#endif /* ESAT_ADCS_h */

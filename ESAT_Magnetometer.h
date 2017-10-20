@@ -16,8 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATMagnetometer_h
-#define ESATMagnetometer_h
+#ifndef ESAT_Magnetometer_h
+#define ESAT_Magnetometer_h
 
 #include <Arduino.h>
 
@@ -26,7 +26,8 @@
 // gyroscope, accelerometer and magnetometer chip
 // mounted on the ESATOBC board.
 // Communications are done though the OBC I2C bus.
-class ESATMagnetometer
+// Use the global instance ESAT_Magnetometer.
+class ESAT_MagnetometerClass
 {
   public:
     // True after a read error.  Must be reset manually.
@@ -66,6 +67,6 @@ class ESATMagnetometer
     void waitForReading();
 };
 
-extern ESATMagnetometer Magnetometer;
+extern ESAT_MagnetometerClass ESAT_Magnetometer;
 
-#endif
+#endif /* ESAT_Magnetometer_h */
