@@ -25,7 +25,6 @@ void ESAT_WheelClass::begin()
 {
   pinMode(PIN, OUTPUT);
   electronicSpeedController.attach(PIN);
-  delay(1000);
   calibrateElectronicSpeedController();
 }
 
