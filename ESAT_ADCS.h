@@ -129,8 +129,8 @@ class ESAT_ADCSClass
     // - Attitude derivative gain (4 bytes).
     // - Gyroscope usage for attitude error derivative determination (1 byte).
     // - Wheel or magnetorquer usage for attitude control (1 byte).
-    // - Wheel duty cycle (1 byte).
-    // - Wheel speed (1 byte).
+    // - Wheel duty cycle (4 byte).
+    // - Wheel speed (2 bytes).
     // - Wheel proportional gain (4 bytes).
     // - Wheel integral gain (4 bytes).
     // - Wheel derivative gain (4 bytes).
@@ -139,7 +139,7 @@ class ESAT_ADCSClass
     // - Magnetorquer Y polarity (1 byte).
     // - Gyroscope error (1 byte).
     // - Magnetometer error (1 byte).
-    static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 52;
+    static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 56;
 
     float attitudeDerivativeGain;
     word attitudeErrorDeadband;
@@ -168,7 +168,7 @@ class ESAT_ADCSClass
     float wheelDerivativeGain;
     float wheelIntegralGain;
     float wheelProportionalGain;
-    byte wheelDutyCycle;
+    float wheelDutyCycle;
     unsigned int wheelSpeed;
     float wheelSpeedErrorIntegral;
 

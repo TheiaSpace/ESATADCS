@@ -23,8 +23,6 @@
 
 void ESAT_WheelClass::begin()
 {
-  calibration[0] = 1.28e2;
-  calibration[1] = 1.90e-2;
   pinMode(PIN, OUTPUT);
   electronicSpeedController.attach(PIN);
   delay(1000);
@@ -43,6 +41,24 @@ void ESAT_WheelClass::calibrateElectronicSpeedController()
   delay(1000);
   writeDutyCycle(128);
   delay(1000);
+}
+
+float ESAT_WheelClass::constrainDutyCycle(const float dutyCycle)
+{
+  if (dutyCycle > 100)
+  {
+    return 100;
+  }
+  if (dutyCycle < -100)
+  {
+    return -100;
+  }
+  return dutyCycle;
+}
+
+word ESAT_WheelClass::constrainSpeed(const word wheelSpeed)
+{
+  return constrain(wheelSpeed, 0, MAXIMUM_WHEEL_SPEED);
 }
 
 void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
@@ -77,16 +93,15 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
 
 void ESAT_WheelClass::write(const word rpm)
 {
-  const float unconstrainedDutyCycle =
-    calibration[0] + rpm * calibration[1];
-  const byte dutyCycle =
-          constrain(round(unconstrainedDutyCycle), 0, 255);
-  writeDutyCycle(dutyCycle);
+  writeDutyCycle(DUTY_CYCLE_PER_RPM * constrainSpeed(rpm));
 }
 
-void ESAT_WheelClass::writeDutyCycle(byte dutyCycle)
+void ESAT_WheelClass::writeDutyCycle(const float dutyCycle)
 {
-  const unsigned int microseconds = map(dutyCycle, 0, 255, MINIMUM, MAXIMUM);
+  const word microseconds =
+    (MAXIMUM_PULSE_WIDTH + MINIMUM_PULSE_WIDTH) / 2
+    + (MAXIMUM_PULSE_WIDTH - MINIMUM_PULSE_WIDTH) / 2
+      * constrainDutyCycle(dutyCycle) / 100;
   electronicSpeedController.writeMicroseconds(microseconds);
 }
 
