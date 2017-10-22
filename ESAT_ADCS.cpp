@@ -41,6 +41,7 @@
 #include "ESAT_Wheel.h"
 #include "ESAT_Timestamp.h"
 #include "ESAT_OBCClock.h"
+#include <ESAT_CCSDSPrimaryHeader.h>
 
 void ESAT_ADCSClass::begin()
 {
@@ -109,16 +110,17 @@ word ESAT_ADCSClass::getApplicationProcessIdentifier()
 void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 {
   packet.rewind();
-  if (packet.readApplicationProcessIdentifier()
-      != APPLICATION_PROCESS_IDENTIFIER)
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+  if (primaryHeader.applicationProcessIdentifier
+      != getApplicationProcessIdentifier())
   {
     return;
   }
-  if (packet.readPacketType() != packet.TELECOMMAND)
+  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
   {
     return;
   }
-  if (packet.readPacketDataLength() < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
+  if (primaryHeader.packetDataLength < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
   {
     return;
   }
@@ -396,18 +398,25 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
     return false;
   }
   newTelemetryPacket = false;
-  packet.clear();
-  if (packet.packetDataBufferLength < HOUSEKEEPING_TELEMETRY_PACKET_LENGTH)
+  if (packet.capacity() < HOUSEKEEPING_TELEMETRY_PACKET_LENGTH)
   {
     return false;
   }
+  packet.clear();
   // Primary header.
-  packet.writePacketVersionNumber(0);
-  packet.writePacketType(packet.TELEMETRY);
-  packet.writeSecondaryHeaderFlag(packet.SECONDARY_HEADER_IS_PRESENT);
-  packet.writeApplicationProcessIdentifier(getApplicationProcessIdentifier());
-  packet.writeSequenceFlags(packet.UNSEGMENTED_USER_DATA);
-  packet.writePacketSequenceCount(telemetryPacketSequenceCount);
+  ESAT_CCSDSPrimaryHeader primaryHeader;
+  primaryHeader.packetVersionNumber = 0;
+  primaryHeader.packetType =
+    primaryHeader.TELEMETRY;
+  primaryHeader.secondaryHeaderFlag =
+    primaryHeader.SECONDARY_HEADER_IS_PRESENT;
+  primaryHeader.applicationProcessIdentifier =
+    getApplicationProcessIdentifier();
+  primaryHeader.sequenceFlags =
+    primaryHeader.UNSEGMENTED_USER_DATA;
+  primaryHeader.packetSequenceCount =
+    telemetryPacketSequenceCount;
+  packet.writePrimaryHeader(primaryHeader);
   // Secondary header.
   ESAT_CCSDSSecondaryHeader secondaryHeader;
   secondaryHeader.preamble =
@@ -440,11 +449,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.writeBoolean(ESAT_Gyroscope.error);
   packet.writeBoolean(ESAT_Magnetometer.error);
   // End of user data.
-  packet.updatePacketDataLength();
-  if (packet.readPacketDataLength() > packet.packetDataBufferLength)
-  {
-    return false;
-  }
+  packet.flush();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
 }
