@@ -43,7 +43,7 @@
 #include "ESAT_OBCClock.h"
 #include <ESAT_CCSDSPrimaryHeader.h>
 
-void ESAT_ADCSClass::begin()
+void ESAT_ADCSClass::begin(const word periodMilliseconds)
 {
   attitudeDerivativeGain = 4e4;
   attitudeErrorDeadband = 1;
@@ -59,6 +59,7 @@ void ESAT_ADCSClass::begin()
   newTelemetryPacket = false;
   oldAttitudeError = 0;
   oldWheelSpeedError = 0;
+  period = periodMilliseconds;
   runCode = REST;
   rotationalSpeed = 0;
   targetAttitude = 0;
@@ -503,7 +504,8 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
   }
   else
   {
-    attitudeErrorDerivative = attitudeError - oldAttitudeError;
+    attitudeErrorDerivative =
+      (attitudeError - oldAttitudeError) * (1000. / period);
   }
   float Kp = attitudeProportionalGain;
   float Kd = attitudeDerivativeGain;
@@ -523,7 +525,9 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
   float actuation = Kp * attitudeError
                   + Kd * rotationalSpeed
                   + Ki * attitudeErrorIntegral;
-  attitudeErrorIntegral = attitudeErrorIntegral + attitudeError;
+  attitudeErrorIntegral =
+    attitudeErrorIntegral
+    + attitudeError * (period / 1000.);
   if (useWheel)
   {
     targetWheelSpeed = constrain(wheelSpeed + actuation, 0, 8000);
