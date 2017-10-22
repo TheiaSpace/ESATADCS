@@ -24,6 +24,7 @@
 void ESAT_WheelClass::begin()
 {
   pinMode(PIN, OUTPUT);
+  writeDutyCycle(0);
   electronicSpeedController.attach(PIN);
   calibrateElectronicSpeedController();
 }
@@ -33,12 +34,12 @@ void ESAT_WheelClass::calibrateElectronicSpeedController()
   // Perform the ESC calibration sequence (high, low and medium again).
   switchElectronicSpeedController(false);
   delay(1000);
-  writeDutyCycle(255);
+  writeDutyCycle(100);
   switchElectronicSpeedController(true);
   delay(2000);
-  writeDutyCycle(0);
+  writeDutyCycle(-100);
   delay(1000);
-  writeDutyCycle(128);
+  writeDutyCycle(0);
   delay(1000);
 }
 
