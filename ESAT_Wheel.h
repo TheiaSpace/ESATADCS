@@ -65,8 +65,8 @@ class ESAT_WheelClass
     // Servo object for commanding the electronic speed controller.
     Servo electronicSpeedController;
 
-    // Run the programming sequence of the electronic speed controller.
-    void programElectronicSpeedController();
+    // Run the calibration sequence of the electronic speed controller.
+    void calibrateElectronicSpeedController();
 
     // Switch on or off the electronic speed controller.
     void switchElectronicSpeedController(boolean on);
