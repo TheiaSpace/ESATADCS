@@ -71,7 +71,7 @@ void ESAT_ADCSClass::begin()
   wheelIntegralGain = 8.5e-4;
   wheelProportionalGain = 8.5e-3;
   wheelSpeedErrorIntegral = 0;
-  wheelDutyCycle = 128;
+  wheelDutyCycle = 0;
   wheelSpeed = 0;
   ESAT_Wheel.begin();
   ESAT_Gyroscope.begin(ESAT_Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
@@ -275,7 +275,7 @@ void ESAT_ADCSClass::handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_
 void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = WHEEL_SET_DUTY_CYCLE;
-  wheelDutyCycle = packet.readByte();
+  wheelDutyCycle = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
@@ -438,7 +438,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.writeFloat(attitudeDerivativeGain);
   packet.writeBoolean(useGyroscope);
   packet.writeBoolean(useWheel);
-  packet.writeByte(wheelDutyCycle);
+  packet.writeFloat(wheelDutyCycle);
   packet.writeWord(wheelSpeed);
   packet.writeFloat(wheelProportionalGain);
   packet.writeFloat(wheelIntegralGain);
@@ -674,7 +674,7 @@ void ESAT_ADCSClass::runRest()
 {
   enableMagnetorquerDriver = false;
   ESAT_Magnetorquer.writeEnable(false);
-  wheelDutyCycle = 128;
+  wheelDutyCycle = 0;
   ESAT_Wheel.writeDutyCycle(wheelDutyCycle);
 }
 

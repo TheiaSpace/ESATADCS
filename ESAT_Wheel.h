@@ -35,13 +35,22 @@ class ESAT_WheelClass
     void write(word rpm);
 
     // Set the duty cycle of the electronic speed controller.
-    void writeDutyCycle(byte dutyCycle);
+    // The duty cycle is a signed percentage: it should go from -100 %
+    // to 0 % for negative speed and from 0 % to 100 % for positive
+    // speed.
+    void writeDutyCycle(float dutyCycle);
 
   private:
+    // Duty cycle percentage point per wheel speed RPM.
+    static constexpr float DUTY_CYCLE_PER_RPM = 0.015;
+
     // Maximum and minimum pulse widths
     // for the electronic speed controller.
-    static const unsigned int MAXIMUM = 1860;
-    static const unsigned int MINIMUM = 1060;
+    static const word MAXIMUM_PULSE_WIDTH = 1860;
+    static const word MINIMUM_PULSE_WIDTH = 1060;
+
+    // Maximum allowed wheel speed in rpm.
+    static const word MAXIMUM_WHEEL_SPEED = 8000;
 
     // The electronic speed controller is attached to this pin.
     static const int PIN = PWM;
@@ -59,14 +68,19 @@ class ESAT_WheelClass
     static const byte POWER_LINE_ATTEMPTS = 10;
     static const byte POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS = 10;
 
-    // RPM to duty cycle calibration coefficients.
-    float calibration[2];
-
     // Servo object for commanding the electronic speed controller.
     Servo electronicSpeedController;
 
     // Run the calibration sequence of the electronic speed controller.
     void calibrateElectronicSpeedController();
+
+    // Constrain the duty cycle constrained to lie
+    // between -100 % and +100 %.
+    float constrainDutyCycle(float dutyCycle);
+
+    // Constrain the wheel speed to lie between 0 and
+    // MAXIMUM_WHEEL_SPEED.
+    word constrainSpeed(word rpm);
 
     // Switch on or off the electronic speed controller.
     void switchElectronicSpeedController(boolean on);
