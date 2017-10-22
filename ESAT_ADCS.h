@@ -30,7 +30,8 @@ class ESAT_ADCSClass
     boolean inertialMeasurementUnitAlive;
 
     // Get all ADCS subsystems ready.
-    void begin();
+    // Set the control cycle period (in milliseconds).
+    void begin(word period);
 
     // Handle a telecommand.
     void handleTelecommand(ESAT_CCSDSPacket& packet);
@@ -156,6 +157,7 @@ class ESAT_ADCSClass
     boolean newTelemetryPacket;
     int oldAttitudeError;
     int oldWheelSpeedError;
+    word period;
     int rotationalSpeed;
     enum RunCode runCode;
     int sunAngle;
