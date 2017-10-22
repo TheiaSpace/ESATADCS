@@ -37,11 +37,9 @@
 #include "ESAT_Magnetometer.h"
 #include "ESAT_Magnetorquer.h"
 #include "ESAT_Tachometer.h"
-#include <ESAT_Util.h>
 #include "ESAT_Wheel.h"
 #include "ESAT_Timestamp.h"
 #include "ESAT_OBCClock.h"
-#include <ESAT_CCSDSPrimaryHeader.h>
 
 void ESAT_ADCSClass::begin(const word periodMilliseconds)
 {
