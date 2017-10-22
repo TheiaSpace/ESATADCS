@@ -45,21 +45,6 @@ void ESAT_WheelClass::calibrateElectronicSpeedController()
   delay(1000);
 }
 
-void ESAT_WheelClass::write(const word rpm)
-{
-  const float unconstrainedDutyCycle =
-    calibration[0] + rpm * calibration[1];
-  const byte dutyCycle =
-          constrain(round(unconstrainedDutyCycle), 0, 255);
-  writeDutyCycle(dutyCycle);
-}
-
-void ESAT_WheelClass::writeDutyCycle(byte dutyCycle)
-{
-  const unsigned int microseconds = map(dutyCycle, 0, 255, MINIMUM, MAXIMUM);
-  electronicSpeedController.writeMicroseconds(microseconds);
-}
-
 void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
 {
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
@@ -88,6 +73,21 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
                                   POWER_LINE_MILLISECONDS_AFTER_WRITES,
                                   POWER_LINE_ATTEMPTS,
                                   POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS);
+}
+
+void ESAT_WheelClass::write(const word rpm)
+{
+  const float unconstrainedDutyCycle =
+    calibration[0] + rpm * calibration[1];
+  const byte dutyCycle =
+          constrain(round(unconstrainedDutyCycle), 0, 255);
+  writeDutyCycle(dutyCycle);
+}
+
+void ESAT_WheelClass::writeDutyCycle(byte dutyCycle)
+{
+  const unsigned int microseconds = map(dutyCycle, 0, 255, MINIMUM, MAXIMUM);
+  electronicSpeedController.writeMicroseconds(microseconds);
 }
 
 ESAT_WheelClass ESAT_Wheel;
