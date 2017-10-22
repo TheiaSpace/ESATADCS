@@ -86,8 +86,8 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
                                   POWER_LINE_ADDRESS,
                                   packet,
                                   POWER_LINE_MILLISECONDS_AFTER_WRITES,
-                                  POWER_LINE_TRIES,
-                                  POWER_LINE_MILLISECONDS_BETWEEN_RETRIES);
+                                  POWER_LINE_ATTEMPTS,
+                                  POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS);
 }
 
 ESAT_WheelClass ESAT_Wheel;
