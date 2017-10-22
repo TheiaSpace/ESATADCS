@@ -28,7 +28,21 @@ void ESAT_WheelClass::begin()
   pinMode(PIN, OUTPUT);
   electronicSpeedController.attach(PIN);
   delay(1000);
-  programElectronicSpeedController();
+  calibrateElectronicSpeedController();
+}
+
+void ESAT_WheelClass::calibrateElectronicSpeedController()
+{
+  // Perform the ESC calibration sequence (high, low and medium again).
+  switchElectronicSpeedController(false);
+  delay(1000);
+  writeDutyCycle(255);
+  switchElectronicSpeedController(true);
+  delay(2000);
+  writeDutyCycle(0);
+  delay(1000);
+  writeDutyCycle(128);
+  delay(1000);
 }
 
 void ESAT_WheelClass::write(const word rpm)
@@ -44,20 +58,6 @@ void ESAT_WheelClass::writeDutyCycle(byte dutyCycle)
 {
   const unsigned int microseconds = map(dutyCycle, 0, 255, MINIMUM, MAXIMUM);
   electronicSpeedController.writeMicroseconds(microseconds);
-}
-
-void ESAT_WheelClass::programElectronicSpeedController()
-{
-  // Perform the ESC programming sequence (high, low and medium again)
-  switchElectronicSpeedController(false);
-  delay(1000);
-  writeDutyCycle(255);
-  switchElectronicSpeedController(true);
-  delay(2000);
-  writeDutyCycle(0);
-  delay(1000);
-  writeDutyCycle(128);
-  delay(1000);
 }
 
 void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
