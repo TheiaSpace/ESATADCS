@@ -334,7 +334,7 @@ void ESAT_ADCSClass::handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& pac
   }
   else
   {
-    magnetorquerYPolarity = ESAT_Magnetorquer.NEGATIVE;
+    magnetorquerXPolarity = ESAT_Magnetorquer.NEGATIVE;
   }
 }
 
