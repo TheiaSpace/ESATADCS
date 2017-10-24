@@ -228,7 +228,7 @@ void ESAT_ADCSClass::handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPa
 
 void ESAT_ADCSClass::handleAttitudeControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
 {
-  attitudeIntegralGain = packet.readFloat();
+  attitudeDerivativeGain = packet.readFloat();
   attitudeErrorIntegral = 0;
   oldAttitudeError = 0;
 }
@@ -334,7 +334,7 @@ void ESAT_ADCSClass::handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& pac
   }
   else
   {
-    magnetorquerYPolarity = ESAT_Magnetorquer.NEGATIVE;
+    magnetorquerXPolarity = ESAT_Magnetorquer.NEGATIVE;
   }
 }
 
