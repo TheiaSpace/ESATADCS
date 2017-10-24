@@ -228,7 +228,7 @@ void ESAT_ADCSClass::handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPa
 
 void ESAT_ADCSClass::handleAttitudeControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
 {
-  attitudeIntegralGain = packet.readFloat();
+  attitudeDerivativeGain = packet.readFloat();
   attitudeErrorIntegral = 0;
   oldAttitudeError = 0;
 }
