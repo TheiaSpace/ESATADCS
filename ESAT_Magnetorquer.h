@@ -28,7 +28,7 @@ class ESAT_MagnetorquerClass
   public:
     enum Polarity
     {
-      NEGATIVE = -1,
+      NEGATIVE = 0,
       POSITIVE = 1,
     };
 
