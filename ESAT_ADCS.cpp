@@ -355,7 +355,7 @@ void ESAT_ADCSClass::handleMagnetorquerSetYPolarityCommand(ESAT_CCSDSPacket& pac
 void ESAT_ADCSClass::handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_APPLY_MAXIMUM_TORQUE;
-  const byte parameter = packet.readWord();
+  const byte parameter = packet.readByte();
   if (parameter > 0)
   {
     targetMagnetorquerDirection = true;
