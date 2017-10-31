@@ -47,8 +47,15 @@ int ESAT_MagnetometerClass::getReading()
   const byte yHighByte = Wire.read();
   const int mx = word(xHighByte, xLowByte);
   const int my = word(yHighByte, yLowByte);
-  const int angle = round(atan2(mx, my) * RAD_TO_DEG) % 360;
-  return angle;
+  const int angle = round(atan2(mx, my) * RAD_TO_DEG);
+  if (angle < 0)
+  {
+    return angle + 360;
+  }
+  else
+  {
+    return angle;
+  }
 }
 
 int ESAT_MagnetometerClass::read()
