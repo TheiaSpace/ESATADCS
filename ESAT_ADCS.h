@@ -74,6 +74,7 @@ class ESAT_ADCSClass
       WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND = 0x30,
       WHEEL_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND = 0x31,
       WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND = 0x32,
+      WHEEL_CONTROLLER_RESET_SPEED_ERROR_INTEGRAL = 0x33,
       MAGNETORQUER_ENABLE_COMMAND = 0x40,
       MAGNETORQUER_SET_X_POLARITY_COMMAND = 0x41,
       MAGNETORQUER_SET_Y_POLARITY_COMMAND = 0x42,
@@ -196,6 +197,7 @@ class ESAT_ADCSClass
     void handleWheelControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet);
     void handleWheelControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet);
     void handleWheelControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet);
+    void handleWheelControllerResetSpeedErrorIntegral(ESAT_CCSDSPacket& packet);
     void handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet);
     void handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& packet);
     void handleMagnetorquerSetYPolarityCommand(ESAT_CCSDSPacket& packet);
