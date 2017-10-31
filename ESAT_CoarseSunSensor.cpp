@@ -34,8 +34,15 @@ int ESAT_CoarseSunSensorClass::read()
   const int readingYMinus = analogRead(PIN_Y_MINUS);
   const int nx = readingXPlus - readingXMinus;
   const int ny = readingYPlus - readingYMinus;
-  const int reading = round(atan2(ny, nx) * RAD_TO_DEG) % 360;
-  return reading;
+  const int reading = round(atan2(ny, nx) * RAD_TO_DEG);
+  if (reading < 0)
+  {
+    return reading + 360;
+  }
+  else
+  {
+    return reading;
+  }
 }
 
 ESAT_CoarseSunSensorClass ESAT_CoarseSunSensor;

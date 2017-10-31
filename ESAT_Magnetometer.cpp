@@ -17,6 +17,7 @@
  */
 
 #include "ESAT_Magnetometer.h"
+#include <ESAT_Util.h>
 #include <Wire.h>
 
 void ESAT_MagnetometerClass::begin()
@@ -45,10 +46,19 @@ int ESAT_MagnetometerClass::getReading()
   const byte xHighByte = Wire.read();
   const byte yLowByte = Wire.read();
   const byte yHighByte = Wire.read();
-  const int mx = word(xHighByte, xLowByte);
-  const int my = word(yHighByte, yLowByte);
-  const int angle = round(atan2(mx, my) * RAD_TO_DEG) % 360;
-  return angle;
+  const word xFieldBits = word(xHighByte, xLowByte);
+  const word yFieldBits = word(yHighByte, yLowByte);
+  const int xField = ESAT_Util.wordToInt(xFieldBits);
+  const int yField = ESAT_Util.wordToInt(yFieldBits);
+  const int angle = round(atan2(xField, yField) * RAD_TO_DEG);
+  if (angle < 0)
+  {
+    return angle + 360;
+  }
+  else
+  {
+    return angle;
+  }
 }
 
 int ESAT_MagnetometerClass::read()
