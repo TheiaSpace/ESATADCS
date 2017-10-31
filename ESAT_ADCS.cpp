@@ -539,7 +539,14 @@ void ESAT_ADCSClass::runWheelSetSpeed()
   const float control = wheelProportionalGain * wheelSpeedError
     + wheelIntegralGain * wheelSpeedErrorIntegral
     + wheelDerivativeGain * wheelSpeedErrorDerivative;
-  ESAT_Wheel.write(control);
+  if (control > 0)
+  {
+    ESAT_Wheel.write(control);
+  }
+  else
+  {
+    ESAT_Wheel.write(0);
+  }
 }
 
 void ESAT_ADCSClass::runMagnetorquerEnable()
