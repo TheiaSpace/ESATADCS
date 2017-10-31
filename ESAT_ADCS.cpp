@@ -43,6 +43,7 @@
 
 void ESAT_ADCSClass::begin(const word periodMilliseconds)
 {
+  actuator = MAGNETORQUER;
   attitudeDerivativeGain = 4e4;
   attitudeErrorDeadband = 1;
   attitudeErrorDerivativeDeadband = 2;
@@ -65,7 +66,6 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   targetWheelSpeed = 0;
   telemetryPacketSequenceCount = 0;
   useGyroscope = true;
-  useWheel = true;
   wheelDerivativeGain = 0;
   wheelIntegralGain = 8.5e-4;
   wheelProportionalGain = 8.5e-3;
@@ -148,8 +148,8 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
     case ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND:
       handleAttitudeControllerUseGyroscopeCommand(packet);
       break;
-    case ATTITUDE_CONTROLLER_USE_WHEEL_OR_MAGNETORQUER_COMMAND:
-      handleAttitudeControllerUseWheelOrMagnetorquerCommand(packet);
+    case ATTITUDE_CONTROLLER_SET_ACTUATOR_COMMAND:
+      handleAttitudeControllerSetActuatorCommand(packet);
       break;
     case ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND:
       handleAttitudeControllerSetDeadbandCommand(packet);
@@ -246,16 +246,16 @@ void ESAT_ADCSClass::handleAttitudeControllerUseGyroscopeCommand(ESAT_CCSDSPacke
   }
 }
 
-void ESAT_ADCSClass::handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESAT_CCSDSPacket& packet)
+void ESAT_ADCSClass::handleAttitudeControllerSetActuatorCommand(ESAT_CCSDSPacket& packet)
 {
   const byte parameter = packet.readByte();
   if (parameter > 0)
   {
-    useWheel = true;
+    actuator = WHEEL;
   }
   else
   {
-    useWheel = false;
+    actuator = MAGNETORQUER;
   }
 }
 
@@ -436,7 +436,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.writeFloat(attitudeIntegralGain);
   packet.writeFloat(attitudeDerivativeGain);
   packet.writeBoolean(useGyroscope);
-  packet.writeBoolean(useWheel);
+  packet.writeByte(actuator);
   packet.writeFloat(wheelDutyCycle);
   packet.writeWord(wheelSpeed);
   packet.writeFloat(wheelProportionalGain);
@@ -526,7 +526,7 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
   attitudeErrorIntegral =
     attitudeErrorIntegral
     + attitudeError * (period / 1000.);
-  if (useWheel)
+  if (actuator == WHEEL)
   {
     targetWheelSpeed = constrain(wheelSpeed + actuation, 0, 8000);
     runWheelSetSpeed();
