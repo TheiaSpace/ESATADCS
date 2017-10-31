@@ -259,13 +259,7 @@ void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
 void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = WHEEL_SET_SPEED;
-  word rawTargetWheelSpeed = packet.readWord();
-  targetWheelSpeed = constrain(rawTargetWheelSpeed, 0, 8000);
-  if (targetWheelSpeed == 0)
-  {
-    runCode = WHEEL_SET_DUTY_CYCLE;
-    ESAT_Wheel.writeDutyCycle(128);
-  }
+  targetWheelSpeed = packet.readWord();
 }
 
 void ESAT_ADCSClass::handleWheelControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet)
