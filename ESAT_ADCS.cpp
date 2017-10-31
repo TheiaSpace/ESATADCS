@@ -78,27 +78,6 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   ESAT_CoarseSunSensor.begin();
   ESAT_Tachometer.begin();
   ESAT_Magnetorquer.begin();
-  blinkSequence();
-}
-
-void ESAT_ADCSClass::blinkSequence()
-{
-  const uint32_t sequence = 1147235945;
-  for (int i = 0; i < 32; i++)
-  {
-    const int state = ((sequence>>i) & 1);
-    if (state == 1)
-    {
-      ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
-      ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
-    }
-    else
-    {
-      ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
-      ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
-    }
-    delay(50);
-  }
 }
 
 word ESAT_ADCSClass::getApplicationProcessIdentifier()
