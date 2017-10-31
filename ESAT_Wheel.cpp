@@ -91,7 +91,7 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
                                   POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS);
 }
 
-void ESAT_WheelClass::write(const int rpm)
+void ESAT_WheelClass::writeSpeed(const int rpm)
 {
   writeDutyCycle(DUTY_CYCLE_PER_RPM * constrainSpeed(rpm));
 }

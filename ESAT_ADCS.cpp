@@ -541,11 +541,11 @@ void ESAT_ADCSClass::runWheelSetSpeed()
     + wheelDerivativeGain * wheelSpeedErrorDerivative;
   if (control > 0)
   {
-    ESAT_Wheel.write(control);
+    ESAT_Wheel.writeSpeed(control);
   }
   else
   {
-    ESAT_Wheel.write(0);
+    ESAT_Wheel.writeSpeed(0);
   }
 }
 

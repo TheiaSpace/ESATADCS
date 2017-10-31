@@ -32,7 +32,7 @@ class ESAT_WheelClass
     void begin();
 
     // Set the speed of the wheel.
-    void write(int rpm);
+    void writeSpeed(int rpm);
 
     // Set the duty cycle of the electronic speed controller.
     // The duty cycle is a signed percentage: it should go from -100 %
