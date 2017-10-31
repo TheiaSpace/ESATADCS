@@ -265,22 +265,16 @@ void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
 void ESAT_ADCSClass::handleWheelControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet)
 {
   wheelProportionalGain = packet.readFloat();
-  wheelSpeedErrorIntegral = 0;
-  oldWheelSpeedError = 0;
 }
 
 void ESAT_ADCSClass::handleWheelControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet)
 {
   wheelIntegralGain = packet.readFloat();
-  wheelSpeedErrorIntegral = 0;
-  oldWheelSpeedError = 0;
 }
 
 void ESAT_ADCSClass::handleWheelControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
 {
   wheelDerivativeGain = packet.readFloat();
-  wheelSpeedErrorIntegral = 0;
-  oldWheelSpeedError = 0;
 }
 
 void ESAT_ADCSClass::handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet)
