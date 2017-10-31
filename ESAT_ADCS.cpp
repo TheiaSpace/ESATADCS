@@ -536,8 +536,11 @@ void ESAT_ADCSClass::runWheelSetDutyCycle()
 void ESAT_ADCSClass::runWheelSetSpeed()
 {
   const int wheelSpeedError = targetWheelSpeed - wheelSpeed;
-  wheelSpeedErrorIntegral = wheelSpeedErrorIntegral + wheelSpeedError;
-  const int wheelSpeedErrorDerivative = wheelSpeedError - oldWheelSpeedError;
+  wheelSpeedErrorIntegral =
+    wheelSpeedErrorIntegral
+    + wheelSpeedError * (period / 1000.);
+  const int wheelSpeedErrorDerivative =
+    (wheelSpeedError - oldWheelSpeedError) * (1000. / period);
   oldWheelSpeedError = wheelSpeedError;
   const float control = wheelProportionalGain * wheelSpeedError
     + wheelIntegralGain * wheelSpeedErrorIntegral
