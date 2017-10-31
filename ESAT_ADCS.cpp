@@ -151,6 +151,9 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
     case WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
       handleWheelControllerSetDerivativeGainCommand(packet);
       break;
+    case WHEEL_CONTROLLER_RESET_SPEED_ERROR_INTEGRAL:
+      handleWheelControllerResetSpeedErrorIntegral(packet);
+      break;
     case MAGNETORQUER_ENABLE_COMMAND:
       handleMagnetorquerEnableCommand(packet);
       break;
@@ -275,6 +278,11 @@ void ESAT_ADCSClass::handleWheelControllerSetIntegralGainCommand(ESAT_CCSDSPacke
 void ESAT_ADCSClass::handleWheelControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
 {
   wheelDerivativeGain = packet.readFloat();
+}
+
+void ESAT_ADCSClass::handleWheelControllerResetSpeedErrorIntegral(ESAT_CCSDSPacket& packet)
+{
+  wheelSpeedErrorIntegral = 0;
 }
 
 void ESAT_ADCSClass::handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet)
