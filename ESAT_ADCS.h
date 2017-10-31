@@ -181,9 +181,6 @@ class ESAT_ADCSClass
     unsigned int wheelSpeed;
     float wheelSpeedErrorIntegral;
 
-    // Light blink sequence performed at startup.
-    void blinkSequence();
-
     // Commands.
     void handleFollowMagnetometerCommand(ESAT_CCSDSPacket& packet);
     void handleFollowSunCommand(ESAT_CCSDSPacket& packet);
