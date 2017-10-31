@@ -26,7 +26,7 @@ void ESAT_MagnetometerClass::begin()
   setBypassMode();
 }
 
-int ESAT_MagnetometerClass::getReading()
+word ESAT_MagnetometerClass::getReading()
 {
   Wire.beginTransmission(MAGNETOMETER_ADDRESS);
   Wire.write(READING_REGISTER);
@@ -61,7 +61,7 @@ int ESAT_MagnetometerClass::getReading()
   }
 }
 
-int ESAT_MagnetometerClass::read()
+word ESAT_MagnetometerClass::read()
 {
   setBypassMode();
   startReading();

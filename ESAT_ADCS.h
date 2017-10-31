@@ -159,7 +159,7 @@ class ESAT_ADCSClass
     float attitudeProportionalGain;
     byte demagnetizationIterations;
     boolean enableMagnetorquerDriver;
-    int magneticAngle;
+    word magneticAngle;
     int magnetorquerXPolarity;
     int magnetorquerYPolarity;
     boolean newTelemetryPacket;
@@ -168,7 +168,7 @@ class ESAT_ADCSClass
     word period;
     int rotationalSpeed;
     enum RunCode runCode;
-    int sunAngle;
+    word sunAngle;
     int targetAttitude;
     boolean targetMagnetorquerDirection;
     int targetWheelSpeed;

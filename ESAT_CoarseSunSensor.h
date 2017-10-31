@@ -29,7 +29,7 @@ class ESAT_CoarseSunSensorClass
     void begin();
 
     // Read the attitude provided by the coarse sun sensors.
-    int read();
+    word read();
 
   private:
     // The individual sensors are connected to these pins.

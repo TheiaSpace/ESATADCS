@@ -26,7 +26,7 @@ void ESAT_CoarseSunSensorClass::begin()
   pinMode(PIN_Y_MINUS, INPUT);
 }
 
-int ESAT_CoarseSunSensorClass::read()
+word ESAT_CoarseSunSensorClass::read()
 {
   const int readingXPlus = analogRead(PIN_X_PLUS);
   const int readingXMinus = analogRead(PIN_X_MINUS);

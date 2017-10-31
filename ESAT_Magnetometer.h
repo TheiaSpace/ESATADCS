@@ -37,7 +37,8 @@ class ESAT_MagnetometerClass
     void begin();
 
     // Read the magnetic attitude (in degrees) relative to North.
-    int read();
+    // The attitude goes from 0 degrees to 359 degrees.
+    word read();
 
   private:
     static const byte BYPASS_REGISTER = 55;
@@ -52,7 +53,7 @@ class ESAT_MagnetometerClass
 
     // Get the current reading of the magnetic attitude.
     // Set the error flag on error.
-    int getReading();
+    word getReading();
 
     // Configure the magnetometer in bypass mode.
     // Set the error flag on error.
