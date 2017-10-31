@@ -67,8 +67,8 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   telemetryPacketSequenceCount = 0;
   useGyroscope = true;
   wheelDerivativeGain = 0;
-  wheelIntegralGain = 8.5e-4;
-  wheelProportionalGain = 8.5e-3;
+  wheelIntegralGain = 0.1;
+  wheelProportionalGain = 1.8;
   wheelSpeedErrorIntegral = 0;
   wheelDutyCycle = 0;
   wheelSpeed = 0;
