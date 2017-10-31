@@ -149,7 +149,7 @@ class ESAT_ADCSClass
     float attitudeErrorIntegral;
     float attitudeIntegralGain;
     float attitudeProportionalGain;
-    word demagnetizationIterations;
+    byte demagnetizationIterations;
     boolean enableMagnetorquerDriver;
     int magneticAngle;
     int magnetorquerXPolarity;

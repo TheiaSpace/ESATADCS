@@ -369,7 +369,7 @@ void ESAT_ADCSClass::handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacke
 void ESAT_ADCSClass::handleMagnetorquerDemagnetizeCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_DEMAGNETIZE;
-  demagnetizationIterations = packet.readWord();
+  demagnetizationIterations = packet.readByte();
 }
 
 void ESAT_ADCSClass::handleRestCommand(ESAT_CCSDSPacket& packet)
@@ -658,7 +658,7 @@ void ESAT_ADCSClass::runMagnetorquerApplyMaximumTorque()
 void ESAT_ADCSClass::runMagnetorquerDemagnetize()
 {
   ESAT_Magnetorquer.writeEnable(true);
-  for (long  i = 0; i < demagnetizationIterations; i++)
+  for (int i = 0; i < demagnetizationIterations; i++)
   {
     ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
     ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
