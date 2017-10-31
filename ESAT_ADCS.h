@@ -50,6 +50,13 @@ class ESAT_ADCSClass
     void update();
 
   private:
+    // Actuators used for attitude control.
+    enum Actuator
+    {
+      MAGNETORQUER = 0,
+      WHEEL = 1,
+    };
+
     // Command codes.
     enum CommandCode
     {
@@ -59,7 +66,7 @@ class ESAT_ADCSClass
       ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND = 0x11,
       ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND = 0x12,
       ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND = 0x13,
-      ATTITUDE_CONTROLLER_USE_WHEEL_OR_MAGNETORQUER_COMMAND = 0x14,
+      ATTITUDE_CONTROLLER_SET_ACTUATOR_COMMAND = 0x14,
       ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND = 0x15,
       ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD_COMMAND = 0x16,
       WHEEL_SET_DUTY_CYCLE_COMMAND = 0x20,
@@ -142,6 +149,7 @@ class ESAT_ADCSClass
     // - Magnetometer error (1 byte).
     static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 56;
 
+    Actuator actuator;
     float attitudeDerivativeGain;
     word attitudeErrorDeadband;
     word attitudeErrorDerivativeDeadband;
@@ -166,7 +174,6 @@ class ESAT_ADCSClass
     int targetWheelSpeed;
     word telemetryPacketSequenceCount;
     boolean useGyroscope;
-    boolean useWheel;
     float wheelDerivativeGain;
     float wheelIntegralGain;
     float wheelProportionalGain;
@@ -184,7 +191,7 @@ class ESAT_ADCSClass
     void handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet);
     void handleAttitudeControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet);
     void handleAttitudeControllerUseGyroscopeCommand(ESAT_CCSDSPacket& packet);
-    void handleAttitudeControllerUseWheelOrMagnetorquerCommand(ESAT_CCSDSPacket& packet);
+    void handleAttitudeControllerSetActuatorCommand(ESAT_CCSDSPacket& packet);
     void handleAttitudeControllerSetDeadbandCommand(ESAT_CCSDSPacket& packet);
     void handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_CCSDSPacket& packet);
     void handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet);
