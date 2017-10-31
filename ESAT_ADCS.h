@@ -168,7 +168,7 @@ class ESAT_ADCSClass
     word period;
     int rotationalSpeed;
     enum RunCode runCode;
-    int sunAngle;
+    word sunAngle;
     int targetAttitude;
     boolean targetMagnetorquerDirection;
     int targetWheelSpeed;
