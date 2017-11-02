@@ -38,6 +38,7 @@
 #include "ESAT_Magnetorquer.h"
 #include "ESAT_Tachometer.h"
 #include "ESAT_Wheel.h"
+#include "ESAT_WheelPIDController.h"
 #include "ESAT_Timestamp.h"
 #include "ESAT_OBCClock.h"
 
@@ -62,15 +63,11 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   runCode = REST;
   targetAttitude = 0;
   targetMagnetorquerDirection = false;
-  targetWheelSpeed = 0;
   telemetryPacketSequenceCount = 0;
   useGyroscope = true;
-  wheelDerivativeGain = 0;
-  wheelIntegralGain = 0.3;
-  wheelProportionalGain = 1.5;
-  wheelSpeedErrorIntegral = 0;
   wheelDutyCycle = 0;
   ESAT_Wheel.begin();
+  ESAT_WheelPIDController.begin(periodMilliseconds / 1000.);
   ESAT_Gyroscope.begin(ESAT_Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
   ESAT_Magnetometer.begin();
   ESAT_CoarseSunSensor.begin();
@@ -260,27 +257,27 @@ void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
 void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = WHEEL_SET_SPEED;
-  targetWheelSpeed = packet.readWord();
+  ESAT_WheelPIDController.targetSpeed = packet.readWord();
 }
 
 void ESAT_ADCSClass::handleWheelControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet)
 {
-  wheelProportionalGain = packet.readFloat();
+  ESAT_WheelPIDController.proportionalGain = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleWheelControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet)
 {
-  wheelIntegralGain = packet.readFloat();
+  ESAT_WheelPIDController.integralGain = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleWheelControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
 {
-  wheelDerivativeGain = packet.readFloat();
+  ESAT_WheelPIDController.derivativeGain = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleWheelControllerResetSpeedErrorIntegral(ESAT_CCSDSPacket& packet)
 {
-  wheelSpeedErrorIntegral = 0;
+  ESAT_WheelPIDController.resetErrorIntegral();
 }
 
 void ESAT_ADCSClass::handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet)
@@ -412,9 +409,9 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.writeByte(actuator);
   packet.writeFloat(wheelDutyCycle);
   packet.writeWord(attitudeStateVector.wheelSpeed);
-  packet.writeFloat(wheelProportionalGain);
-  packet.writeFloat(wheelIntegralGain);
-  packet.writeFloat(wheelDerivativeGain);
+  packet.writeFloat(ESAT_WheelPIDController.proportionalGain);
+  packet.writeFloat(ESAT_WheelPIDController.integralGain);
+  packet.writeFloat(ESAT_WheelPIDController.derivativeGain);
   packet.writeByte(enableMagnetorquerDriver);
   packet.writeByte(byte(magnetorquerXPolarity));
   packet.writeByte(byte(magnetorquerYPolarity));
@@ -511,8 +508,9 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
     + attitudeError * (period / 1000.);
   if (actuator == WHEEL)
   {
-    targetWheelSpeed = constrain(attitudeStateVector.wheelSpeed + actuation, 0, 8000);
-    runWheelSetSpeed();
+    ESAT_WheelPIDController.targetSpeed =
+      constrain(attitudeStateVector.wheelSpeed + actuation, 0, 8000);
+    ESAT_WheelPIDController.loop(attitudeStateVector);
   }
   else
   {
@@ -545,24 +543,7 @@ void ESAT_ADCSClass::runWheelSetDutyCycle()
 
 void ESAT_ADCSClass::runWheelSetSpeed()
 {
-  const int wheelSpeedError = targetWheelSpeed - attitudeStateVector.wheelSpeed;
-  wheelSpeedErrorIntegral =
-    wheelSpeedErrorIntegral
-    + wheelSpeedError * (period / 1000.);
-  const int wheelSpeedErrorDerivative =
-    (wheelSpeedError - oldWheelSpeedError) * (1000. / period);
-  oldWheelSpeedError = wheelSpeedError;
-  const float control = wheelProportionalGain * wheelSpeedError
-    + wheelIntegralGain * wheelSpeedErrorIntegral
-    + wheelDerivativeGain * wheelSpeedErrorDerivative;
-  if (control > 0)
-  {
-    ESAT_Wheel.writeSpeed(control);
-  }
-  else
-  {
-    ESAT_Wheel.writeSpeed(0);
-  }
+  ESAT_WheelPIDController.loop(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runMagnetorquerEnable()
