@@ -44,13 +44,13 @@
 void ESAT_ADCSClass::begin(const word periodMilliseconds)
 {
   actuator = MAGNETORQUER;
-  attitudeDerivativeGain = 4e4;
+  attitudeDerivativeGain = 22;
   attitudeErrorDeadband = 1;
   attitudeErrorDerivativeDeadband = 2;
   attitudeErrorDerivativeDetumblingThreshold = 40;
   attitudeErrorIntegral = 0;
-  attitudeIntegralGain = 0.0;
-  attitudeProportionalGain = 1e3;
+  attitudeIntegralGain = 0;
+  attitudeProportionalGain = 5.5;
   demagnetizationIterations = 0;
   enableMagnetorquerDriver = false;
   magnetorquerXPolarity = ESAT_Magnetorquer.POSITIVE;
