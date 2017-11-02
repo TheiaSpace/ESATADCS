@@ -477,9 +477,19 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
   }
   else
   {
-    attitudeErrorDerivative =
-      (attitudeError - oldAttitudeError) * (1000. / period);
+    int attitudeErrorDifference =
+      attitudeError - oldAttitudeError;
+    if (attitudeErrorDifference > 180)
+    {
+      attitudeErrorDifference = attitudeErrorDifference - 360;
+    }
+    if (attitudeErrorDifference < -180)
+    {
+      attitudeErrorDifference = attitudeErrorDifference + 360;
+    }
+    attitudeErrorDerivative = attitudeErrorDifference * (1000. / period);
   }
+  oldAttitudeError = attitudeError;
   float Kp = attitudeProportionalGain;
   float Kd = attitudeDerivativeGain;
   float Ki = attitudeIntegralGain;
