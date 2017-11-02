@@ -20,6 +20,7 @@
 #define ESAT_ADCS_h
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
+#include "ESAT_AttitudeStateVector.h"
 
 // Attitude determination and control subsystem library.
 // Use the global instance ESAT_ADCS.
@@ -160,16 +161,14 @@ class ESAT_ADCSClass
     float attitudeProportionalGain;
     byte demagnetizationIterations;
     boolean enableMagnetorquerDriver;
-    word magneticAngle;
     int magnetorquerXPolarity;
     int magnetorquerYPolarity;
     boolean newTelemetryPacket;
     int oldAttitudeError;
     int oldWheelSpeedError;
     word period;
-    int rotationalSpeed;
     enum RunCode runCode;
-    word sunAngle;
+    ESAT_AttitudeStateVector attitudeStateVector;
     int targetAttitude;
     boolean targetMagnetorquerDirection;
     int targetWheelSpeed;
@@ -179,7 +178,6 @@ class ESAT_ADCSClass
     float wheelIntegralGain;
     float wheelProportionalGain;
     float wheelDutyCycle;
-    unsigned int wheelSpeed;
     float wheelSpeedErrorIntegral;
 
     // Commands.

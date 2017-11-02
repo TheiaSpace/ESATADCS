@@ -60,7 +60,6 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   oldWheelSpeedError = 0;
   period = periodMilliseconds;
   runCode = REST;
-  rotationalSpeed = 0;
   targetAttitude = 0;
   targetMagnetorquerDirection = false;
   targetWheelSpeed = 0;
@@ -71,7 +70,6 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   wheelProportionalGain = 1.5;
   wheelSpeedErrorIntegral = 0;
   wheelDutyCycle = 0;
-  wheelSpeed = 0;
   ESAT_Wheel.begin();
   ESAT_Gyroscope.begin(ESAT_Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
   ESAT_Magnetometer.begin();
@@ -354,15 +352,15 @@ void ESAT_ADCSClass::handleRestCommand(ESAT_CCSDSPacket& packet)
 
 void ESAT_ADCSClass::readSensors()
 {
-  wheelSpeed = ESAT_Tachometer.read();
+  attitudeStateVector.wheelSpeed = ESAT_Tachometer.read();
   ESAT_Magnetorquer.writeEnable(false);
   delay(20);
   ESAT_Gyroscope.error = false;
-  rotationalSpeed = ESAT_Gyroscope.read(3);
+  attitudeStateVector.rotationalSpeed = ESAT_Gyroscope.read(3);
   ESAT_Magnetometer.error = false;
-  magneticAngle = ESAT_Magnetometer.read();
+  attitudeStateVector.magneticAngle = ESAT_Magnetometer.read();
   ESAT_Magnetorquer.writeEnable(enableMagnetorquerDriver);
-  sunAngle = ESAT_CoarseSunSensor.read();
+  attitudeStateVector.sunAngle = ESAT_CoarseSunSensor.read();
 }
 
 boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
@@ -404,16 +402,16 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   // User data.
   packet.writeByte(byte(runCode));
   packet.writeWord(targetAttitude);
-  packet.writeWord(magneticAngle);
-  packet.writeWord(sunAngle);
-  packet.writeWord(rotationalSpeed);
+  packet.writeWord(attitudeStateVector.magneticAngle);
+  packet.writeWord(attitudeStateVector.sunAngle);
+  packet.writeWord(attitudeStateVector.rotationalSpeed);
   packet.writeFloat(attitudeProportionalGain);
   packet.writeFloat(attitudeIntegralGain);
   packet.writeFloat(attitudeDerivativeGain);
   packet.writeBoolean(useGyroscope);
   packet.writeByte(actuator);
   packet.writeFloat(wheelDutyCycle);
-  packet.writeWord(wheelSpeed);
+  packet.writeWord(attitudeStateVector.wheelSpeed);
   packet.writeFloat(wheelProportionalGain);
   packet.writeFloat(wheelIntegralGain);
   packet.writeFloat(wheelDerivativeGain);
@@ -473,7 +471,7 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
   int attitudeErrorDerivative;
   if (useGyroscope)
   {
-    attitudeErrorDerivative = rotationalSpeed;
+    attitudeErrorDerivative = attitudeStateVector.rotationalSpeed;
   }
   else
   {
@@ -506,14 +504,14 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
     Kp = 0;
   }
   float actuation = Kp * attitudeError
-                  + Kd * rotationalSpeed
+                  + Kd * attitudeErrorDerivative
                   + Ki * attitudeErrorIntegral;
   attitudeErrorIntegral =
     attitudeErrorIntegral
     + attitudeError * (period / 1000.);
   if (actuator == WHEEL)
   {
-    targetWheelSpeed = constrain(wheelSpeed + actuation, 0, 8000);
+    targetWheelSpeed = constrain(attitudeStateVector.wheelSpeed + actuation, 0, 8000);
     runWheelSetSpeed();
   }
   else
@@ -532,12 +530,12 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
 
 void ESAT_ADCSClass::runFollowMagnetometer()
 {
-  runAttitudeControlLoop(magneticAngle);
+  runAttitudeControlLoop(attitudeStateVector.magneticAngle);
 }
 
 void ESAT_ADCSClass::runFollowSun()
 {
-  runAttitudeControlLoop(sunAngle);
+  runAttitudeControlLoop(attitudeStateVector.sunAngle);
 }
 
 void ESAT_ADCSClass::runWheelSetDutyCycle()
@@ -547,7 +545,7 @@ void ESAT_ADCSClass::runWheelSetDutyCycle()
 
 void ESAT_ADCSClass::runWheelSetSpeed()
 {
-  const int wheelSpeedError = targetWheelSpeed - wheelSpeed;
+  const int wheelSpeedError = targetWheelSpeed - attitudeStateVector.wheelSpeed;
   wheelSpeedErrorIntegral =
     wheelSpeedErrorIntegral
     + wheelSpeedError * (period / 1000.);
@@ -625,7 +623,8 @@ void ESAT_ADCSClass::runMagnetorquerApplyMaximumTorque()
           targetMagnetorquerDirection,
           !targetMagnetorquerDirection
   };
-  const long quadrant = map(magneticAngle % 360, 0, 360, 0, 4);
+  const long quadrant =
+    map(attitudeStateVector.magneticAngle % 360, 0, 360, 0, 4);
   if (activationsX[quadrant])
   {
     magnetorquerXPolarity = ESAT_Magnetorquer.POSITIVE;
