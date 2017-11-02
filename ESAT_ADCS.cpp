@@ -38,6 +38,7 @@
 #include "ESAT_Magnetorquer.h"
 #include "ESAT_Tachometer.h"
 #include "ESAT_Wheel.h"
+#include "ESAT_WheelDutyCycleController.h"
 #include "ESAT_WheelPIDController.h"
 #include "ESAT_Timestamp.h"
 #include "ESAT_OBCClock.h"
@@ -65,7 +66,6 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   targetMagnetorquerDirection = false;
   telemetryPacketSequenceCount = 0;
   useGyroscope = true;
-  wheelDutyCycle = 0;
   ESAT_Wheel.begin();
   ESAT_WheelPIDController.begin(periodMilliseconds / 1000.);
   ESAT_Gyroscope.begin(ESAT_Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
@@ -251,7 +251,7 @@ void ESAT_ADCSClass::handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_
 void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = WHEEL_SET_DUTY_CYCLE;
-  wheelDutyCycle = packet.readFloat();
+  ESAT_WheelDutyCycleController.dutyCycle = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
@@ -407,7 +407,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.writeFloat(attitudeDerivativeGain);
   packet.writeBoolean(useGyroscope);
   packet.writeByte(actuator);
-  packet.writeFloat(wheelDutyCycle);
+  packet.writeFloat(ESAT_WheelDutyCycleController.dutyCycle);
   packet.writeWord(attitudeStateVector.wheelSpeed);
   packet.writeFloat(ESAT_WheelPIDController.proportionalGain);
   packet.writeFloat(ESAT_WheelPIDController.integralGain);
@@ -538,7 +538,7 @@ void ESAT_ADCSClass::runFollowSun()
 
 void ESAT_ADCSClass::runWheelSetDutyCycle()
 {
-  ESAT_Wheel.writeDutyCycle(wheelDutyCycle);
+  ESAT_WheelDutyCycleController.loop(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runWheelSetSpeed()
