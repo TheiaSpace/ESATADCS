@@ -412,9 +412,9 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.writeFloat(ESAT_WheelPIDController.proportionalGain);
   packet.writeFloat(ESAT_WheelPIDController.integralGain);
   packet.writeFloat(ESAT_WheelPIDController.derivativeGain);
-  packet.writeByte(enableMagnetorquerDriver);
-  packet.writeByte(byte(magnetorquerXPolarity));
-  packet.writeByte(byte(magnetorquerYPolarity));
+  packet.writeByte(ESAT_Magnetorquer.readEnable());
+  packet.writeByte(byte(ESAT_Magnetorquer.readX()));
+  packet.writeByte(byte(ESAT_Magnetorquer.readY()));
   packet.writeBoolean(ESAT_Gyroscope.error);
   packet.writeBoolean(ESAT_Magnetometer.error);
   // End of user data.
