@@ -36,6 +36,7 @@
 #include "ESAT_Gyroscope.h"
 #include "ESAT_Magnetometer.h"
 #include "ESAT_Magnetorquer.h"
+#include "ESAT_MagnetorquerDemagnetizeRunMode.h"
 #include "ESAT_Tachometer.h"
 #include "ESAT_Wheel.h"
 #include "ESAT_WheelDutyCycleController.h"
@@ -339,7 +340,7 @@ void ESAT_ADCSClass::handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacke
 void ESAT_ADCSClass::handleMagnetorquerDemagnetizeCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_DEMAGNETIZE;
-  demagnetizationIterations = packet.readByte();
+  ESAT_MagnetorquerDemagnetizeRunMode.cycles = packet.readByte();
 }
 
 void ESAT_ADCSClass::handleRestCommand(ESAT_CCSDSPacket& packet)
@@ -632,19 +633,7 @@ void ESAT_ADCSClass::runMagnetorquerApplyMaximumTorque()
 
 void ESAT_ADCSClass::runMagnetorquerDemagnetize()
 {
-  ESAT_Magnetorquer.writeEnable(true);
-  for (int i = 0; i < demagnetizationIterations; i++)
-  {
-    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
-    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
-    delay(20);
-    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
-    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
-    delay(20);
-  }
-  ESAT_Magnetorquer.writeEnable(false);
-  enableMagnetorquerDriver = false;
-  runCode = REST;
+  ESAT_MagnetorquerDemagnetizeRunMode.loop(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runRest()
