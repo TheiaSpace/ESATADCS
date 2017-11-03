@@ -321,15 +321,11 @@ void ESAT_ADCSClass::handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacke
   const byte parameter = packet.readByte();
   switch (parameter)
   {
-    case ESAT_MagnetorquerApplyMaximumTorqueRunMode.STOP:
-      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
-        ESAT_MagnetorquerApplyMaximumTorqueRunMode.STOP;
-      break;
-    case ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_CLOCKWISE:
+    case 0:
       ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
         ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_CLOCKWISE;
       break;
-    case ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_COUNTERCLOCKWISE:
+    case 1:
       ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
         ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_COUNTERCLOCKWISE;
       break;
