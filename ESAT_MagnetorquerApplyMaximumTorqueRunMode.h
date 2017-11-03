@@ -31,9 +31,9 @@ class ESAT_MagnetorquerApplyMaximumTorqueRunModeClass: public ESAT_ADCSRunMode
     // Available modes of operation.
     enum Mode
     {
-      STOP = 0,
-      ROTATE_CLOCKWISE = 1,
-      ROTATE_COUNTERCLOCKWISE = 2,
+      ROTATE_CLOCKWISE,
+      ROTATE_COUNTERCLOCKWISE,
+      STOP,
     };
 
     // Current mode of operation.
