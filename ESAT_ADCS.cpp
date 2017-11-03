@@ -36,6 +36,7 @@
 #include "ESAT_Gyroscope.h"
 #include "ESAT_Magnetometer.h"
 #include "ESAT_Magnetorquer.h"
+#include "ESAT_MagnetorquerApplyMaximumTorqueRunMode.h"
 #include "ESAT_MagnetorquerDemagnetizeRunMode.h"
 #include "ESAT_Tachometer.h"
 #include "ESAT_Wheel.h"
@@ -64,7 +65,6 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   period = periodMilliseconds;
   runCode = REST;
   targetAttitude = 0;
-  targetMagnetorquerDirection = false;
   telemetryPacketSequenceCount = 0;
   useGyroscope = true;
   ESAT_Wheel.begin();
@@ -327,13 +327,24 @@ void ESAT_ADCSClass::handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacke
 {
   runCode = MAGNETORQUER_APPLY_MAXIMUM_TORQUE;
   const byte parameter = packet.readByte();
-  if (parameter > 0)
+  switch (parameter)
   {
-    targetMagnetorquerDirection = true;
-  }
-  else
-  {
-    targetMagnetorquerDirection = false;
+    case ESAT_MagnetorquerApplyMaximumTorqueRunMode.STOP:
+      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
+        ESAT_MagnetorquerApplyMaximumTorqueRunMode.STOP;
+      break;
+    case ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_CLOCKWISE:
+      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
+        ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_CLOCKWISE;
+      break;
+    case ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_COUNTERCLOCKWISE:
+      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
+        ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_COUNTERCLOCKWISE;
+      break;
+    default:
+      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
+        ESAT_MagnetorquerApplyMaximumTorqueRunMode.STOP;
+      break;
   }
 }
 
@@ -517,13 +528,21 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
   {
     if (actuation > 0)
     {
-      targetMagnetorquerDirection = false;
+      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
+        ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_COUNTERCLOCKWISE;
+      return;
     }
-    else
+    if (actuation < 0)
     {
-      targetMagnetorquerDirection = true;
+      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
+        ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_CLOCKWISE;
     }
-    runMagnetorquerApplyMaximumTorque();
+    if (actuation == 0)
+    {
+      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
+        ESAT_MagnetorquerApplyMaximumTorqueRunMode.STOP;
+    }
+    ESAT_MagnetorquerApplyMaximumTorqueRunMode.loop(attitudeStateVector);
   }
 }
 
@@ -593,42 +612,7 @@ void ESAT_ADCSClass::runMagnetorquerSetYPolarity()
 
 void ESAT_ADCSClass::runMagnetorquerApplyMaximumTorque()
 {
-  const bool activationsX[4] = {
-          targetMagnetorquerDirection,
-          targetMagnetorquerDirection,
-          !targetMagnetorquerDirection,
-          !targetMagnetorquerDirection
-  };
-  const bool activationsY[4] = {
-          !targetMagnetorquerDirection,
-          targetMagnetorquerDirection,
-          targetMagnetorquerDirection,
-          !targetMagnetorquerDirection
-  };
-  const long quadrant =
-    map(attitudeStateVector.magneticAngle % 360, 0, 360, 0, 4);
-  if (activationsX[quadrant])
-  {
-    magnetorquerXPolarity = ESAT_Magnetorquer.POSITIVE;
-    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
-  }
-  else
-  {
-    magnetorquerXPolarity = ESAT_Magnetorquer.NEGATIVE;
-    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
-  }
-  if (activationsY[quadrant])
-  {
-    magnetorquerYPolarity = ESAT_Magnetorquer.POSITIVE;
-    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
-  }
-  else
-  {
-    magnetorquerYPolarity = ESAT_Magnetorquer.NEGATIVE;
-    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
-  }
-  enableMagnetorquerDriver = true;
-  ESAT_Magnetorquer.writeEnable(enableMagnetorquerDriver);
+  ESAT_MagnetorquerApplyMaximumTorqueRunMode.loop(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runMagnetorquerDemagnetize()
