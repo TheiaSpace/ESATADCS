@@ -81,7 +81,7 @@ class ESAT_ADCSClass
       MAGNETORQUER_SET_Y_POLARITY_COMMAND = 0x42,
       MAGNETORQUER_APPLY_MAXIMUM_TORQUE_COMMAND = 0x43,
       MAGNETORQUER_DEMAGNETIZE_COMMAND = 0x44,
-      REST_COMMAND = 0xFF,
+      STOP_ACTUATORS_COMMAND = 0xFF,
     };
 
     // Telemetry packet identifiers.
@@ -102,7 +102,7 @@ class ESAT_ADCSClass
       MAGNETORQUER_SET_Y_POLARITY = 0x42,
       MAGNETORQUER_APPLY_MAXIMUM_TORQUE = 0x43,
       MAGNETORQUER_DEMAGNETIZE = 0x44,
-      REST = 0xFF,
+      STOP_ACTUATORS = 0xFF,
     };
 
     // Unique identifier of the subsystem.
@@ -201,7 +201,7 @@ class ESAT_ADCSClass
     void handleMagnetorquerSetYPolarityCommand(ESAT_CCSDSPacket& packet);
     void handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacket& packet);
     void handleMagnetorquerDemagnetizeCommand(ESAT_CCSDSPacket& packet);
-    void handleRestCommand(ESAT_CCSDSPacket& packet);
+    void handleStopActuatorsCommand(ESAT_CCSDSPacket& packet);
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();
@@ -239,8 +239,8 @@ class ESAT_ADCSClass
     // Demagnetize the magnetorquers.
     void runMagnetorquerDemagnetize();
 
-    // Rest.
-    void runRest();
+    // Stop actuators.
+    void runStopActuators();
 };
 
 // Global instance of the ADCS library.

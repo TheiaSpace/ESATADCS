@@ -63,7 +63,7 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   oldAttitudeError = 0;
   oldWheelSpeedError = 0;
   period = periodMilliseconds;
-  runCode = REST;
+  runCode = STOP_ACTUATORS;
   targetAttitude = 0;
   telemetryPacketSequenceCount = 0;
   useGyroscope = true;
@@ -165,8 +165,8 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
     case MAGNETORQUER_DEMAGNETIZE_COMMAND:
       handleMagnetorquerDemagnetizeCommand(packet);
       break;
-    case REST_COMMAND:
-      handleRestCommand(packet);
+    case STOP_ACTUATORS_COMMAND:
+      handleStopActuatorsCommand(packet);
     default:
       break;
   }
@@ -342,9 +342,9 @@ void ESAT_ADCSClass::handleMagnetorquerDemagnetizeCommand(ESAT_CCSDSPacket& pack
   ESAT_MagnetorquerDemagnetizeRunMode.cycles = packet.readByte();
 }
 
-void ESAT_ADCSClass::handleRestCommand(ESAT_CCSDSPacket& packet)
+void ESAT_ADCSClass::handleStopActuatorsCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = REST;
+  runCode = STOP_ACTUATORS;
 }
 
 void ESAT_ADCSClass::readSensors()
@@ -450,7 +450,7 @@ void ESAT_ADCSClass::run()
     runMagnetorquerDemagnetize();
     break;
   default:
-    runRest();
+    runStopActuators();
     break;
   }
 }
@@ -579,7 +579,7 @@ void ESAT_ADCSClass::runMagnetorquerDemagnetize()
   ESAT_MagnetorquerDemagnetizeRunMode.loop(attitudeStateVector);
 }
 
-void ESAT_ADCSClass::runRest()
+void ESAT_ADCSClass::runStopActuators()
 {
   ESAT_Magnetorquer.writeEnable(false);
   wheelDutyCycle = 0;
