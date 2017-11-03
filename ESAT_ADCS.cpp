@@ -38,6 +38,7 @@
 #include "ESAT_Magnetorquer.h"
 #include "ESAT_MagnetorquerApplyMaximumTorqueRunMode.h"
 #include "ESAT_MagnetorquerDemagnetizeRunMode.h"
+#include "ESAT_MagnetorquerEnableRunMode.h"
 #include "ESAT_Tachometer.h"
 #include "ESAT_Wheel.h"
 #include "ESAT_WheelDutyCycleController.h"
@@ -56,7 +57,6 @@ void ESAT_ADCSClass::begin(const word periodMilliseconds)
   attitudeIntegralGain = 0;
   attitudeProportionalGain = 5.5;
   demagnetizationIterations = 0;
-  enableMagnetorquerDriver = false;
   magnetorquerXPolarity = ESAT_Magnetorquer.POSITIVE;
   magnetorquerYPolarity = ESAT_Magnetorquer.POSITIVE;
   newTelemetryPacket = false;
@@ -284,15 +284,7 @@ void ESAT_ADCSClass::handleWheelControllerResetSpeedErrorIntegral(ESAT_CCSDSPack
 void ESAT_ADCSClass::handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = MAGNETORQUER_ENABLE;
-  const byte parameter = packet.readByte();
-  if (parameter > 0)
-  {
-    enableMagnetorquerDriver = true;
-  }
-  else
-  {
-    enableMagnetorquerDriver = false;
-  }
+  ESAT_MagnetorquerEnableRunMode.enable = packet.readBoolean();
 }
 
 void ESAT_ADCSClass::handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& packet)
@@ -362,6 +354,7 @@ void ESAT_ADCSClass::handleRestCommand(ESAT_CCSDSPacket& packet)
 void ESAT_ADCSClass::readSensors()
 {
   attitudeStateVector.wheelSpeed = ESAT_Tachometer.read();
+  const boolean enableMagnetorquerDriver = ESAT_Magnetorquer.readEnable();
   ESAT_Magnetorquer.writeEnable(false);
   delay(20);
   ESAT_Gyroscope.error = false;
@@ -568,22 +561,7 @@ void ESAT_ADCSClass::runWheelSetSpeed()
 
 void ESAT_ADCSClass::runMagnetorquerEnable()
 {
-  if (magnetorquerXPolarity > 0)
-  {
-    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
-  }
-  else
-  {
-    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
-  }
-  if (magnetorquerYPolarity > 0)
-  {
-    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
-  }
-  else
-  {
-    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
-  }
+  ESAT_MagnetorquerEnableRunMode.loop(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runMagnetorquerSetXPolarity()
@@ -622,7 +600,6 @@ void ESAT_ADCSClass::runMagnetorquerDemagnetize()
 
 void ESAT_ADCSClass::runRest()
 {
-  enableMagnetorquerDriver = false;
   ESAT_Magnetorquer.writeEnable(false);
   wheelDutyCycle = 0;
   ESAT_Wheel.writeDutyCycle(wheelDutyCycle);
