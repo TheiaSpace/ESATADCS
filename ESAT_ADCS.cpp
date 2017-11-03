@@ -41,6 +41,7 @@
 #include "ESAT_MagnetorquerEnableRunMode.h"
 #include "ESAT_MagnetorquerSetXPolarityRunMode.h"
 #include "ESAT_MagnetorquerSetYPolarityRunMode.h"
+#include "ESAT_StopActuatorsRunMode.h"
 #include "ESAT_Tachometer.h"
 #include "ESAT_Wheel.h"
 #include "ESAT_WheelDutyCycleController.h"
@@ -581,9 +582,7 @@ void ESAT_ADCSClass::runMagnetorquerDemagnetize()
 
 void ESAT_ADCSClass::runStopActuators()
 {
-  ESAT_Magnetorquer.writeEnable(false);
-  wheelDutyCycle = 0;
-  ESAT_Wheel.writeDutyCycle(wheelDutyCycle);
+  ESAT_StopActuatorsRunMode.loop(attitudeStateVector);
 }
 
 boolean ESAT_ADCSClass::telemetryAvailable()
