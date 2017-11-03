@@ -523,7 +523,6 @@ void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
     {
       ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
         ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_CLOCKWISE;
-      return;
     }
     if (actuation < 0)
     {
