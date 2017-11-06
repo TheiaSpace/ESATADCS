@@ -164,6 +164,8 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.writeFloat(ESAT_AttitudePIDController.derivativeGain);
   packet.writeBoolean(ESAT_AttitudePIDController.useGyroscope);
   packet.writeByte(ESAT_AttitudePIDController.actuator);
+  packet.writeWord(ESAT_AttitudePIDController.errorDeadband);
+  packet.writeWord(ESAT_AttitudePIDController.errorDerivativeDeadband);
   packet.writeFloat(ESAT_Wheel.readDutyCycle());
   packet.writeWord(attitudeStateVector.wheelSpeed);
   packet.writeFloat(ESAT_WheelPIDController.proportionalGain);
