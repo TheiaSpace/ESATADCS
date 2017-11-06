@@ -31,6 +31,10 @@ class ESAT_MagnetorquerEnableRunModeClass: public ESAT_ADCSRunMode
     // false otherwise.
     boolean enable;
 
+    // Return the identifier number of the mode.  Each run mode has
+    // its own unique identifier number.
+    byte identifier();
+
     // Perform one iteration of magnetorquer enabling or disabling.
     void loop(ESAT_AttitudeStateVector attitudeStateVector);
 };

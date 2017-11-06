@@ -103,11 +103,11 @@ void ESAT_WheelClass::writeSpeed(const int rpm)
 
 void ESAT_WheelClass::writeDutyCycle(const float newDutyCycle)
 {
-  dutyCycle = newDutyCycle;
+  dutyCycle = constrainDutyCycle(newDutyCycle);
   const word microseconds =
     (MAXIMUM_PULSE_WIDTH + MINIMUM_PULSE_WIDTH) / 2
     + (MAXIMUM_PULSE_WIDTH - MINIMUM_PULSE_WIDTH) / 2
-      * constrainDutyCycle(dutyCycle) / 100;
+      * dutyCycle / 100;
   electronicSpeedController.writeMicroseconds(microseconds);
 }
 

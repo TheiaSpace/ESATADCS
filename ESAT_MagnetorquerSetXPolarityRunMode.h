@@ -31,6 +31,10 @@ class ESAT_MagnetorquerSetXPolarityRunModeClass: public ESAT_ADCSRunMode
     // Desired polarity of the magnetorquer.
     ESAT_MagnetorquerClass::Polarity polarity;
 
+    // Return the identifier number of the mode.  Each run mode has
+    // its own unique identifier number.
+    byte identifier();
+
     // Perform one iteration of setting the polarity of the
     // magnetorquer.
     void loop(ESAT_AttitudeStateVector attitudeStateVector);

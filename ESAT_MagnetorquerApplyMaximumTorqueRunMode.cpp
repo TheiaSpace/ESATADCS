@@ -19,6 +19,11 @@
 #include "ESAT_MagnetorquerApplyMaximumTorqueRunMode.h"
 #include "ESAT_MagnetorquerController.h"
 
+byte ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::identifier()
+{
+  return 0x33;
+}
+
 void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::loop(ESAT_AttitudeStateVector attitudeStateVector)
 {
   switch (mode)

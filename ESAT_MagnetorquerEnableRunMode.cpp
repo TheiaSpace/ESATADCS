@@ -19,6 +19,11 @@
 #include "ESAT_MagnetorquerEnableRunMode.h"
 #include "ESAT_Magnetorquer.h"
 
+byte ESAT_MagnetorquerEnableRunModeClass::identifier()
+{
+  return 0x30;
+}
+
 void ESAT_MagnetorquerEnableRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
 {
   ESAT_Magnetorquer.writeEnable(enable);

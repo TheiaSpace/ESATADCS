@@ -30,6 +30,10 @@ class ESAT_MagnetorquerDemagnetizeRunModeClass: public ESAT_ADCSRunMode
     // Perform this number of demagnetization cycles.
     byte cycles;
 
+    // Return the identifier number of the mode.  Each run mode has
+    // its own unique identifier number.
+    byte identifier();
+
     // Perform one iteration of the demagnetization mode:
     // a number of demagnetization cycles.
     // This resets cycles to zero.

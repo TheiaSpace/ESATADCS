@@ -20,6 +20,11 @@
 #include "ESAT_Magnetorquer.h"
 #include "ESAT_Wheel.h"
 
+byte ESAT_StopActuatorsRunModeClass::identifier()
+{
+  return 0xFF;
+}
+
 void ESAT_StopActuatorsRunModeClass::loop(ESAT_AttitudeStateVector attitudeStateVector)
 {
   ESAT_Magnetorquer.writeEnable(false);

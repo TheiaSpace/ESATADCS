@@ -56,7 +56,6 @@
 void ESAT_ADCSClass::begin(const word period)
 {
   newTelemetryPacket = false;
-  runCode = STOP_ACTUATORS;
   telemetryPacketSequenceCount = 0;
   ESAT_AttitudePIDController.begin(period / 1000.);
   ESAT_Wheel.begin();
@@ -66,6 +65,7 @@ void ESAT_ADCSClass::begin(const word period)
   ESAT_CoarseSunSensor.begin();
   ESAT_Tachometer.begin();
   ESAT_Magnetorquer.begin();
+  setRunMode(ESAT_StopActuatorsRunMode);
 }
 
 word ESAT_ADCSClass::getApplicationProcessIdentifier()
@@ -166,14 +166,14 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 
 void ESAT_ADCSClass::handleFollowMagneticAngleCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = FOLLOW_MAGNETIC_ANGLE;
+  setRunMode(ESAT_FollowMagneticAngleRunMode);
   const word rawTargetAttitude = packet.readWord();
   ESAT_AttitudePIDController.targetAngle = rawTargetAttitude % 360;
 }
 
 void ESAT_ADCSClass::handleFollowSunAngleCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = FOLLOW_SUN_ANGLE;
+  setRunMode(ESAT_FollowSunAngleRunMode);
   const word rawTargetAttitude = packet.readWord();
   ESAT_AttitudePIDController.targetAngle = rawTargetAttitude % 360;
 }
@@ -227,13 +227,13 @@ void ESAT_ADCSClass::handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_
 
 void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = WHEEL_SET_DUTY_CYCLE;
+  setRunMode(ESAT_WheelSetDutyCycleRunMode);
   ESAT_WheelSetDutyCycleRunMode.dutyCycle = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = WHEEL_SET_SPEED;
+  setRunMode(ESAT_WheelSetSpeedRunMode);
   ESAT_WheelSetSpeedRunMode.targetSpeed = packet.readWord();
 }
 
@@ -259,13 +259,13 @@ void ESAT_ADCSClass::handleWheelControllerResetSpeedErrorIntegral(ESAT_CCSDSPack
 
 void ESAT_ADCSClass::handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = MAGNETORQUER_ENABLE;
+  setRunMode(ESAT_MagnetorquerEnableRunMode);
   ESAT_MagnetorquerEnableRunMode.enable = packet.readBoolean();
 }
 
 void ESAT_ADCSClass::handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = MAGNETORQUER_SET_X_POLARITY;
+  setRunMode(ESAT_MagnetorquerSetXPolarityRunMode);
   const byte parameter = packet.readByte();
   if (parameter > 0)
   {
@@ -279,7 +279,7 @@ void ESAT_ADCSClass::handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& pac
 
 void ESAT_ADCSClass::handleMagnetorquerSetYPolarityCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = MAGNETORQUER_SET_Y_POLARITY;
+  setRunMode(ESAT_MagnetorquerSetYPolarityRunMode);
   const byte parameter = packet.readByte();
   if (parameter > 0)
   {
@@ -293,7 +293,7 @@ void ESAT_ADCSClass::handleMagnetorquerSetYPolarityCommand(ESAT_CCSDSPacket& pac
 
 void ESAT_ADCSClass::handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = MAGNETORQUER_APPLY_MAXIMUM_TORQUE;
+  setRunMode(ESAT_MagnetorquerApplyMaximumTorqueRunMode);
   const byte parameter = packet.readByte();
   if (parameter == 0)
   {
@@ -309,13 +309,13 @@ void ESAT_ADCSClass::handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacke
 
 void ESAT_ADCSClass::handleMagnetorquerDemagnetizeCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = MAGNETORQUER_DEMAGNETIZE;
+  setRunMode(ESAT_MagnetorquerDemagnetizeRunMode);
   ESAT_MagnetorquerDemagnetizeRunMode.cycles = packet.readByte();
 }
 
 void ESAT_ADCSClass::handleStopActuatorsCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = STOP_ACTUATORS;
+  setRunMode(ESAT_StopActuatorsRunMode);
 }
 
 void ESAT_ADCSClass::readSensors()
@@ -369,7 +369,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   secondaryHeader.packetIdentifier = HOUSEKEEPING;
   packet.writeSecondaryHeader(secondaryHeader);
   // User data.
-  packet.writeByte(byte(runCode));
+  packet.writeByte(runMode->identifier());
   packet.writeWord(ESAT_AttitudePIDController.targetAngle);
   packet.writeWord(attitudeStateVector.magneticAngle);
   packet.writeWord(attitudeStateVector.sunAngle);
@@ -397,83 +397,12 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
 
 void ESAT_ADCSClass::run()
 {
-  switch (runCode)
-  {
-  case FOLLOW_MAGNETIC_ANGLE:
-    runFollowMagneticAngle();
-    break;
-  case FOLLOW_SUN_ANGLE:
-    runFollowSunAngle();
-    break;
-  case WHEEL_SET_DUTY_CYCLE:
-    runWheelSetDutyCycle();
-    break;
-  case WHEEL_SET_SPEED:
-    runWheelSetSpeed();
-    break;
-  case MAGNETORQUER_ENABLE:
-    runMagnetorquerEnable();
-    break;
-  case MAGNETORQUER_APPLY_MAXIMUM_TORQUE:
-    runMagnetorquerApplyMaximumTorque();
-    break;
-  case MAGNETORQUER_DEMAGNETIZE:
-    runMagnetorquerDemagnetize();
-    break;
-  default:
-    runStopActuators();
-    break;
-  }
+  runMode->loop(attitudeStateVector);
 }
 
-void ESAT_ADCSClass::runFollowMagneticAngle()
+void ESAT_ADCSClass::setRunMode(ESAT_ADCSRunMode& newRunMode)
 {
-  ESAT_FollowMagneticAngleRunMode.loop(attitudeStateVector);
-}
-
-void ESAT_ADCSClass::runFollowSunAngle()
-{
-  ESAT_FollowSunAngleRunMode.loop(attitudeStateVector);
-}
-
-void ESAT_ADCSClass::runWheelSetDutyCycle()
-{
-  ESAT_WheelSetDutyCycleRunMode.loop(attitudeStateVector);
-}
-
-void ESAT_ADCSClass::runWheelSetSpeed()
-{
-  ESAT_WheelSetSpeedRunMode.loop(attitudeStateVector);
-}
-
-void ESAT_ADCSClass::runMagnetorquerEnable()
-{
-  ESAT_MagnetorquerEnableRunMode.loop(attitudeStateVector);
-}
-
-void ESAT_ADCSClass::runMagnetorquerSetXPolarity()
-{
-  ESAT_MagnetorquerSetXPolarityRunMode.loop(attitudeStateVector);
-}
-
-void ESAT_ADCSClass::runMagnetorquerSetYPolarity()
-{
-  ESAT_MagnetorquerSetYPolarityRunMode.loop(attitudeStateVector);
-}
-
-void ESAT_ADCSClass::runMagnetorquerApplyMaximumTorque()
-{
-  ESAT_MagnetorquerApplyMaximumTorqueRunMode.loop(attitudeStateVector);
-}
-
-void ESAT_ADCSClass::runMagnetorquerDemagnetize()
-{
-  ESAT_MagnetorquerDemagnetizeRunMode.loop(attitudeStateVector);
-}
-
-void ESAT_ADCSClass::runStopActuators()
-{
-  ESAT_StopActuatorsRunMode.loop(attitudeStateVector);
+  runMode = &newRunMode;
 }
 
 boolean ESAT_ADCSClass::telemetryAvailable()

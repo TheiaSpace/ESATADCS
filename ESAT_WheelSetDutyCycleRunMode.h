@@ -28,6 +28,10 @@
 class ESAT_WheelSetDutyCycleRunModeClass: public ESAT_ADCSRunMode
 {
   public:
+    // Return the identifier number of the mode.  Each run mode has
+    // its own unique identifier number.
+    byte identifier();
+
     // Target duty cycle of the wheel in percent points from -100 % to +100%.
     float dutyCycle;
 

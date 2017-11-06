@@ -27,6 +27,10 @@
 class ESAT_StopActuatorsRunModeClass: public ESAT_ADCSRunMode
 {
   public:
+    // Return the identifier number of the mode.  Each run mode has
+    // its own unique identifier number.
+    byte identifier();
+
     // Stop the actuators
     void loop(ESAT_AttitudeStateVector attitudeStateVector);
 };

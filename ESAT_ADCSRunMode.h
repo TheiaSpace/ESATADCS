@@ -31,6 +31,10 @@ class ESAT_ADCSRunMode
   public:
     virtual ~ESAT_ADCSRunMode() {};
 
+    // Return the identifier number of the mode.  Each run mode has
+    // its own unique identifier number.
+    virtual byte identifier() = 0;
+
     // Perform one iteration of the ADCS run mode.
     virtual void loop(ESAT_AttitudeStateVector attitudeStateVector) = 0;
 };

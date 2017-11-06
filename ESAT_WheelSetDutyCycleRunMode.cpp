@@ -19,6 +19,11 @@
 #include "ESAT_WheelSetDutyCycleRunMode.h"
 #include "ESAT_Wheel.h"
 
+byte ESAT_WheelSetDutyCycleRunModeClass::identifier()
+{
+  return 0x20;
+}
+
 void ESAT_WheelSetDutyCycleRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
 {
   ESAT_Wheel.writeDutyCycle(dutyCycle);

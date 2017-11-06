@@ -37,6 +37,10 @@ class ESAT_MagnetorquerApplyMaximumTorqueRunModeClass: public ESAT_ADCSRunMode
     // Current mode of operation.
     Mode mode;
 
+    // Return the identifier number of the mode.  Each run mode has
+    // its own unique identifier number.
+    byte identifier();
+
     // Perform one iteration of the maximum magnetic torque mode:
     // apply the maximum possible torque towards the specified direction
     // given the attitude of the satellite.

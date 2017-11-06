@@ -20,6 +20,7 @@
 #define ESAT_ADCS_h
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
+#include "ESAT_ADCSRunMode.h"
 #include "ESAT_AttitudeStateVector.h"
 
 // Attitude determination and control subsystem library.
@@ -44,6 +45,9 @@ class ESAT_ADCSClass
     // Return true if the operation was successful;
     // otherwise return false.
     boolean readTelemetry(ESAT_CCSDSPacket& packet);
+
+    // Set the ADCS run mode.
+    void setRunMode(ESAT_ADCSRunMode& runMode);
 
     // Return true if there is a new telemetry packet available.
     boolean telemetryAvailable();
@@ -81,21 +85,6 @@ class ESAT_ADCSClass
     enum TelemetryPacketIdentifier
     {
       HOUSEKEEPING = 0,
-    };
-
-    // Run codes.
-    enum RunCode
-    {
-      FOLLOW_MAGNETIC_ANGLE = 0x00,
-      FOLLOW_SUN_ANGLE = 0x01,
-      WHEEL_SET_DUTY_CYCLE = 0x20,
-      WHEEL_SET_SPEED = 0x21,
-      MAGNETORQUER_ENABLE = 0x40,
-      MAGNETORQUER_SET_X_POLARITY = 0x41,
-      MAGNETORQUER_SET_Y_POLARITY = 0x42,
-      MAGNETORQUER_APPLY_MAXIMUM_TORQUE = 0x43,
-      MAGNETORQUER_DEMAGNETIZE = 0x44,
-      STOP_ACTUATORS = 0xFF,
     };
 
     // Unique identifier of the subsystem.
@@ -145,7 +134,10 @@ class ESAT_ADCSClass
     static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 56;
 
     boolean newTelemetryPacket;
-    enum RunCode runCode;
+
+    // Current run mode.
+    ESAT_ADCSRunMode* runMode;
+
     ESAT_AttitudeStateVector attitudeStateVector;
     word telemetryPacketSequenceCount;
 
@@ -175,41 +167,8 @@ class ESAT_ADCSClass
     // Read the sensors needed for attitude determination and control.
     void readSensors();
 
-    // Actuate according to the current run code.
+    // Actuate according to the current run mode.
     void run();
-
-    // Attitude control loop.
-    void runAttitudeControlLoop(int currentAttitude);
-
-    // Attitude control relative to the magnetic field.
-    void runFollowMagneticAngle();
-
-    // Attitude control relative to the Sun.
-    void runFollowSunAngle();
-
-    // Set the duty cycle of the wheel.
-    void runWheelSetDutyCycle();
-
-    // Set the rotational speed of the wheel.
-    void runWheelSetSpeed();
-
-    // Enable the magnetorquers.
-    void runMagnetorquerEnable();
-
-    // Set the polarity of the X magnetorquer.
-    void runMagnetorquerSetXPolarity();
-
-    // Set the polarity of the Y magnetorquer.
-    void runMagnetorquerSetYPolarity();
-
-    // Rotate using the magnetorquers.
-    void runMagnetorquerApplyMaximumTorque();
-
-    // Demagnetize the magnetorquers.
-    void runMagnetorquerDemagnetize();
-
-    // Stop actuators.
-    void runStopActuators();
 };
 
 // Global instance of the ADCS library.

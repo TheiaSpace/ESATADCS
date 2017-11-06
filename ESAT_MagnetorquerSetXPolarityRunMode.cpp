@@ -18,6 +18,11 @@
 
 #include "ESAT_MagnetorquerSetXPolarityRunMode.h"
 
+byte ESAT_MagnetorquerSetXPolarityRunModeClass::identifier()
+{
+  return 0x31;
+}
+
 void ESAT_MagnetorquerSetXPolarityRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
 {
   ESAT_Magnetorquer.writeX(polarity);

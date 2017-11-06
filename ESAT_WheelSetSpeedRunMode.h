@@ -27,6 +27,10 @@
 class ESAT_WheelSetSpeedRunModeClass: public ESAT_ADCSRunMode
 {
   public:
+    // Return the identifier number of the mode.  Each run mode has
+    // its own unique identifier number.
+    byte identifier();
+
     // Target wheel speed in revolutions per second.
     word targetSpeed;
 

@@ -19,6 +19,11 @@
 #include "ESAT_MagnetorquerDemagnetizeRunMode.h"
 #include "ESAT_Magnetorquer.h"
 
+byte ESAT_MagnetorquerDemagnetizeRunModeClass::identifier()
+{
+  return 0x34;
+}
+
 void ESAT_MagnetorquerDemagnetizeRunModeClass::loop(ESAT_AttitudeStateVector attitudeStateVector)
 {
   if (cycles == 0)
