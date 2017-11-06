@@ -47,6 +47,10 @@ class ESAT_WheelPIDControllerClass
     // Perform one iteration of the control loop.
     void loop(word targetSpeed, word currentSpeed);
 
+    // Return the latest target speed of the wheel in revolutions per
+    // minute.
+    word readTargetSpeed();
+
     // Reset the error integral.
     void resetErrorIntegral();
 
@@ -73,6 +77,9 @@ class ESAT_WheelPIDControllerClass
     // Time step.
     // Expressed in seconds.
     float period;
+
+    // Target rotational speed of the wheel in revolutions per minute.
+    word targetSpeed;
 };
 
 // Global instance of the wheel PID controller library.

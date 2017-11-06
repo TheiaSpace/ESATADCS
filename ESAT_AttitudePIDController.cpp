@@ -80,7 +80,8 @@ void ESAT_AttitudePIDControllerClass::applyMagnetorquerActuation(const ESAT_Atti
 
 void ESAT_AttitudePIDControllerClass::applyWheelActuation(const ESAT_AttitudeStateVector attitudeStateVector)
 {
-  ESAT_WheelPIDController.loop(attitudeStateVector.wheelSpeed + actuation,
+  ESAT_WheelPIDController.loop(ESAT_WheelPIDController.readTargetSpeed()
+                               + actuation,
                                attitudeStateVector.wheelSpeed);
 }
 

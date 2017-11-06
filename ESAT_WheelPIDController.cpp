@@ -27,11 +27,13 @@ void ESAT_WheelPIDControllerClass::begin(const float periodInSeconds)
   period = periodInSeconds;
   errorIntegral = 0;
   oldError = 0;
+  targetSpeed = 0;
 }
 
-void ESAT_WheelPIDControllerClass::loop(const word targetSpeed,
+void ESAT_WheelPIDControllerClass::loop(const word newTargetSpeed,
                                         const word currentSpeed)
 {
+  targetSpeed = newTargetSpeed;
   const int error = int(targetSpeed) - int(currentSpeed);
   errorIntegral = errorIntegral + error * period;
   const float errorDerivative = (error - oldError) / period;
@@ -48,6 +50,11 @@ void ESAT_WheelPIDControllerClass::loop(const word targetSpeed,
   {
     ESAT_Wheel.writeSpeed(0);
   }
+}
+
+word ESAT_WheelPIDControllerClass::readTargetSpeed()
+{
+  return targetSpeed;
 }
 
 void ESAT_WheelPIDControllerClass::resetErrorIntegral()
