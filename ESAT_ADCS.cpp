@@ -33,6 +33,7 @@
 
 #include "ESAT_ADCS.h"
 #include "ESAT_AttitudePIDController.h"
+#include "ESAT_AttitudeTelecommandHandler.h"
 #include "ESAT_CoarseSunSensor.h"
 #include "ESAT_FollowMagneticAngleRunMode.h"
 #include "ESAT_FollowSunAngleRunMode.h"
@@ -44,14 +45,17 @@
 #include "ESAT_Magnetorquer.h"
 #include "ESAT_MagnetorquerSetXPolarityRunMode.h"
 #include "ESAT_MagnetorquerSetYPolarityRunMode.h"
+#include "ESAT_MagnetorquerTelecommandHandler.h"
 #include "ESAT_OBCClock.h"
 #include "ESAT_StopActuatorsRunMode.h"
+#include "ESAT_StopActuatorsTelecommandHandler.h"
 #include "ESAT_Tachometer.h"
 #include "ESAT_Timestamp.h"
 #include "ESAT_Wheel.h"
 #include "ESAT_WheelPIDController.h"
 #include "ESAT_WheelSetDutyCycleRunMode.h"
 #include "ESAT_WheelSetSpeedRunMode.h"
+#include "ESAT_WheelTelecommandHandler.h"
 
 void ESAT_ADCSClass::begin(const word period)
 {
@@ -66,6 +70,11 @@ void ESAT_ADCSClass::begin(const word period)
   ESAT_Tachometer.begin();
   ESAT_Magnetorquer.begin();
   setRunMode(ESAT_StopActuatorsRunMode);
+  numberOfTelecommandHandlers = 0;
+  registerTelecommandHandler(ESAT_AttitudeTelecommandHandler);
+  registerTelecommandHandler(ESAT_WheelTelecommandHandler);
+  registerTelecommandHandler(ESAT_MagnetorquerTelecommandHandler);
+  registerTelecommandHandler(ESAT_StopActuatorsTelecommandHandler);
 }
 
 word ESAT_ADCSClass::getApplicationProcessIdentifier()
@@ -86,236 +95,18 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  if (primaryHeader.packetDataLength < MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH)
+  if (primaryHeader.packetDataLength < ESAT_CCSDSSecondaryHeader::LENGTH)
   {
     return;
   }
-  const ESAT_CCSDSSecondaryHeader secondaryHeader = packet.readSecondaryHeader();
-  if (secondaryHeader.majorVersionNumber < MAJOR_VERSION_NUMBER)
+  for (int i = 0; i < numberOfTelecommandHandlers; i++)
   {
-    return;
+    const boolean handled = telecommandHandlers[i]->handleTelecommand(packet);
+    if (handled)
+    {
+      return;
+    }
   }
-  switch (secondaryHeader.packetIdentifier)
-  {
-    case FOLLOW_MAGNETIC_ANGLE_COMMAND:
-      handleFollowMagneticAngleCommand(packet);
-      break;
-    case FOLLOW_SUN_ANGLE_COMMAND:
-      handleFollowSunAngleCommand(packet);
-      break;
-    case ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND:
-      handleAttitudeControllerSetProportionalGainCommand(packet);
-      break;
-    case ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND:
-      handleAttitudeControllerSetIntegralGainCommand(packet);
-      break;
-    case ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
-      handleAttitudeControllerSetDerivativeGainCommand(packet);
-      break;
-    case ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND:
-      handleAttitudeControllerUseGyroscopeCommand(packet);
-      break;
-    case ATTITUDE_CONTROLLER_SET_ACTUATOR_COMMAND:
-      handleAttitudeControllerSetActuatorCommand(packet);
-      break;
-    case ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND:
-      handleAttitudeControllerSetDeadbandCommand(packet);
-      break;
-    case ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD_COMMAND:
-      handleAttitudeControllerSetDetumblingThresholdCommand(packet);
-      break;
-    case WHEEL_SET_DUTY_CYCLE_COMMAND:
-      handleWheelSetDutyCycleCommand(packet);
-      break;
-    case WHEEL_SET_SPEED_COMMAND:
-      handleWheelSetSpeedCommand(packet);
-      break;
-    case WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND:
-      handleWheelControllerSetProportionalGainCommand(packet);
-      break;
-    case WHEEL_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND:
-      handleWheelControllerSetIntegralGainCommand(packet);
-      break;
-    case WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND:
-      handleWheelControllerSetDerivativeGainCommand(packet);
-      break;
-    case WHEEL_CONTROLLER_RESET_SPEED_ERROR_INTEGRAL:
-      handleWheelControllerResetSpeedErrorIntegral(packet);
-      break;
-    case MAGNETORQUER_ENABLE_COMMAND:
-      handleMagnetorquerEnableCommand(packet);
-      break;
-    case MAGNETORQUER_SET_X_POLARITY_COMMAND:
-      handleMagnetorquerSetXPolarityCommand(packet);
-      break;
-    case MAGNETORQUER_SET_Y_POLARITY_COMMAND:
-      handleMagnetorquerSetYPolarityCommand(packet);
-      break;
-    case MAGNETORQUER_APPLY_MAXIMUM_TORQUE_COMMAND:
-      handleMagnetorquerApplyMaximumTorqueCommand(packet);
-      break;
-    case MAGNETORQUER_DEMAGNETIZE_COMMAND:
-      handleMagnetorquerDemagnetizeCommand(packet);
-      break;
-    case STOP_ACTUATORS_COMMAND:
-      handleStopActuatorsCommand(packet);
-    default:
-      break;
-  }
-}
-
-void ESAT_ADCSClass::handleFollowMagneticAngleCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_FollowMagneticAngleRunMode);
-  const word rawTargetAttitude = packet.readWord();
-  ESAT_AttitudePIDController.targetAngle = rawTargetAttitude % 360;
-}
-
-void ESAT_ADCSClass::handleFollowSunAngleCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_FollowSunAngleRunMode);
-  const word rawTargetAttitude = packet.readWord();
-  ESAT_AttitudePIDController.targetAngle = rawTargetAttitude % 360;
-}
-
-void ESAT_ADCSClass::handleAttitudeControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet)
-{
-  ESAT_AttitudePIDController.proportionalGain = packet.readFloat();
-}
-
-void ESAT_ADCSClass::handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet)
-{
-  ESAT_AttitudePIDController.integralGain = packet.readFloat();
-}
-
-void ESAT_ADCSClass::handleAttitudeControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
-{
-  ESAT_AttitudePIDController.derivativeGain = packet.readFloat();
-}
-
-void ESAT_ADCSClass::handleAttitudeControllerUseGyroscopeCommand(ESAT_CCSDSPacket& packet)
-{
-  ESAT_AttitudePIDController.useGyroscope = packet.readBoolean();
-}
-
-void ESAT_ADCSClass::handleAttitudeControllerSetActuatorCommand(ESAT_CCSDSPacket& packet)
-{
-  const byte parameter = packet.readByte();
-  if (parameter > 0)
-  {
-    ESAT_AttitudePIDController.actuator =
-      ESAT_AttitudePIDController.WHEEL;
-  }
-  else
-  {
-    ESAT_AttitudePIDController.actuator =
-      ESAT_AttitudePIDController.MAGNETORQUER;
-  }
-}
-
-void ESAT_ADCSClass::handleAttitudeControllerSetDeadbandCommand(ESAT_CCSDSPacket& packet)
-{
-  ESAT_AttitudePIDController.errorDeadband = packet.readWord();
-  ESAT_AttitudePIDController.errorDerivativeDeadband = packet.readWord();
-}
-
-void ESAT_ADCSClass::handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_CCSDSPacket& packet)
-
-{
-  ESAT_AttitudePIDController.detumblingThreshold = packet.readWord();
-}
-
-void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_WheelSetDutyCycleRunMode);
-  ESAT_WheelSetDutyCycleRunMode.dutyCycle = packet.readFloat();
-}
-
-void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_WheelSetSpeedRunMode);
-  ESAT_WheelSetSpeedRunMode.targetSpeed = packet.readWord();
-}
-
-void ESAT_ADCSClass::handleWheelControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet)
-{
-  ESAT_WheelPIDController.proportionalGain = packet.readFloat();
-}
-
-void ESAT_ADCSClass::handleWheelControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet)
-{
-  ESAT_WheelPIDController.integralGain = packet.readFloat();
-}
-
-void ESAT_ADCSClass::handleWheelControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
-{
-  ESAT_WheelPIDController.derivativeGain = packet.readFloat();
-}
-
-void ESAT_ADCSClass::handleWheelControllerResetSpeedErrorIntegral(ESAT_CCSDSPacket& packet)
-{
-  ESAT_WheelPIDController.resetErrorIntegral();
-}
-
-void ESAT_ADCSClass::handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_MagnetorquerEnableRunMode);
-  ESAT_MagnetorquerEnableRunMode.enable = packet.readBoolean();
-}
-
-void ESAT_ADCSClass::handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_MagnetorquerSetXPolarityRunMode);
-  const byte parameter = packet.readByte();
-  if (parameter > 0)
-  {
-    ESAT_MagnetorquerSetXPolarityRunMode.polarity = ESAT_Magnetorquer.POSITIVE;
-  }
-  else
-  {
-    ESAT_MagnetorquerSetXPolarityRunMode.polarity = ESAT_Magnetorquer.NEGATIVE;
-  }
-}
-
-void ESAT_ADCSClass::handleMagnetorquerSetYPolarityCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_MagnetorquerSetYPolarityRunMode);
-  const byte parameter = packet.readByte();
-  if (parameter > 0)
-  {
-    ESAT_MagnetorquerSetYPolarityRunMode.polarity = ESAT_Magnetorquer.POSITIVE;
-  }
-  else
-  {
-    ESAT_MagnetorquerSetYPolarityRunMode.polarity = ESAT_Magnetorquer.NEGATIVE;
-  }
-}
-
-void ESAT_ADCSClass::handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_MagnetorquerApplyMaximumTorqueRunMode);
-  const byte parameter = packet.readByte();
-  if (parameter == 0)
-  {
-    ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
-      ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_CLOCKWISE;
-  }
-  else
-  {
-    ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
-      ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_COUNTERCLOCKWISE;
-  }
-}
-
-void ESAT_ADCSClass::handleMagnetorquerDemagnetizeCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_MagnetorquerDemagnetizeRunMode);
-  ESAT_MagnetorquerDemagnetizeRunMode.cycles = packet.readByte();
-}
-
-void ESAT_ADCSClass::handleStopActuatorsCommand(ESAT_CCSDSPacket& packet)
-{
-  setRunMode(ESAT_StopActuatorsRunMode);
 }
 
 void ESAT_ADCSClass::readSensors()
@@ -393,6 +184,16 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.flush();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   return true;
+}
+
+void ESAT_ADCSClass::registerTelecommandHandler(ESAT_ADCSTelecommandHandler& telecommandHandler)
+{
+  if (numberOfTelecommandHandlers == MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS)
+  {
+    return;
+  }
+  telecommandHandlers[numberOfTelecommandHandlers] = &telecommandHandler;
+  numberOfTelecommandHandlers = numberOfTelecommandHandlers + 1;
 }
 
 void ESAT_ADCSClass::run()
