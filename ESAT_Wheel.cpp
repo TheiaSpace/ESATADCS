@@ -61,6 +61,11 @@ word ESAT_WheelClass::constrainSpeed(const int wheelSpeed)
   return constrain(wheelSpeed, -MAXIMUM_WHEEL_SPEED, MAXIMUM_WHEEL_SPEED);
 }
 
+float ESAT_WheelClass::readDutyCycle()
+{
+  return dutyCycle;
+}
+
 void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
 {
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
@@ -96,8 +101,9 @@ void ESAT_WheelClass::writeSpeed(const int rpm)
   writeDutyCycle(DUTY_CYCLE_PER_RPM * constrainSpeed(rpm));
 }
 
-void ESAT_WheelClass::writeDutyCycle(const float dutyCycle)
+void ESAT_WheelClass::writeDutyCycle(const float newDutyCycle)
 {
+  dutyCycle = newDutyCycle;
   const word microseconds =
     (MAXIMUM_PULSE_WIDTH + MINIMUM_PULSE_WIDTH) / 2
     + (MAXIMUM_PULSE_WIDTH - MINIMUM_PULSE_WIDTH) / 2
