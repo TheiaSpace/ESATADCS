@@ -16,26 +16,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_WheelControlLoop_h
-#define ESAT_WheelControlLoop_h
+#include "ESAT_WheelSetDutyCycleRunMode.h"
+#include "ESAT_Wheel.h"
 
-#include <Arduino.h>
-#include "ESAT_ADCSRunMode.h"
-
-// Wheel duty cycle controller.
-// Just set the duty cycle of the wheel.
-// Use the global instance ESAT_WheelDutyCycleController.
-class ESAT_WheelDutyCycleControllerClass: public ESAT_ADCSRunMode
+void ESAT_WheelSetDutyCycleRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
 {
-  public:
-    // Target duty cycle of the wheel in percent points from -100 % to +100%.
-    float dutyCycle;
+  ESAT_Wheel.writeDutyCycle(dutyCycle);
+}
 
-    // Perform one iteration of the control loop.
-    void loop(ESAT_AttitudeStateVector attitudeStateVector);
-};
-
-// Global instance of the wheel duty cycle controller library.
-extern ESAT_WheelDutyCycleControllerClass ESAT_WheelDutyCycleController;
-
-#endif /* ESAT_WheelDutyCycleController_h */
+ESAT_WheelSetDutyCycleRunModeClass ESAT_WheelSetDutyCycleRunMode;

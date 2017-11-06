@@ -47,8 +47,8 @@
 #include "ESAT_StopActuatorsRunMode.h"
 #include "ESAT_Tachometer.h"
 #include "ESAT_Wheel.h"
-#include "ESAT_WheelDutyCycleController.h"
 #include "ESAT_WheelPIDController.h"
+#include "ESAT_WheelSetDutyCycleRunMode.h"
 #include "ESAT_Timestamp.h"
 #include "ESAT_OBCClock.h"
 
@@ -231,7 +231,7 @@ void ESAT_ADCSClass::handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_
 void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = WHEEL_SET_DUTY_CYCLE;
-  ESAT_WheelDutyCycleController.dutyCycle = packet.readFloat();
+  ESAT_WheelSetDutyCycleRunMode.dutyCycle = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
@@ -446,7 +446,7 @@ void ESAT_ADCSClass::runFollowSun()
 
 void ESAT_ADCSClass::runWheelSetDutyCycle()
 {
-  ESAT_WheelDutyCycleController.loop(attitudeStateVector);
+  ESAT_WheelSetDutyCycleRunMode.loop(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runWheelSetSpeed()
