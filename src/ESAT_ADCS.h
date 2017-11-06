@@ -81,31 +81,6 @@ class ESAT_ADCSClass
     // Maximum number of telecommand handlers.
     static const byte MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS = 16;
 
-    // Size of the housekeeping telemetry packet in bytes:
-    // - Primary header (6 bytes).
-    // - Secondary header (4 bytes).
-    // - Mode of operation (1 byte).
-    // - Target attitude (2 bytes).
-    // - Magnetic angle (2 bytes).
-    // - Sun angle (2 bytes).
-    // - Rotational speed (2 bytes).
-    // - Attitude proportional gain (4 bytes).
-    // - Attitude integral gain (4 bytes).
-    // - Attitude derivative gain (4 bytes).
-    // - Gyroscope usage for attitude error derivative determination (1 byte).
-    // - Wheel or magnetorquer usage for attitude control (1 byte).
-    // - Wheel duty cycle (4 byte).
-    // - Wheel speed (2 bytes).
-    // - Wheel proportional gain (4 bytes).
-    // - Wheel integral gain (4 bytes).
-    // - Wheel derivative gain (4 bytes).
-    // - Magnetorquer driver state (1 byte).
-    // - Magnetorquer X polarity (1 byte).
-    // - Magnetorquer Y polarity (1 byte).
-    // - Gyroscope error (1 byte).
-    // - Magnetometer error (1 byte).
-    static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 56;
-
     // Current attitude state vector.
     ESAT_AttitudeStateVector attitudeStateVector;
 
