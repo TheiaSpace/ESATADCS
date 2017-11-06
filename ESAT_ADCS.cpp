@@ -34,6 +34,7 @@
 #include "ESAT_ADCS.h"
 #include "ESAT_AttitudePIDController.h"
 #include "ESAT_CoarseSunSensor.h"
+#include "ESAT_FollowMagnetometerRunMode.h"
 #include "ESAT_Gyroscope.h"
 #include "ESAT_Magnetometer.h"
 #include "ESAT_Magnetorquer.h"
@@ -434,8 +435,7 @@ void ESAT_ADCSClass::run()
 
 void ESAT_ADCSClass::runFollowMagnetometer()
 {
-  ESAT_AttitudePIDController.loop(attitudeStateVector.magneticAngle,
-                                  attitudeStateVector);
+  ESAT_FollowMagnetometerRunMode.loop(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runFollowSun()
