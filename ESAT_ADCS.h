@@ -51,13 +51,6 @@ class ESAT_ADCSClass
     void update();
 
   private:
-    // Actuators used for attitude control.
-    enum Actuator
-    {
-      MAGNETORQUER = 0,
-      WHEEL = 1,
-    };
-
     // Command codes.
     enum CommandCode
     {
