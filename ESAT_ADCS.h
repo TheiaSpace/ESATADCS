@@ -151,34 +151,10 @@ class ESAT_ADCSClass
     // - Magnetometer error (1 byte).
     static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 56;
 
-    Actuator actuator;
-    float attitudeDerivativeGain;
-    word attitudeErrorDeadband;
-    word attitudeErrorDerivativeDeadband;
-    word attitudeErrorDerivativeDetumblingThreshold;
-    float attitudeErrorIntegral;
-    float attitudeIntegralGain;
-    float attitudeProportionalGain;
-    byte demagnetizationIterations;
-    boolean enableMagnetorquerDriver;
-    int magnetorquerXPolarity;
-    int magnetorquerYPolarity;
     boolean newTelemetryPacket;
-    int oldAttitudeError;
-    int oldWheelSpeedError;
-    word period;
     enum RunCode runCode;
     ESAT_AttitudeStateVector attitudeStateVector;
-    int targetAttitude;
-    boolean targetMagnetorquerDirection;
-    int targetWheelSpeed;
     word telemetryPacketSequenceCount;
-    boolean useGyroscope;
-    float wheelDerivativeGain;
-    float wheelIntegralGain;
-    float wheelProportionalGain;
-    float wheelDutyCycle;
-    float wheelSpeedErrorIntegral;
 
     // Commands.
     void handleFollowMagnetometerCommand(ESAT_CCSDSPacket& packet);

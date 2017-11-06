@@ -53,18 +53,14 @@
 #include "ESAT_Timestamp.h"
 #include "ESAT_OBCClock.h"
 
-void ESAT_ADCSClass::begin(const word periodMilliseconds)
+void ESAT_ADCSClass::begin(const word period)
 {
-  demagnetizationIterations = 0;
   newTelemetryPacket = false;
-  oldWheelSpeedError = 0;
-  period = periodMilliseconds;
   runCode = STOP_ACTUATORS;
   telemetryPacketSequenceCount = 0;
-  useGyroscope = true;
-  ESAT_AttitudePIDController.begin(periodMilliseconds / 1000.);
+  ESAT_AttitudePIDController.begin(period / 1000.);
   ESAT_Wheel.begin();
-  ESAT_WheelPIDController.begin(periodMilliseconds / 1000.);
+  ESAT_WheelPIDController.begin(period / 1000.);
   ESAT_Gyroscope.begin(ESAT_Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
   ESAT_Magnetometer.begin();
   ESAT_CoarseSunSensor.begin();
