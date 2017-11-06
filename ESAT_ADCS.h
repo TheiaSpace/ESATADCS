@@ -108,17 +108,17 @@ class ESAT_ADCSClass
     // - Magnetometer error (1 byte).
     static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 56;
 
-    // True when a new telemetry packet is available; false otherwise.
-    boolean newTelemetryPacket;
-
-    // Current run mode.
-    ESAT_ADCSRunMode* runMode;
-
     // Current attitude state vector.
     ESAT_AttitudeStateVector attitudeStateVector;
 
+    // True when a new telemetry packet is available; false otherwise.
+    boolean newTelemetryPacket;
+
     // Number of registered telecommand handlers.
     byte numberOfTelecommandHandlers;
+
+    // Current run mode.
+    ESAT_ADCSRunMode* runMode;
 
     // List of telecommand handlers.
     ESAT_ADCSTelecommandHandler* telecommandHandlers[MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS];
