@@ -97,7 +97,7 @@ class ESAT_AttitudePIDControllerClass
 
     // Default value of the derivative gain of the PID control
     // algorithm.  Expressed in seconds.
-    static constexpr float DEFAULT_DERIVATIVE_GAIN = 0;
+    static constexpr float DEFAULT_DERIVATIVE_GAIN = 22;
 
     // Default value of the detumbling theshold (expressed in degrees
     // per second): limit control to the derivative correction when
@@ -118,11 +118,11 @@ class ESAT_AttitudePIDControllerClass
 
     // Default value of the integral gain of the PID control
     // algorithm.  Expressed in 1 / second.
-    static constexpr float DEFAULT_INTEGRAL_GAIN = 0.3;
+    static constexpr float DEFAULT_INTEGRAL_GAIN = 0;
 
     // Default value of the proportional gain of the PID control
     // algorithm.  Dimensionless.
-    static constexpr float DEFAULT_PROPORTIONAL_GAIN = 1.5;
+    static constexpr float DEFAULT_PROPORTIONAL_GAIN = 5.5;
 
     // Default value of the useGyroscope property.
     static const boolean DEFAULT_USE_GYROSCOPE_VALUE = true;
