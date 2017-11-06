@@ -59,6 +59,10 @@ class ESAT_ADCSClass
     // Return true if there is a new telemetry packet available.
     boolean telemetryAvailable();
 
+    // Update the ADCS:
+    // * Read the sensors.
+    // * Perform one iteration.
+    // * Make available a new telemetry packet.
     void update();
 
   private:
@@ -104,11 +108,13 @@ class ESAT_ADCSClass
     // - Magnetometer error (1 byte).
     static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 56;
 
+    // True when a new telemetry packet is available; false otherwise.
     boolean newTelemetryPacket;
 
     // Current run mode.
     ESAT_ADCSRunMode* runMode;
 
+    // Current attitude state vector.
     ESAT_AttitudeStateVector attitudeStateVector;
 
     // Number of registered telecommand handlers.
@@ -117,6 +123,7 @@ class ESAT_ADCSClass
     // List of telecommand handlers.
     ESAT_ADCSTelecommandHandler* telecommandHandlers[MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS];
 
+    // Counter of generated telemetry packets.
     word telemetryPacketSequenceCount;
 
     // Read the sensors needed for attitude determination and control.
