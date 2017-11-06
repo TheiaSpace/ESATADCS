@@ -16,13 +16,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_FollowMagnetometerRunMode.h"
-#include "ESAT_AttitudePIDController.h"
+#ifndef ESAT_FollowMagneticAngleRunMode_h
+#define ESAT_FollowMagneticAngleRunMode_h
 
-void ESAT_FollowMagnetometerRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
+#include <Arduino.h>
+#include "ESAT_ADCSRunMode.h"
+
+// Run mode for controlling the attitude to follow a magnetic angle.
+// Use the public instance ESAT_FollowMagneticAngleRunMode.
+class ESAT_FollowMagneticAngleRunModeClass: public ESAT_ADCSRunMode
 {
-  ESAT_AttitudePIDController.loop(attitudeStateVector.magneticAngle,
-                                  attitudeStateVector);
-}
+  public:
+    // Keep a magnetic angle.
+    void loop(ESAT_AttitudeStateVector attitudeStateVector);
+};
 
-ESAT_FollowMagnetometerRunModeClass ESAT_FollowMagnetometerRunMode;
+// Global instance of the library of the run mode for controlling the
+// magnetic attitude.
+extern ESAT_FollowMagneticAngleRunModeClass ESAT_FollowMagneticAngleRunMode;
+
+#endif /* ESAT_FollowMagneticAngleRunMode_h */

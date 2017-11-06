@@ -61,7 +61,7 @@ class ESAT_ADCSClass
     // Command codes.
     enum CommandCode
     {
-      FOLLOW_MAGNETOMETER_COMMAND = 0x00,
+      FOLLOW_MAGNETIC_ANGLE_COMMAND = 0x00,
       FOLLOW_SUN_COMMAND = 0x01,
       ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND = 0x10,
       ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND = 0x11,
@@ -93,7 +93,7 @@ class ESAT_ADCSClass
     // Run codes.
     enum RunCode
     {
-      FOLLOW_MAGNETOMETER = 0x00,
+      FOLLOW_MAGNETIC_ANGLE = 0x00,
       FOLLOW_SUN = 0x01,
       WHEEL_SET_DUTY_CYCLE = 0x20,
       WHEEL_SET_SPEED = 0x21,
@@ -157,7 +157,7 @@ class ESAT_ADCSClass
     word telemetryPacketSequenceCount;
 
     // Commands.
-    void handleFollowMagnetometerCommand(ESAT_CCSDSPacket& packet);
+    void handleFollowMagneticAngleCommand(ESAT_CCSDSPacket& packet);
     void handleFollowSunCommand(ESAT_CCSDSPacket& packet);
     void handleAttitudeControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet);
     void handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet);
@@ -189,7 +189,7 @@ class ESAT_ADCSClass
     void runAttitudeControlLoop(int currentAttitude);
 
     // Attitude control relative to the magnetic field.
-    void runFollowMagnetometer();
+    void runFollowMagneticAngle();
 
     // Attitude control relative to the Sun.
     void runFollowSun();

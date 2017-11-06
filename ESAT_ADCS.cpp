@@ -34,7 +34,7 @@
 #include "ESAT_ADCS.h"
 #include "ESAT_AttitudePIDController.h"
 #include "ESAT_CoarseSunSensor.h"
-#include "ESAT_FollowMagnetometerRunMode.h"
+#include "ESAT_FollowMagneticAngleRunMode.h"
 #include "ESAT_FollowSunRunMode.h"
 #include "ESAT_Gyroscope.h"
 #include "ESAT_Magnetometer.h"
@@ -97,8 +97,8 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   }
   switch (secondaryHeader.packetIdentifier)
   {
-    case FOLLOW_MAGNETOMETER_COMMAND:
-      handleFollowMagnetometerCommand(packet);
+    case FOLLOW_MAGNETIC_ANGLE_COMMAND:
+      handleFollowMagneticAngleCommand(packet);
       break;
     case FOLLOW_SUN_COMMAND:
       handleFollowSunCommand(packet);
@@ -164,9 +164,9 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   }
 }
 
-void ESAT_ADCSClass::handleFollowMagnetometerCommand(ESAT_CCSDSPacket& packet)
+void ESAT_ADCSClass::handleFollowMagneticAngleCommand(ESAT_CCSDSPacket& packet)
 {
-  runCode = FOLLOW_MAGNETOMETER;
+  runCode = FOLLOW_MAGNETIC_ANGLE;
   const word rawTargetAttitude = packet.readWord();
   ESAT_AttitudePIDController.targetAngle = rawTargetAttitude % 360;
 }
@@ -399,8 +399,8 @@ void ESAT_ADCSClass::run()
 {
   switch (runCode)
   {
-  case FOLLOW_MAGNETOMETER:
-    runFollowMagnetometer();
+  case FOLLOW_MAGNETIC_ANGLE:
+    runFollowMagneticAngle();
     break;
   case FOLLOW_SUN:
     runFollowSun();
@@ -426,9 +426,9 @@ void ESAT_ADCSClass::run()
   }
 }
 
-void ESAT_ADCSClass::runFollowMagnetometer()
+void ESAT_ADCSClass::runFollowMagneticAngle()
 {
-  ESAT_FollowMagnetometerRunMode.loop(attitudeStateVector);
+  ESAT_FollowMagneticAngleRunMode.loop(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runFollowSun()
