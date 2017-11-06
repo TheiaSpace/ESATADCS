@@ -120,7 +120,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
     return false;
   }
   newTelemetryPacket = false;
-  if (packet.capacity() < HOUSEKEEPING_TELEMETRY_PACKET_LENGTH)
+  if (packet.capacity() < ESAT_CCSDSSecondaryHeader::LENGTH)
   {
     return false;
   }
