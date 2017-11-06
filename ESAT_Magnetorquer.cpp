@@ -22,6 +22,8 @@ void ESAT_MagnetorquerClass::begin()
 {
   configurePins();
   writeEnable(false);
+  writeX(NEGATIVE);
+  writeY(NEGATIVE);
 }
 
 void ESAT_MagnetorquerClass::configurePins()
@@ -32,8 +34,24 @@ void ESAT_MagnetorquerClass::configurePins()
   pinMode(PIN_Y_POLARITY, OUTPUT);
 }
 
-void ESAT_MagnetorquerClass::writeEnable(boolean enable)
+boolean ESAT_MagnetorquerClass::readEnable() const
 {
+  return enable;
+}
+
+ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerClass::readX() const
+{
+  return xPolarity;
+}
+
+ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerClass::readY() const
+{
+  return yPolarity;
+}
+
+void ESAT_MagnetorquerClass::writeEnable(const boolean enableDriver)
+{
+  enable = enableDriver;
   if (enable)
   {
     digitalWrite(PIN_ENABLE_X, HIGH);
@@ -46,8 +64,9 @@ void ESAT_MagnetorquerClass::writeEnable(boolean enable)
   }
 }
 
-void ESAT_MagnetorquerClass::writeX(ESAT_MagnetorquerClass::Polarity polarity)
+void ESAT_MagnetorquerClass::writeX(const ESAT_MagnetorquerClass::Polarity polarity)
 {
+  xPolarity = polarity;
   if (polarity == NEGATIVE)
   {
     digitalWrite(PIN_X_POLARITY, LOW);
@@ -58,8 +77,9 @@ void ESAT_MagnetorquerClass::writeX(ESAT_MagnetorquerClass::Polarity polarity)
   }
 }
 
-void ESAT_MagnetorquerClass::writeY(ESAT_MagnetorquerClass::Polarity polarity)
+void ESAT_MagnetorquerClass::writeY(const ESAT_MagnetorquerClass::Polarity polarity)
 {
+  yPolarity = polarity;
   if (polarity == NEGATIVE)
   {
     digitalWrite(PIN_Y_POLARITY, LOW);

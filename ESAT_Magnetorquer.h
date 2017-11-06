@@ -35,6 +35,16 @@ class ESAT_MagnetorquerClass
     // Set up the magnetorquers.
     void begin();
 
+    // Return true if the magnetorquer driver is powered up; otherwise
+    // return false.
+    boolean readEnable() const;
+
+    // Return the polarity of the X-axis magnetorquer.
+    Polarity readX() const;
+
+    // Return the polarity of the Y-axis magnetorquer.
+    Polarity readY() const;
+
     // Power up or down the magnetorquer driver.
     void writeEnable(boolean enable);
 
@@ -56,6 +66,15 @@ class ESAT_MagnetorquerClass
 
     // This pin activates the Y magnetorquer.
     static const int PIN_Y_POLARITY = MTQY;
+
+    // True if the magnetorquer driver is powered up; false otherwise.
+    boolean enable;
+
+    // Polarity of the X-axis magnetorquer.
+    Polarity xPolarity;
+
+    // Polarity of the Y-axis magnetorquer.
+    Polarity yPolarity;
 
     // Configure the control pins.
     void configurePins();

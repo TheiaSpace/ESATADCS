@@ -31,6 +31,12 @@ class ESAT_WheelClass
     // Set up the wheel controller.
     void begin();
 
+    // Return the duty cycle of the electronic speed controller.
+    // The duty cycle is a signed percentage: it should go from -100 %
+    // to 0 % for negative speed and from 0 % to 100 % for positive
+    // speed.
+    float readDutyCycle();
+
     // Set the speed of the wheel.
     void writeSpeed(int rpm);
 
@@ -67,6 +73,12 @@ class ESAT_WheelClass
     static const byte POWER_LINE_MILLISECONDS_AFTER_WRITES = 1;
     static const byte POWER_LINE_ATTEMPTS = 10;
     static const byte POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS = 10;
+
+    // Duty cycle of the electronic speed controller.
+    // The duty cycle is a signed percentage: it should go from -100 %
+    // to 0 % for negative speed and from 0 % to 100 % for positive
+    // speed.
+    float dutyCycle;
 
     // Servo object for commanding the electronic speed controller.
     Servo electronicSpeedController;

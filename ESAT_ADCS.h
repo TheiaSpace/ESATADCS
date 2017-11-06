@@ -20,6 +20,9 @@
 #define ESAT_ADCS_h
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
+#include "ESAT_ADCSRunMode.h"
+#include "ESAT_ADCSTelecommandHandler.h"
+#include "ESAT_AttitudeStateVector.h"
 
 // Attitude determination and control subsystem library.
 // Use the global instance ESAT_ADCS.
@@ -44,64 +47,25 @@ class ESAT_ADCSClass
     // otherwise return false.
     boolean readTelemetry(ESAT_CCSDSPacket& packet);
 
+    // Register a telecommand handler.
+    // On telecommand reception, ESAT_ADCS.handleTelecommand()
+    // iterates over the telecommand handlers until it finds one that
+    // manages the received telecommand.
+    void registerTelecommandHandler(ESAT_ADCSTelecommandHandler& telecommandHandler);
+
+    // Set the ADCS run mode.
+    void setRunMode(ESAT_ADCSRunMode& runMode);
+
     // Return true if there is a new telemetry packet available.
     boolean telemetryAvailable();
 
     void update();
 
   private:
-    // Actuators used for attitude control.
-    enum Actuator
-    {
-      MAGNETORQUER = 0,
-      WHEEL = 1,
-    };
-
-    // Command codes.
-    enum CommandCode
-    {
-      FOLLOW_MAGNETOMETER_COMMAND = 0x00,
-      FOLLOW_SUN_COMMAND = 0x01,
-      ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND = 0x10,
-      ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND = 0x11,
-      ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND = 0x12,
-      ATTITUDE_CONTROLLER_USE_GYROSCOPE_COMMAND = 0x13,
-      ATTITUDE_CONTROLLER_SET_ACTUATOR_COMMAND = 0x14,
-      ATTITUDE_CONTROLLER_SET_DEADBAND_COMMAND = 0x15,
-      ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD_COMMAND = 0x16,
-      WHEEL_SET_DUTY_CYCLE_COMMAND = 0x20,
-      WHEEL_SET_SPEED_COMMAND = 0x21,
-      WHEEL_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND = 0x30,
-      WHEEL_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND = 0x31,
-      WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND = 0x32,
-      WHEEL_CONTROLLER_RESET_SPEED_ERROR_INTEGRAL = 0x33,
-      MAGNETORQUER_ENABLE_COMMAND = 0x40,
-      MAGNETORQUER_SET_X_POLARITY_COMMAND = 0x41,
-      MAGNETORQUER_SET_Y_POLARITY_COMMAND = 0x42,
-      MAGNETORQUER_APPLY_MAXIMUM_TORQUE_COMMAND = 0x43,
-      MAGNETORQUER_DEMAGNETIZE_COMMAND = 0x44,
-      REST_COMMAND = 0xFF,
-    };
-
     // Telemetry packet identifiers.
     enum TelemetryPacketIdentifier
     {
       HOUSEKEEPING = 0,
-    };
-
-    // Run codes.
-    enum RunCode
-    {
-      FOLLOW_MAGNETOMETER = 0x00,
-      FOLLOW_SUN = 0x01,
-      WHEEL_SET_DUTY_CYCLE = 0x20,
-      WHEEL_SET_SPEED = 0x21,
-      MAGNETORQUER_ENABLE = 0x40,
-      MAGNETORQUER_SET_X_POLARITY = 0x41,
-      MAGNETORQUER_SET_Y_POLARITY = 0x42,
-      MAGNETORQUER_APPLY_MAXIMUM_TORQUE = 0x43,
-      MAGNETORQUER_DEMAGNETIZE = 0x44,
-      REST = 0xFF,
     };
 
     // Unique identifier of the subsystem.
@@ -112,18 +76,8 @@ class ESAT_ADCSClass
     static const byte MINOR_VERSION_NUMBER = 0;
     static const byte PATCH_VERSION_NUMBER = 0;
 
-    // Minimum command payload data length in bytes:
-    // - Year (2 byte).
-    // - Month (1 byte).
-    // - Day (1 byte).
-    // - Hours (1 byte).
-    // - Minutes (1 byte).
-    // - Seconds (1 byte).
-    // - Major version number (1 byte).
-    // - Minor version number (1 byte).
-    // - Patch version number (1 byte).
-    // - Command code (1 byte).
-    static const byte MINIMUM_COMMAND_PAYLOAD_DATA_LENGTH = 11;
+    // Maximum number of telecommand handlers.
+    static const byte MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS = 16;
 
     // Size of the housekeeping telemetry packet in bytes:
     // - Primary header (6 bytes).
@@ -150,99 +104,26 @@ class ESAT_ADCSClass
     // - Magnetometer error (1 byte).
     static const byte HOUSEKEEPING_TELEMETRY_PACKET_LENGTH = 56;
 
-    Actuator actuator;
-    float attitudeDerivativeGain;
-    word attitudeErrorDeadband;
-    word attitudeErrorDerivativeDeadband;
-    word attitudeErrorDerivativeDetumblingThreshold;
-    float attitudeErrorIntegral;
-    float attitudeIntegralGain;
-    float attitudeProportionalGain;
-    byte demagnetizationIterations;
-    boolean enableMagnetorquerDriver;
-    word magneticAngle;
-    int magnetorquerXPolarity;
-    int magnetorquerYPolarity;
     boolean newTelemetryPacket;
-    int oldAttitudeError;
-    int oldWheelSpeedError;
-    word period;
-    int rotationalSpeed;
-    enum RunCode runCode;
-    word sunAngle;
-    int targetAttitude;
-    boolean targetMagnetorquerDirection;
-    int targetWheelSpeed;
-    word telemetryPacketSequenceCount;
-    boolean useGyroscope;
-    float wheelDerivativeGain;
-    float wheelIntegralGain;
-    float wheelProportionalGain;
-    float wheelDutyCycle;
-    unsigned int wheelSpeed;
-    float wheelSpeedErrorIntegral;
 
-    // Commands.
-    void handleFollowMagnetometerCommand(ESAT_CCSDSPacket& packet);
-    void handleFollowSunCommand(ESAT_CCSDSPacket& packet);
-    void handleAttitudeControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet);
-    void handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet);
-    void handleAttitudeControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet);
-    void handleAttitudeControllerUseGyroscopeCommand(ESAT_CCSDSPacket& packet);
-    void handleAttitudeControllerSetActuatorCommand(ESAT_CCSDSPacket& packet);
-    void handleAttitudeControllerSetDeadbandCommand(ESAT_CCSDSPacket& packet);
-    void handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_CCSDSPacket& packet);
-    void handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet);
-    void handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet);
-    void handleWheelControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet);
-    void handleWheelControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet);
-    void handleWheelControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet);
-    void handleWheelControllerResetSpeedErrorIntegral(ESAT_CCSDSPacket& packet);
-    void handleMagnetorquerEnableCommand(ESAT_CCSDSPacket& packet);
-    void handleMagnetorquerSetXPolarityCommand(ESAT_CCSDSPacket& packet);
-    void handleMagnetorquerSetYPolarityCommand(ESAT_CCSDSPacket& packet);
-    void handleMagnetorquerApplyMaximumTorqueCommand(ESAT_CCSDSPacket& packet);
-    void handleMagnetorquerDemagnetizeCommand(ESAT_CCSDSPacket& packet);
-    void handleRestCommand(ESAT_CCSDSPacket& packet);
+    // Current run mode.
+    ESAT_ADCSRunMode* runMode;
+
+    ESAT_AttitudeStateVector attitudeStateVector;
+
+    // Number of registered telecommand handlers.
+    byte numberOfTelecommandHandlers;
+
+    // List of telecommand handlers.
+    ESAT_ADCSTelecommandHandler* telecommandHandlers[MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS];
+
+    word telemetryPacketSequenceCount;
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();
 
-    // Actuate according to the current run code.
+    // Actuate according to the current run mode.
     void run();
-
-    // Attitude control loop.
-    void runAttitudeControlLoop(int currentAttitude);
-
-    // Attitude control relative to the magnetic field.
-    void runFollowMagnetometer();
-
-    // Attitude control relative to the Sun.
-    void runFollowSun();
-
-    // Set the duty cycle of the wheel.
-    void runWheelSetDutyCycle();
-
-    // Set the rotational speed of the wheel.
-    void runWheelSetSpeed();
-
-    // Enable the magnetorquers.
-    void runMagnetorquerEnable();
-
-    // Set the polarity of the X magnetorquer.
-    void runMagnetorquerSetXPolarity();
-
-    // Set the polarity of the Y magnetorquer.
-    void runMagnetorquerSetYPolarity();
-
-    // Rotate using the magnetorquers.
-    void runMagnetorquerApplyMaximumTorque();
-
-    // Demagnetize the magnetorquers.
-    void runMagnetorquerDemagnetize();
-
-    // Rest.
-    void runRest();
 };
 
 // Global instance of the ADCS library.
