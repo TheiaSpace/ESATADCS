@@ -18,6 +18,7 @@
 
 #ifndef ESAT_ADCS_h
 #define ESAT_ADCS_h
+
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
 #include "ESAT_ADCSRunMode.h"
