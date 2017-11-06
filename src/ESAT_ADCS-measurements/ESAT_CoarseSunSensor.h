@@ -28,10 +28,31 @@ class ESAT_CoarseSunSensorClass
     // Set up the coarse sun sensor.
     void begin();
 
-    // Read the attitude provided by the coarse sun sensors.
-    word read();
+    // Read the attitude provided by the coarse sun sensors:
+    // the angle of the Sun direction measured counterclockwise from
+    // the satellite's +X axis, from 0 degrees to 359 degrees.
+    word readSunAngle();
+
+    // Return the raw reading of the -X sun sensor as a percentage
+    // from 0 % (dark) to 100 % (saturated).
+    float readXMinus();
+
+    // Return the raw reading of the +X sun sensor as a percentage
+    // from 0 % (dark) to 100 % (saturated).
+    float readXPlus();
+
+    // Return the raw reading of the -Y sun sensor as a percentage
+    // from 0 % (dark) to 100 % (saturated).
+    float readYMinus();
+
+    // Return the raw reading of the +Y sun sensor as a percentage
+    // from 0 % (dark) to 100 % (saturated).
+    float readYPlus();
 
   private:
+    // Range of measurement of the analog converter.
+    static const word MEASUREMENT_RANGE = 4095;
+
     // The individual sensors are connected to these pins.
     static const int PIN_X_PLUS = CSSXPLUS;
     static const int PIN_X_MINUS = CSSXMINUS;

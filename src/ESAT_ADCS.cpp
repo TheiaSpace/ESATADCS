@@ -110,7 +110,7 @@ void ESAT_ADCSClass::readSensors()
   ESAT_Magnetometer.error = false;
   attitudeStateVector.magneticAngle = ESAT_Magnetometer.read();
   ESAT_Magnetorquer.writeEnable(enableMagnetorquerDriver);
-  attitudeStateVector.sunAngle = ESAT_CoarseSunSensor.read();
+  attitudeStateVector.sunAngle = ESAT_CoarseSunSensor.readSunAngle();
 }
 
 boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
@@ -154,6 +154,10 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.writeWord(ESAT_AttitudePIDController.targetAngle);
   packet.writeWord(attitudeStateVector.magneticAngle);
   packet.writeWord(attitudeStateVector.sunAngle);
+  packet.writeFloat(ESAT_CoarseSunSensor.readXPlus());
+  packet.writeFloat(ESAT_CoarseSunSensor.readYPlus());
+  packet.writeFloat(ESAT_CoarseSunSensor.readXMinus());
+  packet.writeFloat(ESAT_CoarseSunSensor.readYMinus());
   packet.writeWord(attitudeStateVector.rotationalSpeed);
   packet.writeFloat(ESAT_AttitudePIDController.proportionalGain);
   packet.writeFloat(ESAT_AttitudePIDController.integralGain);

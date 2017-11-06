@@ -26,7 +26,7 @@ void ESAT_CoarseSunSensorClass::begin()
   pinMode(PIN_Y_MINUS, INPUT);
 }
 
-word ESAT_CoarseSunSensorClass::read()
+word ESAT_CoarseSunSensorClass::readSunAngle()
 {
   const int readingXPlus = analogRead(PIN_X_PLUS);
   const int readingXMinus = analogRead(PIN_X_MINUS);
@@ -43,6 +43,26 @@ word ESAT_CoarseSunSensorClass::read()
   {
     return reading;
   }
+}
+
+float ESAT_CoarseSunSensorClass::readXMinus()
+{
+  return analogRead(PIN_X_MINUS) * (100. / MEASUREMENT_RANGE);
+}
+
+float ESAT_CoarseSunSensorClass::readXPlus()
+{
+  return analogRead(PIN_X_PLUS) * (100. / MEASUREMENT_RANGE);
+}
+
+float ESAT_CoarseSunSensorClass::readYMinus()
+{
+  return analogRead(PIN_Y_MINUS) * (100. / MEASUREMENT_RANGE);
+}
+
+float ESAT_CoarseSunSensorClass::readYPlus()
+{
+  return analogRead(PIN_Y_PLUS) * (100. / MEASUREMENT_RANGE);
 }
 
 ESAT_CoarseSunSensorClass ESAT_CoarseSunSensor;
