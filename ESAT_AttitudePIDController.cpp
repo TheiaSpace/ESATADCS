@@ -94,7 +94,6 @@ void ESAT_AttitudePIDControllerClass::begin(const float periodInSeconds)
   integralGain = DEFAULT_INTEGRAL_GAIN;
   proportionalGain = DEFAULT_PROPORTIONAL_GAIN;
   useGyroscope = DEFAULT_USE_GYROSCOPE_VALUE;
-  period = periodInSeconds;
   errorIntegral = 0;
   oldError = 0;
   period = periodInSeconds;
