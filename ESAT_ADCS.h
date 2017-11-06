@@ -62,7 +62,7 @@ class ESAT_ADCSClass
     enum CommandCode
     {
       FOLLOW_MAGNETIC_ANGLE_COMMAND = 0x00,
-      FOLLOW_SUN_COMMAND = 0x01,
+      FOLLOW_SUN_ANGLE_COMMAND = 0x01,
       ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN_COMMAND = 0x10,
       ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN_COMMAND = 0x11,
       ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN_COMMAND = 0x12,
@@ -94,7 +94,7 @@ class ESAT_ADCSClass
     enum RunCode
     {
       FOLLOW_MAGNETIC_ANGLE = 0x00,
-      FOLLOW_SUN = 0x01,
+      FOLLOW_SUN_ANGLE = 0x01,
       WHEEL_SET_DUTY_CYCLE = 0x20,
       WHEEL_SET_SPEED = 0x21,
       MAGNETORQUER_ENABLE = 0x40,
@@ -158,7 +158,7 @@ class ESAT_ADCSClass
 
     // Commands.
     void handleFollowMagneticAngleCommand(ESAT_CCSDSPacket& packet);
-    void handleFollowSunCommand(ESAT_CCSDSPacket& packet);
+    void handleFollowSunAngleCommand(ESAT_CCSDSPacket& packet);
     void handleAttitudeControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet);
     void handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet);
     void handleAttitudeControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet);
@@ -192,7 +192,7 @@ class ESAT_ADCSClass
     void runFollowMagneticAngle();
 
     // Attitude control relative to the Sun.
-    void runFollowSun();
+    void runFollowSunAngle();
 
     // Set the duty cycle of the wheel.
     void runWheelSetDutyCycle();

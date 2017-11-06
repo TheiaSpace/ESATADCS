@@ -16,15 +16,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_FollowSunRunMode_h
-#define ESAT_FollowSunRunMode_h
+#ifndef ESAT_FollowSunAngleRunMode_h
+#define ESAT_FollowSunAngleRunMode_h
 
 #include <Arduino.h>
 #include "ESAT_ADCSRunMode.h"
 
 // Run mode for controlling the attitude to follow a Sun angle.
-// Use the public instance ESAT_FollowSunRunMode.
-class ESAT_FollowSunRunModeClass: public ESAT_ADCSRunMode
+// Use the public instance ESAT_FollowSunAngleRunMode.
+class ESAT_FollowSunAngleRunModeClass: public ESAT_ADCSRunMode
 {
   public:
     // Keep a Sun angle.
@@ -33,6 +33,6 @@ class ESAT_FollowSunRunModeClass: public ESAT_ADCSRunMode
 
 // Global instance of the library of the run mode for controlling the
 // Sun attitude.
-extern ESAT_FollowSunRunModeClass ESAT_FollowSunRunMode;
+extern ESAT_FollowSunAngleRunModeClass ESAT_FollowSunAngleRunMode;
 
-#endif /* ESAT_FollowSunRunMode_h */
+#endif /* ESAT_FollowSunAngleRunMode_h */

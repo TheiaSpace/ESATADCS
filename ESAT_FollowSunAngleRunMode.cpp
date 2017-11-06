@@ -16,13 +16,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_FollowSunRunMode.h"
+#include "ESAT_FollowSunAngleRunMode.h"
 #include "ESAT_AttitudePIDController.h"
 
-void ESAT_FollowSunRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_FollowSunAngleRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
 {
   ESAT_AttitudePIDController.loop(attitudeStateVector.magneticAngle,
                                   attitudeStateVector);
 }
 
-ESAT_FollowSunRunModeClass ESAT_FollowSunRunMode;
+ESAT_FollowSunAngleRunModeClass ESAT_FollowSunAngleRunMode;
