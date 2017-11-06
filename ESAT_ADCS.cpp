@@ -32,6 +32,7 @@
  */
 
 #include "ESAT_ADCS.h"
+#include "ESAT_AttitudePIDController.h"
 #include "ESAT_CoarseSunSensor.h"
 #include "ESAT_Gyroscope.h"
 #include "ESAT_Magnetometer.h"
@@ -51,23 +52,14 @@
 
 void ESAT_ADCSClass::begin(const word periodMilliseconds)
 {
-  actuator = MAGNETORQUER;
-  attitudeDerivativeGain = 22;
-  attitudeErrorDeadband = 1;
-  attitudeErrorDerivativeDeadband = 2;
-  attitudeErrorDerivativeDetumblingThreshold = 40;
-  attitudeErrorIntegral = 0;
-  attitudeIntegralGain = 0;
-  attitudeProportionalGain = 5.5;
   demagnetizationIterations = 0;
   newTelemetryPacket = false;
-  oldAttitudeError = 0;
   oldWheelSpeedError = 0;
   period = periodMilliseconds;
   runCode = STOP_ACTUATORS;
-  targetAttitude = 0;
   telemetryPacketSequenceCount = 0;
   useGyroscope = true;
+  ESAT_AttitudePIDController.begin(periodMilliseconds / 1000.);
   ESAT_Wheel.begin();
   ESAT_WheelPIDController.begin(periodMilliseconds / 1000.);
   ESAT_Gyroscope.begin(ESAT_Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
@@ -177,52 +169,34 @@ void ESAT_ADCSClass::handleFollowMagnetometerCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = FOLLOW_MAGNETOMETER;
   const word rawTargetAttitude = packet.readWord();
-  targetAttitude = rawTargetAttitude % 360;
-  attitudeErrorIntegral = 0;
-  oldAttitudeError = 0;
+  ESAT_AttitudePIDController.targetAngle = rawTargetAttitude % 360;
 }
 
 void ESAT_ADCSClass::handleFollowSunCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = FOLLOW_SUN;
   const word rawTargetAttitude = packet.readWord();
-  targetAttitude = rawTargetAttitude % 360;
-  attitudeErrorIntegral = 0;
-  oldAttitudeError = 0;
+  ESAT_AttitudePIDController.targetAngle = rawTargetAttitude % 360;
 }
 
 void ESAT_ADCSClass::handleAttitudeControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet)
 {
-  attitudeProportionalGain = packet.readFloat();
-  attitudeErrorIntegral = 0;
-  oldAttitudeError = 0;
+  ESAT_AttitudePIDController.proportionalGain = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleAttitudeControllerSetIntegralGainCommand(ESAT_CCSDSPacket& packet)
 {
-  attitudeIntegralGain = packet.readFloat();
-  attitudeErrorIntegral = 0;
-  oldAttitudeError = 0;
+  ESAT_AttitudePIDController.integralGain = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleAttitudeControllerSetDerivativeGainCommand(ESAT_CCSDSPacket& packet)
 {
-  attitudeDerivativeGain = packet.readFloat();
-  attitudeErrorIntegral = 0;
-  oldAttitudeError = 0;
+  ESAT_AttitudePIDController.derivativeGain = packet.readFloat();
 }
 
 void ESAT_ADCSClass::handleAttitudeControllerUseGyroscopeCommand(ESAT_CCSDSPacket& packet)
 {
-  const byte parameter = packet.readByte();
-  if (parameter > 0)
-  {
-    useGyroscope = true;
-  }
-  else
-  {
-    useGyroscope = false;
-  }
+  ESAT_AttitudePIDController.useGyroscope = packet.readBoolean();
 }
 
 void ESAT_ADCSClass::handleAttitudeControllerSetActuatorCommand(ESAT_CCSDSPacket& packet)
@@ -230,24 +204,26 @@ void ESAT_ADCSClass::handleAttitudeControllerSetActuatorCommand(ESAT_CCSDSPacket
   const byte parameter = packet.readByte();
   if (parameter > 0)
   {
-    actuator = WHEEL;
+    ESAT_AttitudePIDController.actuator =
+      ESAT_AttitudePIDController.WHEEL;
   }
   else
   {
-    actuator = MAGNETORQUER;
+    ESAT_AttitudePIDController.actuator =
+      ESAT_AttitudePIDController.MAGNETORQUER;
   }
 }
 
 void ESAT_ADCSClass::handleAttitudeControllerSetDeadbandCommand(ESAT_CCSDSPacket& packet)
 {
-  attitudeErrorDeadband = packet.readWord();
-  attitudeErrorDerivativeDeadband = packet.readWord();
+  ESAT_AttitudePIDController.errorDeadband = packet.readWord();
+  ESAT_AttitudePIDController.errorDerivativeDeadband = packet.readWord();
 }
 
 void ESAT_ADCSClass::handleAttitudeControllerSetDetumblingThresholdCommand(ESAT_CCSDSPacket& packet)
 
 {
-  attitudeErrorDerivativeDetumblingThreshold = packet.readWord();
+  ESAT_AttitudePIDController.detumblingThreshold = packet.readWord();
 }
 
 void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
@@ -400,15 +376,15 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   packet.writeSecondaryHeader(secondaryHeader);
   // User data.
   packet.writeByte(byte(runCode));
-  packet.writeWord(targetAttitude);
+  packet.writeWord(ESAT_AttitudePIDController.targetAngle);
   packet.writeWord(attitudeStateVector.magneticAngle);
   packet.writeWord(attitudeStateVector.sunAngle);
   packet.writeWord(attitudeStateVector.rotationalSpeed);
-  packet.writeFloat(attitudeProportionalGain);
-  packet.writeFloat(attitudeIntegralGain);
-  packet.writeFloat(attitudeDerivativeGain);
-  packet.writeBoolean(useGyroscope);
-  packet.writeByte(actuator);
+  packet.writeFloat(ESAT_AttitudePIDController.proportionalGain);
+  packet.writeFloat(ESAT_AttitudePIDController.integralGain);
+  packet.writeFloat(ESAT_AttitudePIDController.derivativeGain);
+  packet.writeBoolean(ESAT_AttitudePIDController.useGyroscope);
+  packet.writeByte(ESAT_AttitudePIDController.actuator);
   packet.writeFloat(ESAT_WheelDutyCycleController.dutyCycle);
   packet.writeWord(attitudeStateVector.wheelSpeed);
   packet.writeFloat(ESAT_WheelPIDController.proportionalGain);
@@ -456,93 +432,16 @@ void ESAT_ADCSClass::run()
   }
 }
 
-void ESAT_ADCSClass::runAttitudeControlLoop(int currentAttitude)
-{
-  int attitudeError = targetAttitude - currentAttitude;
-  if (attitudeError > 180)
-  {
-    attitudeError = attitudeError - 360;
-  }
-  else if (attitudeError < -180)
-  {
-    attitudeError = attitudeError + 360;
-  }
-  int attitudeErrorDerivative;
-  if (useGyroscope)
-  {
-    attitudeErrorDerivative = attitudeStateVector.rotationalSpeed;
-  }
-  else
-  {
-    int attitudeErrorDifference =
-      attitudeError - oldAttitudeError;
-    if (attitudeErrorDifference > 180)
-    {
-      attitudeErrorDifference = attitudeErrorDifference - 360;
-    }
-    if (attitudeErrorDifference < -180)
-    {
-      attitudeErrorDifference = attitudeErrorDifference + 360;
-    }
-    attitudeErrorDerivative = attitudeErrorDifference * (1000. / period);
-  }
-  oldAttitudeError = attitudeError;
-  float Kp = attitudeProportionalGain;
-  float Kd = attitudeDerivativeGain;
-  float Ki = attitudeIntegralGain;
-  if ((abs(attitudeError) < attitudeErrorDeadband)
-      && (abs(attitudeErrorDerivative) < attitudeErrorDerivativeDeadband))
-  {
-    Ki = 0;
-    Kp = 0;
-    Kd = 0;
-  }
-  if (abs(attitudeErrorDerivative) > attitudeErrorDerivativeDetumblingThreshold)
-  {
-    Ki = 0;
-    Kp = 0;
-  }
-  float actuation = Kp * attitudeError
-                  + Kd * attitudeErrorDerivative
-                  + Ki * attitudeErrorIntegral;
-  attitudeErrorIntegral =
-    attitudeErrorIntegral
-    + attitudeError * (period / 1000.);
-  if (actuator == WHEEL)
-  {
-    ESAT_WheelPIDController.targetSpeed =
-      constrain(attitudeStateVector.wheelSpeed + actuation, 0, 8000);
-    ESAT_WheelPIDController.loop(attitudeStateVector);
-  }
-  else
-  {
-    if (actuation > 0)
-    {
-      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
-        ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_CLOCKWISE;
-    }
-    if (actuation < 0)
-    {
-      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
-        ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_COUNTERCLOCKWISE;
-    }
-    if (actuation == 0)
-    {
-      ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
-        ESAT_MagnetorquerApplyMaximumTorqueRunMode.STOP;
-    }
-    ESAT_MagnetorquerApplyMaximumTorqueRunMode.loop(attitudeStateVector);
-  }
-}
-
 void ESAT_ADCSClass::runFollowMagnetometer()
 {
-  runAttitudeControlLoop(attitudeStateVector.magneticAngle);
+  ESAT_AttitudePIDController.loop(attitudeStateVector.magneticAngle,
+                                  attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runFollowSun()
 {
-  runAttitudeControlLoop(attitudeStateVector.sunAngle);
+  ESAT_AttitudePIDController.loop(attitudeStateVector.sunAngle,
+                                  attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runWheelSetDutyCycle()
