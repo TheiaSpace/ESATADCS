@@ -38,20 +38,20 @@
 #include "ESAT_FollowSunRunMode.h"
 #include "ESAT_Gyroscope.h"
 #include "ESAT_Magnetometer.h"
-#include "ESAT_Magnetorquer.h"
 #include "ESAT_MagnetorquerApplyMaximumTorqueRunMode.h"
 #include "ESAT_MagnetorquerDemagnetizeRunMode.h"
 #include "ESAT_MagnetorquerEnableRunMode.h"
+#include "ESAT_Magnetorquer.h"
 #include "ESAT_MagnetorquerSetXPolarityRunMode.h"
 #include "ESAT_MagnetorquerSetYPolarityRunMode.h"
+#include "ESAT_OBCClock.h"
 #include "ESAT_StopActuatorsRunMode.h"
 #include "ESAT_Tachometer.h"
+#include "ESAT_Timestamp.h"
 #include "ESAT_Wheel.h"
 #include "ESAT_WheelPIDController.h"
 #include "ESAT_WheelSetDutyCycleRunMode.h"
 #include "ESAT_WheelSetSpeedRunMode.h"
-#include "ESAT_Timestamp.h"
-#include "ESAT_OBCClock.h"
 
 void ESAT_ADCSClass::begin(const word period)
 {
