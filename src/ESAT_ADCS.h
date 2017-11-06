@@ -30,9 +30,6 @@
 class ESAT_ADCSClass
 {
   public:
-    // True if the inertial measurement unit is alive.
-    boolean inertialMeasurementUnitAlive;
-
     // Get all ADCS subsystems ready.
     // Set the control cycle period (in milliseconds).
     void begin(word period);
