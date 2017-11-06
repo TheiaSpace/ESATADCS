@@ -29,9 +29,10 @@ void ESAT_WheelPIDControllerClass::begin(const float periodInSeconds)
   oldError = 0;
 }
 
-void ESAT_WheelPIDControllerClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_WheelPIDControllerClass::loop(const word targetSpeed,
+                                        const word currentSpeed)
 {
-  const int error = int(targetSpeed) - int(attitudeStateVector.wheelSpeed);
+  const int error = int(targetSpeed) - int(currentSpeed);
   errorIntegral = errorIntegral + error * period;
   const float errorDerivative = (error - oldError) / period;
   oldError = error;

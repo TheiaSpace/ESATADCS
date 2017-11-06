@@ -16,16 +16,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_WheelController_h
-#define ESAT_WheelController_h
+#ifndef ESAT_WheelPIDController_h
+#define ESAT_WheelPIDController_h
 
 #include <Arduino.h>
-#include "ESAT_ADCSRunMode.h"
 
 // Wheel control loop, PID variant.
 // This is a simple PID control loop.
 // Use the public instance ESAT_WheelPIDController.
-class ESAT_WheelPIDControllerClass: public ESAT_ADCSRunMode
+class ESAT_WheelPIDControllerClass
 {
   public:
     // Derivative gain of the PID control algorithm.
@@ -40,16 +39,13 @@ class ESAT_WheelPIDControllerClass: public ESAT_ADCSRunMode
     // Dimensionless.
     float proportionalGain;
 
-    // Target wheel speed in revolutions per second.
-    word targetSpeed;
-
     // Start the control loop.
     // Set the default gains.
     // Set the period (in seconds) of the control loop.
     void begin(float period);
 
     // Perform one iteration of the control loop.
-    void loop(ESAT_AttitudeStateVector attitudeStateVector);
+    void loop(word targetSpeed, word currentSpeed);
 
     // Reset the error integral.
     void resetErrorIntegral();

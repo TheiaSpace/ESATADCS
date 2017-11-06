@@ -49,6 +49,7 @@
 #include "ESAT_Wheel.h"
 #include "ESAT_WheelPIDController.h"
 #include "ESAT_WheelSetDutyCycleRunMode.h"
+#include "ESAT_WheelSetSpeedRunMode.h"
 #include "ESAT_Timestamp.h"
 #include "ESAT_OBCClock.h"
 
@@ -237,7 +238,7 @@ void ESAT_ADCSClass::handleWheelSetDutyCycleCommand(ESAT_CCSDSPacket& packet)
 void ESAT_ADCSClass::handleWheelSetSpeedCommand(ESAT_CCSDSPacket& packet)
 {
   runCode = WHEEL_SET_SPEED;
-  ESAT_WheelPIDController.targetSpeed = packet.readWord();
+  ESAT_WheelSetSpeedRunMode.targetSpeed = packet.readWord();
 }
 
 void ESAT_ADCSClass::handleWheelControllerSetProportionalGainCommand(ESAT_CCSDSPacket& packet)
@@ -451,7 +452,7 @@ void ESAT_ADCSClass::runWheelSetDutyCycle()
 
 void ESAT_ADCSClass::runWheelSetSpeed()
 {
-  ESAT_WheelPIDController.loop(attitudeStateVector);
+  ESAT_WheelSetSpeedRunMode.loop(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::runMagnetorquerEnable()

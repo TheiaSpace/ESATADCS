@@ -84,9 +84,8 @@ void ESAT_AttitudePIDControllerClass::applyMagnetorquerActuation(const ESAT_Atti
 
 void ESAT_AttitudePIDControllerClass::applyWheelActuation(const ESAT_AttitudeStateVector attitudeStateVector)
 {
-  ESAT_WheelPIDController.targetSpeed =
-    constrain(ESAT_WheelPIDController.targetSpeed + actuation, 0, 8000);
-  ESAT_WheelPIDController.loop(attitudeStateVector);
+  ESAT_WheelPIDController.loop(attitudeStateVector.wheelSpeed + actuation,
+                               attitudeStateVector.wheelSpeed);
 }
 
 void ESAT_AttitudePIDControllerClass::begin(const float periodInSeconds)
