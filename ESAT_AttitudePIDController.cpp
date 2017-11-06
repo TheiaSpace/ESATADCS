@@ -17,7 +17,7 @@
  */
 
 #include "ESAT_AttitudePIDController.h"
-#include "ESAT_MagnetorquerApplyMaximumTorqueRunMode.h"
+#include "ESAT_MagnetorquerController.h"
 #include "ESAT_WheelPIDController.h"
 
 boolean ESAT_AttitudePIDControllerClass::aboveDetumblingThreshold()
@@ -66,20 +66,16 @@ void ESAT_AttitudePIDControllerClass::applyMagnetorquerActuation(const ESAT_Atti
 {
   if (actuation > 0)
   {
-    ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
-      ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_CLOCKWISE;
+    ESAT_MagnetorquerController.rotateClockwise(attitudeStateVector.magneticAngle);
   }
   if (actuation < 0)
   {
-    ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
-      ESAT_MagnetorquerApplyMaximumTorqueRunMode.ROTATE_COUNTERCLOCKWISE;
+    ESAT_MagnetorquerController.rotateCounterclockwise(attitudeStateVector.magneticAngle);
   }
   if (actuation == 0)
   {
-    ESAT_MagnetorquerApplyMaximumTorqueRunMode.mode =
-      ESAT_MagnetorquerApplyMaximumTorqueRunMode.STOP;
+    ESAT_MagnetorquerController.stop();
   }
-  ESAT_MagnetorquerApplyMaximumTorqueRunMode.loop(attitudeStateVector);
 }
 
 void ESAT_AttitudePIDControllerClass::applyWheelActuation(const ESAT_AttitudeStateVector attitudeStateVector)

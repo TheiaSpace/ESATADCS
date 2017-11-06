@@ -17,112 +17,21 @@
  */
 
 #include "ESAT_MagnetorquerApplyMaximumTorqueRunMode.h"
-
-ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::clockwiseXPolarity(const word magneticAngle)
-{
-  if ((magneticAngle % 360) < 90)
-  {
-    return ESAT_Magnetorquer.NEGATIVE;
-  }
-  if ((magneticAngle % 360) < 180)
-  {
-    return ESAT_Magnetorquer.NEGATIVE;
-  }
-  if ((magneticAngle % 360) < 270)
-  {
-    return ESAT_Magnetorquer.POSITIVE;
-  }
-  return ESAT_Magnetorquer.POSITIVE;
-}
-
-ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::clockwiseYPolarity(const word magneticAngle)
-{
-  if ((magneticAngle % 360) < 90)
-  {
-    return ESAT_Magnetorquer.POSITIVE;
-  }
-  if ((magneticAngle % 360) < 180)
-  {
-    return ESAT_Magnetorquer.NEGATIVE;
-  }
-  if ((magneticAngle % 360) < 270)
-  {
-    return ESAT_Magnetorquer.NEGATIVE;
-  }
-  return ESAT_Magnetorquer.POSITIVE;
-}
-
-ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::counterclockwiseXPolarity(const word magneticAngle)
-{
-  if ((magneticAngle % 360) < 90)
-  {
-    return ESAT_Magnetorquer.POSITIVE;
-  }
-  if ((magneticAngle % 360) < 180)
-  {
-    return ESAT_Magnetorquer.POSITIVE;
-  }
-  if ((magneticAngle % 360) < 270)
-  {
-    return ESAT_Magnetorquer.NEGATIVE;
-  }
-  return ESAT_Magnetorquer.NEGATIVE;
-}
-
-ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::counterclockwiseYPolarity(const word magneticAngle)
-{
-  if ((magneticAngle % 360) < 90)
-  {
-    return ESAT_Magnetorquer.NEGATIVE;
-  }
-  if ((magneticAngle % 360) < 180)
-  {
-    return ESAT_Magnetorquer.POSITIVE;
-  }
-  if ((magneticAngle % 360) < 270)
-  {
-    return ESAT_Magnetorquer.POSITIVE;
-  }
-  return ESAT_Magnetorquer.NEGATIVE;
-}
+#include "ESAT_MagnetorquerController.h"
 
 void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::loop(ESAT_AttitudeStateVector attitudeStateVector)
 {
   switch (mode)
   {
-    case STOP:
-      stop();
-      break;
     case ROTATE_CLOCKWISE:
-      rotateClockwise(attitudeStateVector.magneticAngle);
+      ESAT_MagnetorquerController.rotateClockwise(attitudeStateVector.magneticAngle);
       break;
     case ROTATE_COUNTERCLOCKWISE:
-      rotateCounterclockwise(attitudeStateVector.magneticAngle);
+      ESAT_MagnetorquerController.rotateCounterclockwise(attitudeStateVector.magneticAngle);
       break;
     default:
       break;
   }
-}
-
-void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::rotateClockwise(const word magneticAngle)
-{
-  ESAT_Magnetorquer.writeEnable(false);
-  ESAT_Magnetorquer.writeX(clockwiseXPolarity(magneticAngle));
-  ESAT_Magnetorquer.writeY(clockwiseYPolarity(magneticAngle));
-  ESAT_Magnetorquer.writeEnable(true);
-}
-
-void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::rotateCounterclockwise(const word magneticAngle)
-{
-  ESAT_Magnetorquer.writeEnable(false);
-  ESAT_Magnetorquer.writeX(counterclockwiseXPolarity(magneticAngle));
-  ESAT_Magnetorquer.writeY(counterclockwiseYPolarity(magneticAngle));
-  ESAT_Magnetorquer.writeEnable(true);
-}
-
-void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::stop()
-{
-  ESAT_Magnetorquer.writeEnable(false);
 }
 
 ESAT_MagnetorquerApplyMaximumTorqueRunModeClass ESAT_MagnetorquerApplyMaximumTorqueRunMode;
