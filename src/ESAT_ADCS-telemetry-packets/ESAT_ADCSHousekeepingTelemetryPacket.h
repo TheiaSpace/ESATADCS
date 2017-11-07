@@ -32,14 +32,6 @@
 class ESAT_ADCSHousekeepingTelemetryPacket: public ESAT_ADCSTelemetryPacket
 {
   public:
-    // Default constructor.
-    ESAT_ADCSHousekeepingTelemetryPacket();
-
-    // Instantiate a new ADCS housekeeping telemetry packet with a
-    // given attitude state vector and run mode.
-    ESAT_ADCSHousekeepingTelemetryPacket(ESAT_AttitudeStateVector attitudeStateVector,
-                                         byte runModeIdentifier);
-
     // Return the ADCS housekeeping telemetry packet identifier.
     byte packetIdentifier();
 
@@ -49,12 +41,6 @@ class ESAT_ADCSHousekeepingTelemetryPacket: public ESAT_ADCSTelemetryPacket
   private:
     // Packet identifier of ADCS housekeeping telemetry.
     static const byte PACKET_IDENTIFIER = 0x00;
-
-    // Attitude state vector.
-    ESAT_AttitudeStateVector attitudeStateVector;
-
-    // Run mode identifier.
-    byte runModeIdentifier;
 };
 
 #endif /* ESAT_ADCSHousekeepingTelemetryPacket_h */

@@ -50,9 +50,6 @@
 
 void ESAT_ADCSClass::addHousekeepingTelemetryPacket()
 {
-  housekeepingTelemetryPacket =
-    ESAT_ADCSHousekeepingTelemetryPacket(currentAttitudeStateVector,
-                                         runMode->identifier());
   addTelemetryPacket(housekeepingTelemetryPacket);
 }
 
