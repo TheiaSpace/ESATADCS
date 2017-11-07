@@ -36,7 +36,10 @@ class ESAT_MagnetometerClass
     // Set up the magnetometer.
     void begin();
 
-    // Read the magnetic attitude (in degrees) relative to North.
+    // Read the magnetic attitude (in degrees) relative to North:
+    // the counterclockwise angle from the +X axis of the satellite
+    // to the North direction or the clockwise angle from the North
+    // direction to the +X axis of the satellite.
     // The attitude goes from 0 degrees to 359 degrees.
     word read();
 
