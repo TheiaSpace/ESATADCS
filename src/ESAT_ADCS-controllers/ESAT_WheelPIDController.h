@@ -45,7 +45,7 @@ class ESAT_WheelPIDControllerClass
     void begin(float period);
 
     // Perform one iteration of the control loop.
-    void loop(word targetSpeed, word currentSpeed);
+    void loop(word targetSpeed);
 
     // Return the latest target speed of the wheel in revolutions per
     // minute.

@@ -20,7 +20,6 @@
 #define ESAT_AttitudePIDController_h
 
 #include <Arduino.h>
-#include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 
 // Wheel control loop, PID variant.
 // This is a simple PID control loop.
@@ -85,8 +84,7 @@ class ESAT_AttitudePIDControllerClass
 
     // Perform one iteration of the control loop to try to compensate
     // for the angle error.
-    void loop(word currentAngle,
-              ESAT_AttitudeStateVector attitudeStateVector);
+    void loop(word currentAngle);
 
     // Reset the error integral.
     void resetErrorIntegral();
@@ -156,13 +154,13 @@ class ESAT_AttitudePIDControllerClass
     int angleDifference(int minuend, int subtrahend);
 
     // Apply the desired actuation.
-    void applyActuation(ESAT_AttitudeStateVector attitudeStateVector);
+    void applyActuation();
 
     // Apply the desired actuation using the magnetorquers.
-    void applyMagnetorquerActuation(ESAT_AttitudeStateVector attitudeStateVector);
+    void applyMagnetorquerActuation();
 
     // Apply the desired actuation using the wheel.
-    void applyWheelActuation(ESAT_AttitudeStateVector attitudeStateVector);
+    void applyWheelActuation();
 
     // Return true if the following conditions are met simultaneously:
     // * The error is below the error deadband threshold.
@@ -185,7 +183,7 @@ class ESAT_AttitudePIDControllerClass
     void updateError(word currentAngle);
 
     // Update the value of the error derivative.
-    void updateErrorDerivative(int rotationalSpeed);
+    void updateErrorDerivative();
 
     // Update the value of the error integral.
     void updateErrorIntegral();

@@ -17,7 +17,6 @@
  */
 
 #include "ESAT_ADCS-run-modes/ESAT_WheelSetSpeedRunMode.h"
-#include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_WheelPIDController.h"
 
 byte ESAT_WheelSetSpeedRunModeClass::identifier()
@@ -27,9 +26,7 @@ byte ESAT_WheelSetSpeedRunModeClass::identifier()
 
 void ESAT_WheelSetSpeedRunModeClass::run()
 {
-  const ESAT_AttitudeStateVector attitudeStateVector =
-    ESAT_ADCS.attitudeStateVector();
-  ESAT_WheelPIDController.loop(targetSpeed, attitudeStateVector.wheelSpeed);
+  ESAT_WheelPIDController.loop(targetSpeed);
 }
 
 ESAT_WheelSetSpeedRunModeClass ESAT_WheelSetSpeedRunMode;

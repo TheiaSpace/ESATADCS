@@ -17,6 +17,7 @@
  */
 
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
+#include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_MagnetorquerController.h"
 #include "ESAT_ADCS-controllers/ESAT_WheelPIDController.h"
 
@@ -47,30 +48,30 @@ int ESAT_AttitudePIDControllerClass::angleDifference(const int minuend,
   return difference;
 }
 
-void ESAT_AttitudePIDControllerClass::applyActuation(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_AttitudePIDControllerClass::applyActuation()
 {
   switch (actuator)
   {
     case MAGNETORQUER:
-      applyMagnetorquerActuation(attitudeStateVector);
+      applyMagnetorquerActuation();
       break;
     case WHEEL:
-      applyWheelActuation(attitudeStateVector);
+      applyWheelActuation();
       break;
     default:
       break;
   }
 }
 
-void ESAT_AttitudePIDControllerClass::applyMagnetorquerActuation(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_AttitudePIDControllerClass::applyMagnetorquerActuation()
 {
   if (actuation > 0)
   {
-    ESAT_MagnetorquerController.rotateClockwise(attitudeStateVector.magneticAngle);
+    ESAT_MagnetorquerController.rotateClockwise();
   }
   if (actuation < 0)
   {
-    ESAT_MagnetorquerController.rotateCounterclockwise(attitudeStateVector.magneticAngle);
+    ESAT_MagnetorquerController.rotateCounterclockwise();
   }
   if (actuation == 0)
   {
@@ -78,11 +79,10 @@ void ESAT_AttitudePIDControllerClass::applyMagnetorquerActuation(const ESAT_Atti
   }
 }
 
-void ESAT_AttitudePIDControllerClass::applyWheelActuation(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_AttitudePIDControllerClass::applyWheelActuation()
 {
   ESAT_WheelPIDController.loop(ESAT_WheelPIDController.readTargetSpeed()
-                               + actuation,
-                               attitudeStateVector.wheelSpeed);
+                               + actuation);
 }
 
 void ESAT_AttitudePIDControllerClass::begin(const float periodInSeconds)
@@ -128,14 +128,19 @@ float ESAT_AttitudePIDControllerClass::computeActuation()
     + derivativeGain * errorDerivative;
 }
 
-void ESAT_AttitudePIDControllerClass::loop(const word currentAngle,
-                                           const ESAT_AttitudeStateVector attitudeStateVector)
+float ESAT_AttitudePIDControllerClass::computeErrorDerivative()
+{
+  const int errorDifference = angleDifference(error, oldError);
+  return errorDifference / period;
+}
+
+void ESAT_AttitudePIDControllerClass::loop(const word currentAngle)
 {
   updateError(currentAngle);
-  updateErrorDerivative(attitudeStateVector.rotationalSpeed);
+  updateErrorDerivative();
   updateActuation();
   updateErrorIntegral();
-  applyActuation(attitudeStateVector);
+  applyActuation();
 }
 
 void ESAT_AttitudePIDControllerClass::resetErrorIntegral()
@@ -153,17 +158,13 @@ void ESAT_AttitudePIDControllerClass::updateError(const word currentAngle)
   error = angleDifference(targetAngle, currentAngle);
 }
 
-float ESAT_AttitudePIDControllerClass::computeErrorDerivative()
-{
-  const int errorDifference = angleDifference(error, oldError);
-  return errorDifference / period;
-}
-
-void ESAT_AttitudePIDControllerClass::updateErrorDerivative(const int rotationalSpeed)
+void ESAT_AttitudePIDControllerClass::updateErrorDerivative()
 {
   if (useGyroscope)
   {
-    errorDerivative = rotationalSpeed;
+    const ESAT_AttitudeStateVector attitudeStateVector =
+      ESAT_ADCS.attitudeStateVector();
+    errorDerivative = attitudeStateVector.rotationalSpeed;
   }
   else
   {

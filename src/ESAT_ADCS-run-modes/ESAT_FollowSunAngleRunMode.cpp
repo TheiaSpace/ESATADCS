@@ -29,8 +29,7 @@ void ESAT_FollowSunAngleRunModeClass::run()
 {
   const ESAT_AttitudeStateVector attitudeStateVector =
     ESAT_ADCS.attitudeStateVector();
-  ESAT_AttitudePIDController.loop(attitudeStateVector.magneticAngle,
-                                  attitudeStateVector);
+  ESAT_AttitudePIDController.loop(attitudeStateVector.sunAngle);
 }
 
 ESAT_FollowSunAngleRunModeClass ESAT_FollowSunAngleRunMode;

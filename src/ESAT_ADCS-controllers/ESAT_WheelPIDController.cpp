@@ -17,6 +17,7 @@
  */
 
 #include "ESAT_ADCS-controllers/ESAT_WheelPIDController.h"
+#include "ESAT_ADCS.h"
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
 
 void ESAT_WheelPIDControllerClass::begin(const float periodInSeconds)
@@ -30,11 +31,12 @@ void ESAT_WheelPIDControllerClass::begin(const float periodInSeconds)
   targetSpeed = 0;
 }
 
-void ESAT_WheelPIDControllerClass::loop(const word newTargetSpeed,
-                                        const word currentSpeed)
+void ESAT_WheelPIDControllerClass::loop(const word newTargetSpeed)
 {
   targetSpeed = newTargetSpeed;
-  const int error = int(targetSpeed) - int(currentSpeed);
+  const ESAT_AttitudeStateVector attitudeStateVector =
+    ESAT_ADCS.attitudeStateVector();
+  const int error = int(targetSpeed) - int(attitudeStateVector.wheelSpeed);
   errorIntegral = errorIntegral + error * period;
   const float errorDerivative = (error - oldError) / period;
   oldError = error;
