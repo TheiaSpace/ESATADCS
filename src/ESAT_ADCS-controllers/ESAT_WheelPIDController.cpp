@@ -20,12 +20,11 @@
 #include "ESAT_ADCS.h"
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
 
-void ESAT_WheelPIDControllerClass::begin(const float periodInSeconds)
+void ESAT_WheelPIDControllerClass::begin()
 {
   derivativeGain = DEFAULT_DERIVATIVE_GAIN;
   integralGain = DEFAULT_INTEGRAL_GAIN;
   proportionalGain = DEFAULT_PROPORTIONAL_GAIN;
-  period = periodInSeconds;
   errorIntegral = 0;
   oldError = 0;
   targetSpeed = 0;
@@ -33,6 +32,7 @@ void ESAT_WheelPIDControllerClass::begin(const float periodInSeconds)
 
 void ESAT_WheelPIDControllerClass::loop(const word newTargetSpeed)
 {
+  const float period = ESAT_ADCS.period();
   targetSpeed = newTargetSpeed;
   const ESAT_AttitudeStateVector attitudeStateVector =
     ESAT_ADCS.attitudeStateVector();

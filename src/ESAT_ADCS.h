@@ -58,14 +58,18 @@ class ESAT_ADCSClass
     ESAT_AttitudeStateVector attitudeStateVector();
 
     // Get all ADCS subsystems ready.
-    // Set the control cycle period (in milliseconds).
-    void begin(word period);
+    void begin();
 
     // Handle a telecommand.
     void handleTelecommand(ESAT_CCSDSPacket& packet);
 
     // Return the unique identifier of the ADCS.
     word getApplicationProcessIdentifier();
+
+    // Return the period (in seconds) from the previous call to
+    // update() to the current call to update().  Attitude control
+    // loops may need this.
+    float period();
 
     // Fill a packet with the next ADCS telemetry packet available.
     // Return true if the operation was successful;
@@ -117,11 +121,17 @@ class ESAT_ADCSClass
     // Current attitude state vector.
     ESAT_AttitudeStateVector currentAttitudeStateVector;
 
+    // Processor uptime (in milliseconds) at the current call to update().
+    unsigned long currentUpdateTime;
+
     // Number of registered telecommand handlers.
     byte numberOfTelecommandHandlers;
 
     // Number of stacked telemetry packets.
     byte numberOfTelemetryPackets;
+
+    // Processor uptime (in milliseconds) at the previous call to update().
+    unsigned long previousUpdateTime;
 
     // Current run mode.
     ESAT_ADCSRunMode* runMode;
@@ -143,6 +153,9 @@ class ESAT_ADCSClass
 
     // Actuate according to the current run mode.
     void run();
+
+    // Recalculate the period.
+    void updatePeriod();
 };
 
 // Global instance of the ADCS library.

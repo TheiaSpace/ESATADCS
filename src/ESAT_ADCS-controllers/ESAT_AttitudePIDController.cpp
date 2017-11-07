@@ -85,7 +85,7 @@ void ESAT_AttitudePIDControllerClass::applyWheelActuation()
                                + actuation);
 }
 
-void ESAT_AttitudePIDControllerClass::begin(const float periodInSeconds)
+void ESAT_AttitudePIDControllerClass::begin()
 {
   actuator = DEFAULT_ACTUATOR;
   derivativeGain = DEFAULT_DERIVATIVE_GAIN;
@@ -97,7 +97,6 @@ void ESAT_AttitudePIDControllerClass::begin(const float periodInSeconds)
   useGyroscope = DEFAULT_USE_GYROSCOPE_VALUE;
   errorIntegral = 0;
   oldError = 0;
-  period = periodInSeconds;
 }
 
 boolean ESAT_AttitudePIDControllerClass::belowDeadbandThreshold()
@@ -131,7 +130,7 @@ float ESAT_AttitudePIDControllerClass::computeActuation()
 float ESAT_AttitudePIDControllerClass::computeErrorDerivative()
 {
   const int errorDifference = angleDifference(error, oldError);
-  return errorDifference / period;
+  return errorDifference / ESAT_ADCS.period();
 }
 
 void ESAT_AttitudePIDControllerClass::loop(const word currentAngle)
@@ -175,7 +174,7 @@ void ESAT_AttitudePIDControllerClass::updateErrorDerivative()
 
 void ESAT_AttitudePIDControllerClass::updateErrorIntegral()
 {
-  errorIntegral = errorIntegral + error * period;
+  errorIntegral = errorIntegral + error * ESAT_ADCS.period();
 }
 
 ESAT_AttitudePIDControllerClass ESAT_AttitudePIDController;
