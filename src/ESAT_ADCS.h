@@ -24,6 +24,8 @@
 #include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_ADCSTelecommandHandler.h"
+#include "ESAT_ADCS-telemetry-packets/ESAT_ADCSHousekeepingTelemetryPacket.h"
+#include "ESAT_ADCS-telemetry-packets/ESAT_ADCSTelemetryPacket.h"
 
 // Attitude Determination and Control Subsystem (ADCS) library.
 // Use the global instance ESAT_ADCS.
@@ -50,6 +52,9 @@
 class ESAT_ADCSClass
 {
   public:
+    // Stack a new telemetry packet for emission.
+    void addTelemetryPacket(ESAT_ADCSTelemetryPacket& telemetryPacket);
+
     // Get all ADCS subsystems ready.
     // Set the control cycle period (in milliseconds).
     void begin(word period);
@@ -80,7 +85,7 @@ class ESAT_ADCSClass
     // Update the ADCS:
     // * Read the sensors.
     // * Perform one iteration.
-    // * Make available a new telemetry packet.
+    // * Make available a new housekeeping telemetry packet.
     void update();
 
   private:
@@ -101,14 +106,20 @@ class ESAT_ADCSClass
     // Maximum number of telecommand handlers.
     static const byte MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS = 16;
 
+    // Maximum number of telemetry packets.
+    static const byte MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS = 16;
+
+    // Housekeeping telemetry packet.
+    ESAT_ADCSHousekeepingTelemetryPacket housekeepingTelemetryPacket;
+
     // Current attitude state vector.
     ESAT_AttitudeStateVector attitudeStateVector;
 
-    // True when a new telemetry packet is available; false otherwise.
-    boolean newTelemetryPacket;
-
     // Number of registered telecommand handlers.
     byte numberOfTelecommandHandlers;
+
+    // Number of stacked telemetry packets.
+    byte numberOfTelemetryPackets;
 
     // Current run mode.
     ESAT_ADCSRunMode* runMode;
@@ -116,8 +127,14 @@ class ESAT_ADCSClass
     // List of telecommand handlers.
     ESAT_ADCSTelecommandHandler* telecommandHandlers[MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS];
 
+    // Stack of telemetry packets.
+    ESAT_ADCSTelemetryPacket* telemetryPackets[MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS];
+
     // Counter of generated telemetry packets.
     word telemetryPacketSequenceCount;
+
+    // Add the housekeeping telemetry packet to the telemetry packet stack.
+    void addHousekeepingTelemetryPacket();
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();

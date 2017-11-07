@@ -47,9 +47,27 @@
 #include "ESAT_ADCS-telecommand-handlers/ESAT_StopActuatorsTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_WheelTelecommandHandler.h"
 
+
+void ESAT_ADCSClass::addHousekeepingTelemetryPacket()
+{
+  housekeepingTelemetryPacket =
+    ESAT_ADCSHousekeepingTelemetryPacket(attitudeStateVector,
+                                         runMode->identifier());
+  addTelemetryPacket(housekeepingTelemetryPacket);
+}
+
+void ESAT_ADCSClass::addTelemetryPacket(ESAT_ADCSTelemetryPacket& telemetryPacket)
+{
+  if (numberOfTelemetryPackets >= MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS)
+  {
+    return;
+  }
+  telemetryPackets[numberOfTelemetryPackets] = &telemetryPacket;
+  numberOfTelemetryPackets = numberOfTelemetryPackets + 1;
+}
+
 void ESAT_ADCSClass::begin(const word period)
 {
-  newTelemetryPacket = false;
   telemetryPacketSequenceCount = 0;
   ESAT_AttitudePIDController.begin(period / 1000.);
   ESAT_Wheel.begin();
@@ -60,6 +78,7 @@ void ESAT_ADCSClass::begin(const word period)
   ESAT_Tachometer.begin();
   ESAT_Magnetorquer.begin();
   setRunMode(ESAT_StopActuatorsRunMode);
+  numberOfTelemetryPackets = 0;
   numberOfTelecommandHandlers = 0;
   registerTelecommandHandler(ESAT_AttitudeTelecommandHandler);
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
@@ -115,11 +134,10 @@ void ESAT_ADCSClass::readSensors()
 
 boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
-  if (!newTelemetryPacket)
+  if (!telemetryAvailable())
   {
     return false;
   }
-  newTelemetryPacket = false;
   if (packet.capacity() < ESAT_CCSDSSecondaryHeader::LENGTH)
   {
     return false;
@@ -147,39 +165,13 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
   secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
   secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
-  secondaryHeader.packetIdentifier = HOUSEKEEPING;
+  secondaryHeader.packetIdentifier =
+    telemetryPackets[numberOfTelemetryPackets - 1]->packetIdentifier();
   packet.writeSecondaryHeader(secondaryHeader);
-  // User data.
-  packet.writeByte(runMode->identifier());
-  packet.writeWord(ESAT_AttitudePIDController.targetAngle);
-  packet.writeWord(attitudeStateVector.magneticAngle);
-  packet.writeWord(attitudeStateVector.sunAngle);
-  packet.writeFloat(ESAT_CoarseSunSensor.readXPlus());
-  packet.writeFloat(ESAT_CoarseSunSensor.readYPlus());
-  packet.writeFloat(ESAT_CoarseSunSensor.readXMinus());
-  packet.writeFloat(ESAT_CoarseSunSensor.readYMinus());
-  packet.writeWord(attitudeStateVector.rotationalSpeed);
-  packet.writeFloat(ESAT_AttitudePIDController.proportionalGain);
-  packet.writeFloat(ESAT_AttitudePIDController.integralGain);
-  packet.writeFloat(ESAT_AttitudePIDController.derivativeGain);
-  packet.writeBoolean(ESAT_AttitudePIDController.useGyroscope);
-  packet.writeByte(ESAT_AttitudePIDController.actuator);
-  packet.writeWord(ESAT_AttitudePIDController.errorDeadband);
-  packet.writeWord(ESAT_AttitudePIDController.errorDerivativeDeadband);
-  packet.writeWord(ESAT_AttitudePIDController.detumblingThreshold);
-  packet.writeFloat(ESAT_Wheel.readDutyCycle());
-  packet.writeWord(attitudeStateVector.wheelSpeed);
-  packet.writeFloat(ESAT_WheelPIDController.proportionalGain);
-  packet.writeFloat(ESAT_WheelPIDController.integralGain);
-  packet.writeFloat(ESAT_WheelPIDController.derivativeGain);
-  packet.writeByte(ESAT_Magnetorquer.readEnable());
-  packet.writeByte(byte(ESAT_Magnetorquer.readX()));
-  packet.writeByte(byte(ESAT_Magnetorquer.readY()));
-  packet.writeBoolean(ESAT_Gyroscope.error);
-  packet.writeBoolean(ESAT_Magnetometer.error);
-  // End of user data.
+  telemetryPackets[numberOfTelemetryPackets - 1]->readUserData(packet);
   packet.flush();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+  numberOfTelemetryPackets = numberOfTelemetryPackets - 1;
   return true;
 }
 
@@ -205,14 +197,21 @@ void ESAT_ADCSClass::setRunMode(ESAT_ADCSRunMode& newRunMode)
 
 boolean ESAT_ADCSClass::telemetryAvailable()
 {
-  return newTelemetryPacket;
+  if (numberOfTelemetryPackets > 0)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 void ESAT_ADCSClass::update()
 {
   readSensors();
   run();
-  newTelemetryPacket = true;
+  addHousekeepingTelemetryPacket();
 }
 
 ESAT_ADCSClass ESAT_ADCS;
