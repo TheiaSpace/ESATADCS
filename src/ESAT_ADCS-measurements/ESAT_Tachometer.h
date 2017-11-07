@@ -33,8 +33,13 @@ class ESAT_TachometerClass
     unsigned int read();
 
   private:
+    // Number of tachometer pulses since the latest measurement.
     volatile unsigned int count;
+
+    // Number of tachometer pulses at the previous measurement.
     unsigned int previousCount;
+
+    // Processor uptime in milliseconds at the previous measurements.
     unsigned long previousReadingTime;
 
     // The rotating wheel has several marks, so the tachometer gives
