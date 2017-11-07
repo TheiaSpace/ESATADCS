@@ -43,24 +43,35 @@ class ESAT_MagnetorquerTelecommandHandlerClass: public ESAT_ADCSTelecommandHandl
     };
 
     // Handle the telecommand for enabling or disabling the magnetorquers.
+    // The telecommand has one 8-bit boolean parameter:
+    // true for enabling the the magnetorquer driver and false for
+    // disabling it.
     // This changes the ADCS run mode.
     void handleMagnetorquerEnableTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the polarity of the X-axis
     // magnetorquer.
+    // The telecommand has one 8-bit unsigned integer parameter:
+    // 0 for negative polarity and 1 for positive polarity.
     // This changes the ADCS run mode.
     void handleMagnetorquerSetXPolarityTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the polarity of the Y-axis
     // magnetorquer.
+    // The telecommand has one 8-bit unsigned integer parameter:
+    // 0 for negative polarity and 1 for positive polarity.
     // This changes the ADCS run mode.
     void handleMagnetorquerSetYPolarityTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for applying a maximum torque.
+    // The telecommand has one 8-bit unsigned integer parameter:
+    // 0 for clockwise rotation and 1 for counterclockwise rotation.
     // This changes the ADCS run mode.
     void handleMagnetorquerApplyMaximumTorqueTelecommand(ESAT_CCSDSPacket telecommand);
 
     // HAndle the telecommand for demagnetizing the magnetorquer.
+    // The telecommand has one 8-bit unsigned integer parameter:
+    // the number of demagnetization cycles.
     // This changes the ADCS run mode.
     void handleMagnetorquerDemagnetizeTelecommand(ESAT_CCSDSPacket telecommand);
 };

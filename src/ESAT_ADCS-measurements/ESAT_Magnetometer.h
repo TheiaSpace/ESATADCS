@@ -36,11 +36,16 @@ class ESAT_MagnetometerClass
     // Set up the magnetometer.
     void begin();
 
-    // Read the magnetic attitude (in degrees) relative to North.
+    // Read the magnetic attitude (in degrees) relative to North:
+    // the counterclockwise angle from the +X axis of the satellite
+    // to the North direction or the clockwise angle from the North
+    // direction to the +X axis of the satellite.
     // The attitude goes from 0 degrees to 359 degrees.
     word read();
 
   private:
+    // I2C addresses, registers and flags used when communicating with
+    // the magnetometer chip.
     static const byte BYPASS_REGISTER = 55;
     static const byte CHIP_ADDRESS = 0x69;
     static const byte CONTROL_REGISTER = 0x0A;
@@ -68,6 +73,7 @@ class ESAT_MagnetometerClass
     void waitForReading();
 };
 
+// Global instance of the magnetometer library.
 extern ESAT_MagnetometerClass ESAT_Magnetometer;
 
 #endif /* ESAT_Magnetometer_h */

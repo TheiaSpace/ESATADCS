@@ -22,10 +22,21 @@
 #include <Arduino.h>
 
 // Magnetorquers used for attitude control.
+// There are two magnetorquers: one aligned with the X-axis and one
+// aligned with the Y-axis.  These magnetorquers are electromagnets
+// that can be switched on or off in either positive or negative
+// polarity.  Together they form a 2D magnetorquer that works like a
+// compass needle that can be magnetized in 1 of 4 perpendicular
+// directions at will by changing the polarities of the X-axis and
+// Y-axis 1D magnetorquers.  Like a compass needle tends to point to
+// the North, so will do the satellite (one corner of the satellite
+// that depends on the X-axis and Y-axis 1D magnetorquer polarities)
+// when the 2D magnetorquer is switched on.
 // Use the global instance ESAT_Magnetorquer.
 class ESAT_MagnetorquerClass
 {
   public:
+    // Magnetorquer polarity: either negative or positive.
     enum Polarity
     {
       NEGATIVE = 0,

@@ -75,6 +75,7 @@ class ESAT_GyroscopeClass
     void setGain(byte fullScaleConfiguration);
 };
 
+// Global instance of the gyroscope library.
 extern ESAT_GyroscopeClass ESAT_Gyroscope;
 
 #endif /* ESAT_Gyroscope_h */
