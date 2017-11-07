@@ -24,7 +24,7 @@ byte ESAT_FollowMagneticAngleRunModeClass::identifier()
   return 0x00;
 }
 
-void ESAT_FollowMagneticAngleRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_FollowMagneticAngleRunModeClass::run(const ESAT_AttitudeStateVector attitudeStateVector)
 {
   ESAT_AttitudePIDController.loop(attitudeStateVector.magneticAngle,
                                   attitudeStateVector);

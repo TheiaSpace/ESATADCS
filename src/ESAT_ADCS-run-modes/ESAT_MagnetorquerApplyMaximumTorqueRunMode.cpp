@@ -24,7 +24,7 @@ byte ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::identifier()
   return 0x33;
 }
 
-void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::loop(ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::run(ESAT_AttitudeStateVector attitudeStateVector)
 {
   switch (mode)
   {

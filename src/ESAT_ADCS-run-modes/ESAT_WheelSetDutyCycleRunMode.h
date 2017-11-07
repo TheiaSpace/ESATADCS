@@ -36,7 +36,7 @@ class ESAT_WheelSetDutyCycleRunModeClass: public ESAT_ADCSRunMode
     float dutyCycle;
 
     // Perform one iteration of the control loop.
-    void loop(ESAT_AttitudeStateVector attitudeStateVector);
+    void run(ESAT_AttitudeStateVector attitudeStateVector);
 };
 
 // Global instance of the wheel duty cycle controller library.

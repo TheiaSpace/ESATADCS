@@ -195,7 +195,7 @@ void ESAT_ADCSClass::registerTelecommandHandler(ESAT_ADCSTelecommandHandler& tel
 
 void ESAT_ADCSClass::run()
 {
-  runMode->loop(attitudeStateVector);
+  runMode->run(attitudeStateVector);
 }
 
 void ESAT_ADCSClass::setRunMode(ESAT_ADCSRunMode& newRunMode)
