@@ -30,6 +30,9 @@ class ESAT_TachometerClass
     void begin();
 
     // Read the speed of the rotating wheel (in revolutions per minute).
+    // This works by counting the number of tachometer pulses since
+    // the latest call to read(), so calling read() too often will
+    // lower the accuracty of the measurement.
     unsigned int read();
 
   private:
