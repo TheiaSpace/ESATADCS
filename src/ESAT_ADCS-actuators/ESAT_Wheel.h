@@ -23,7 +23,10 @@
 #include <ESAT_CCSDSSecondaryHeader.h>
 #include <Servo.h>
 
-// Rotating wheel.
+// Reaction wheel.
+// The ESAT has a heavy flywheel attached to a motor.  Changing the
+// rotational speed of the wheel changes the rotational speed of the
+// satellite in the opposite direction.
 // Use the global instance ESAT_Wheel.
 class ESAT_WheelClass
 {
@@ -31,19 +34,21 @@ class ESAT_WheelClass
     // Set up the wheel controller.
     void begin();
 
-    // Return the duty cycle of the electronic speed controller.
-    // The duty cycle is a signed percentage: it should go from -100 %
-    // to 0 % for negative speed and from 0 % to 100 % for positive
-    // speed.
+    // Return the duty cycle of the electronic speed controller.  The
+    // duty cycle is a signed percentage: it should go from -100 % to
+    // 0 % for negative (clockwise) speed and from 0 % to 100 % for
+    // positive (counterclockwise) speed.
     float readDutyCycle();
 
-    // Set the speed of the wheel.
+    // Set the speed of the wheel in revolutions per minute: negative
+    // for clockwise rotation and positive for counterclockwise
+    // rotation.
     void writeSpeed(int rpm);
 
-    // Set the duty cycle of the electronic speed controller.
-    // The duty cycle is a signed percentage: it should go from -100 %
-    // to 0 % for negative speed and from 0 % to 100 % for positive
-    // speed.
+    // Set the duty cycle of the electronic speed controller.  The
+    // duty cycle is a signed percentage: it should go from -100 % to
+    // 0 % for negative (clockwise) speed and from 0 % to 100 % for
+    // positive (counterclockwise) speed.
     void writeDutyCycle(float dutyCycle);
 
   private:
