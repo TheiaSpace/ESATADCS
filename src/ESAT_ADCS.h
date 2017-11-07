@@ -55,6 +55,9 @@ class ESAT_ADCSClass
     // Stack a new telemetry packet for emission.
     void addTelemetryPacket(ESAT_ADCSTelemetryPacket& telemetryPacket);
 
+    // Return the current attitude state vector.
+    ESAT_AttitudeStateVector attitudeStateVector();
+
     // Get all ADCS subsystems ready.
     // Set the control cycle period (in milliseconds).
     void begin(word period);
@@ -75,6 +78,9 @@ class ESAT_ADCSClass
     // iterates over the telecommand handlers until it finds one that
     // manages the received telecommand.
     void registerTelecommandHandler(ESAT_ADCSTelecommandHandler& telecommandHandler);
+
+    // Return the current run mode identifier.
+    byte runModeIdentifier();
 
     // Set the ADCS run mode.
     void setRunMode(ESAT_ADCSRunMode& runMode);
@@ -109,11 +115,11 @@ class ESAT_ADCSClass
     // Maximum number of telemetry packets.
     static const byte MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS = 16;
 
+    // Current attitude state vector.
+    ESAT_AttitudeStateVector currentAttitudeStateVector;
+
     // Housekeeping telemetry packet.
     ESAT_ADCSHousekeepingTelemetryPacket housekeepingTelemetryPacket;
-
-    // Current attitude state vector.
-    ESAT_AttitudeStateVector attitudeStateVector;
 
     // Number of registered telecommand handlers.
     byte numberOfTelecommandHandlers;
