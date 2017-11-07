@@ -17,6 +17,7 @@
  */
 
 #include "ESAT_ADCS-run-modes/ESAT_FollowMagneticAngleRunMode.h"
+#include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
 
 byte ESAT_FollowMagneticAngleRunModeClass::identifier()
@@ -24,8 +25,10 @@ byte ESAT_FollowMagneticAngleRunModeClass::identifier()
   return 0x00;
 }
 
-void ESAT_FollowMagneticAngleRunModeClass::run(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_FollowMagneticAngleRunModeClass::run()
 {
+  const ESAT_AttitudeStateVector attitudeStateVector =
+    ESAT_ADCS.attitudeStateVector();
   ESAT_AttitudePIDController.loop(attitudeStateVector.magneticAngle,
                                   attitudeStateVector);
 }

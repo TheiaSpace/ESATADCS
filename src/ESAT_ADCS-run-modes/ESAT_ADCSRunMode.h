@@ -20,12 +20,11 @@
 #define ESAT_ADCSRunMode_h
 
 #include <Arduino.h>
-#include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 
-// An ADCS run mode has a run() method that accepts the current
-// attitude state vector and perform whatever actions are relevant
-// to the mode (for example, an attitude control loop will command
-// the actuators to control the attitude of the satellite).
+// An ADCS run mode has a run() method that performs whatever actions
+// are relevant to the mode (for example, an attitude control loop
+// will command the actuators to control the attitude of the
+// satellite).
 class ESAT_ADCSRunMode
 {
   public:
@@ -36,7 +35,7 @@ class ESAT_ADCSRunMode
     virtual byte identifier() = 0;
 
     // Perform one iteration of the ADCS run mode.
-    virtual void run(ESAT_AttitudeStateVector attitudeStateVector) = 0;
+    virtual void run() = 0;
 };
 
 #endif /* ESAT_ADCSRunMode_h */

@@ -32,7 +32,7 @@ class ESAT_StopActuatorsRunModeClass: public ESAT_ADCSRunMode
     byte identifier();
 
     // Stop the actuators
-    void run(ESAT_AttitudeStateVector attitudeStateVector);
+    void run();
 };
 
 // Global instance of the library of the run mode for stopping the

@@ -190,7 +190,7 @@ void ESAT_ADCSClass::registerTelecommandHandler(ESAT_ADCSTelecommandHandler& tel
 
 void ESAT_ADCSClass::run()
 {
-  runMode->run(currentAttitudeStateVector);
+  runMode->run();
 }
 
 byte ESAT_ADCSClass::runModeIdentifier()

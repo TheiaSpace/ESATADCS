@@ -17,6 +17,7 @@
  */
 
 #include "ESAT_ADCS-run-modes/ESAT_MagnetorquerApplyMaximumTorqueRunMode.h"
+#include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_MagnetorquerController.h"
 
 byte ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::identifier()
@@ -24,8 +25,10 @@ byte ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::identifier()
   return 0x33;
 }
 
-void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::run(ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::run()
 {
+  const ESAT_AttitudeStateVector attitudeStateVector =
+    ESAT_ADCS.attitudeStateVector();
   switch (mode)
   {
     case ROTATE_CLOCKWISE:

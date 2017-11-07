@@ -25,7 +25,7 @@ byte ESAT_StopActuatorsRunModeClass::identifier()
   return 0xFF;
 }
 
-void ESAT_StopActuatorsRunModeClass::run(ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_StopActuatorsRunModeClass::run()
 {
   ESAT_Magnetorquer.writeEnable(false);
   ESAT_Wheel.writeDutyCycle(0);

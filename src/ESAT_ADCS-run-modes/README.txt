@@ -7,13 +7,13 @@ Run modes must implement this interface, which exposes two methods:
 
   byte identifier();
 
-  void run(ESAT_AttitudeStateVector attitudeStateVector);
+  void run();
 
 The identifier must be unique for each run mude.
 
-The run() method accepts the current attitude state vector and perform
-whatever actions are relevant to the run mode, like running the
-attitude control loop or simply switching on and off actuators.
+The run() method performs whatever actions are relevant to the run
+mode, like running the attitude control loop or simply switching on
+and off actuators.
 
 To change the run mode, use ESAT_ADCS.setRunMode()
 
