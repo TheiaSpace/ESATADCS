@@ -22,6 +22,10 @@
 #include <Arduino.h>
 
 // Coarse sun sensor used for attitude determination.
+// The coarse sun sensor consists of 4 light detectors,
+// one on each side panel.  By comparing the readings
+// of these 4 light detector, the coarse sun sensor library
+// can estimate the direction of the light source.
 class ESAT_CoarseSunSensorClass
 {
   public:
@@ -60,6 +64,7 @@ class ESAT_CoarseSunSensorClass
     static const int PIN_Y_MINUS = CSSYMINUS;
 };
 
+// Global instance of the coarse sun sensor library.
 extern ESAT_CoarseSunSensorClass ESAT_CoarseSunSensor;
 
 #endif /* ESAT_CoarseSunSensor_h */
