@@ -137,8 +137,8 @@ void ESAT_AttitudePIDControllerClass::loop(const word currentAngle)
 {
   updateError(currentAngle);
   updateErrorDerivative();
-  updateActuation();
   updateErrorIntegral();
+  updateActuation();
   applyActuation();
 }
 
