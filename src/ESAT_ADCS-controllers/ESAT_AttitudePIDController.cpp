@@ -96,7 +96,7 @@ void ESAT_AttitudePIDControllerClass::begin()
   proportionalGain = DEFAULT_PROPORTIONAL_GAIN;
   useGyroscope = DEFAULT_USE_GYROSCOPE_VALUE;
   errorIntegral = 0;
-  oldError = 0;
+  previousError = 0;
 }
 
 boolean ESAT_AttitudePIDControllerClass::belowDeadbandThreshold()
@@ -129,7 +129,7 @@ float ESAT_AttitudePIDControllerClass::computeActuation()
 
 float ESAT_AttitudePIDControllerClass::computeErrorDerivative()
 {
-  const int errorDifference = angleDifference(error, oldError);
+  const int errorDifference = angleDifference(error, previousError);
   return errorDifference / ESAT_ADCS.period();
 }
 
@@ -169,7 +169,7 @@ void ESAT_AttitudePIDControllerClass::updateErrorDerivative()
   {
     errorDerivative = computeErrorDerivative();
   }
-  oldError = error;
+  previousError = error;
 }
 
 void ESAT_AttitudePIDControllerClass::updateErrorIntegral()

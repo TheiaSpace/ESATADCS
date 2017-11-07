@@ -71,7 +71,7 @@ class ESAT_WheelPIDControllerClass
 
     // Wheel speed (in revolutions per second) at the previous
     // iteration of the control loop.
-    word oldError;
+    word previousError;
 
     // Target rotational speed of the wheel in revolutions per minute.
     word targetSpeed;
