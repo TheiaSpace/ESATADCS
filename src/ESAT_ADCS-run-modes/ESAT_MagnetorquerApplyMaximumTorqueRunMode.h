@@ -44,7 +44,7 @@ class ESAT_MagnetorquerApplyMaximumTorqueRunModeClass: public ESAT_ADCSRunMode
     // Perform one iteration of the maximum magnetic torque mode:
     // apply the maximum possible torque towards the specified direction
     // given the attitude of the satellite.
-    void loop(ESAT_AttitudeStateVector attitudeStateVector);
+    void run(ESAT_AttitudeStateVector attitudeStateVector);
 };
 
 // Global instance of the magnetorquer maximum torque run mode library.

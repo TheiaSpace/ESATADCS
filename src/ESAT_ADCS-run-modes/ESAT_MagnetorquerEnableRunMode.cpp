@@ -24,7 +24,7 @@ byte ESAT_MagnetorquerEnableRunModeClass::identifier()
   return 0x30;
 }
 
-void ESAT_MagnetorquerEnableRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_MagnetorquerEnableRunModeClass::run(const ESAT_AttitudeStateVector attitudeStateVector)
 {
   ESAT_Magnetorquer.writeEnable(enable);
 }

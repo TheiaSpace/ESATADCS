@@ -37,7 +37,7 @@ class ESAT_MagnetorquerDemagnetizeRunModeClass: public ESAT_ADCSRunMode
     // Perform one iteration of the demagnetization mode:
     // a number of demagnetization cycles.
     // This resets cycles to zero.
-    void loop(ESAT_AttitudeStateVector attitudeStateVector);
+    void run(ESAT_AttitudeStateVector attitudeStateVector);
 };
 
 // Global instance of the magnetorquer demagnetization run mode library.

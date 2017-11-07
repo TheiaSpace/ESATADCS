@@ -32,7 +32,7 @@ class ESAT_FollowMagneticAngleRunModeClass: public ESAT_ADCSRunMode
     byte identifier();
 
     // Keep a magnetic angle.
-    void loop(ESAT_AttitudeStateVector attitudeStateVector);
+    void run(ESAT_AttitudeStateVector attitudeStateVector);
 };
 
 // Global instance of the library of the run mode for controlling the

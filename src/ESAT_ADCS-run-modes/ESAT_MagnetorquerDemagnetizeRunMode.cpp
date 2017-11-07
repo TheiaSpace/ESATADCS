@@ -24,7 +24,7 @@ byte ESAT_MagnetorquerDemagnetizeRunModeClass::identifier()
   return 0x34;
 }
 
-void ESAT_MagnetorquerDemagnetizeRunModeClass::loop(ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_MagnetorquerDemagnetizeRunModeClass::run(ESAT_AttitudeStateVector attitudeStateVector)
 {
   if (cycles == 0)
   {

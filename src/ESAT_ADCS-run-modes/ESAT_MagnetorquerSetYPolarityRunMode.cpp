@@ -23,7 +23,7 @@ byte ESAT_MagnetorquerSetYPolarityRunModeClass::identifier()
   return 0x32;
 }
 
-void ESAT_MagnetorquerSetYPolarityRunModeClass::loop(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_MagnetorquerSetYPolarityRunModeClass::run(const ESAT_AttitudeStateVector attitudeStateVector)
 {
   ESAT_Magnetorquer.writeY(polarity);
 }

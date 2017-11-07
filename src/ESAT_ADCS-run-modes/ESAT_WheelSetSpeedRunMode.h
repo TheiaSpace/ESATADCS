@@ -36,7 +36,7 @@ class ESAT_WheelSetSpeedRunModeClass: public ESAT_ADCSRunMode
 
     // Perform one iteration of the control loop for reaching
     // the desired wheel speed.
-    void loop(ESAT_AttitudeStateVector attitudeStateVector);
+    void run(ESAT_AttitudeStateVector attitudeStateVector);
 };
 
 // Global instance of the wheel speed setting run mode library.
