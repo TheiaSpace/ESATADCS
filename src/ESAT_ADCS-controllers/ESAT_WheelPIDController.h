@@ -41,8 +41,7 @@ class ESAT_WheelPIDControllerClass
 
     // Start the control loop.
     // Set the default gains.
-    // Set the period (in seconds) of the control loop.
-    void begin(float period);
+    void begin();
 
     // Perform one iteration of the control loop.
     void loop(word targetSpeed);
@@ -73,10 +72,6 @@ class ESAT_WheelPIDControllerClass
     // Wheel speed (in revolutions per second) at the previous
     // iteration of the control loop.
     word oldError;
-
-    // Time step.
-    // Expressed in seconds.
-    float period;
 
     // Target rotational speed of the wheel in revolutions per minute.
     word targetSpeed;

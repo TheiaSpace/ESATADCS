@@ -79,8 +79,7 @@ class ESAT_AttitudePIDControllerClass
     // Set the default gains.
     // Set the default deadband.
     // Set the default detumbling threshold.
-    // Set the period (in seconds) of the control loop.
-    void begin(float period);
+    void begin();
 
     // Perform one iteration of the control loop to try to compensate
     // for the angle error.
@@ -140,10 +139,6 @@ class ESAT_AttitudePIDControllerClass
     // Angle error (in degrees) at the previous iteration of the
     // control loop.
     int oldError;
-
-    // Time step.
-    // Expressed in seconds.
-    float period;
 
     // Return true if the error derivative is above the detumbling
     // threshold.  Otherwise return false.

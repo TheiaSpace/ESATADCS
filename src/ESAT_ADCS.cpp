@@ -69,12 +69,14 @@ ESAT_AttitudeStateVector ESAT_ADCSClass::attitudeStateVector()
   return currentAttitudeStateVector;
 }
 
-void ESAT_ADCSClass::begin(const word period)
+void ESAT_ADCSClass::begin()
 {
+  currentUpdateTime = millis();
+  previousUpdateTime = currentUpdateTime;
   telemetryPacketSequenceCount = 0;
-  ESAT_AttitudePIDController.begin(period / 1000.);
+  ESAT_AttitudePIDController.begin();
   ESAT_Wheel.begin();
-  ESAT_WheelPIDController.begin(period / 1000.);
+  ESAT_WheelPIDController.begin();
   ESAT_Gyroscope.begin(ESAT_Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
   ESAT_Magnetometer.begin();
   ESAT_CoarseSunSensor.begin();
@@ -119,6 +121,11 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
       return;
     }
   }
+}
+
+float ESAT_ADCSClass::period()
+{
+  return (currentUpdateTime - previousUpdateTime) / 1000.;
 }
 
 void ESAT_ADCSClass::readSensors()
@@ -217,9 +224,16 @@ boolean ESAT_ADCSClass::telemetryAvailable()
 
 void ESAT_ADCSClass::update()
 {
+  updatePeriod();
   readSensors();
   run();
   addHousekeepingTelemetryPacket();
+}
+
+void ESAT_ADCSClass::updatePeriod()
+{
+  previousUpdateTime = currentUpdateTime;
+  currentUpdateTime = millis();
 }
 
 ESAT_ADCSClass ESAT_ADCS;
