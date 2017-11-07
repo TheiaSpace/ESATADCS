@@ -138,7 +138,7 @@ class ESAT_AttitudePIDControllerClass
 
     // Angle error (in degrees) at the previous iteration of the
     // control loop.
-    int oldError;
+    int previousError;
 
     // Return true if the error derivative is above the detumbling
     // threshold.  Otherwise return false.
