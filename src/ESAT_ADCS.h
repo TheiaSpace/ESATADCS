@@ -24,7 +24,6 @@
 #include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_ADCSTelecommandHandler.h"
-#include "ESAT_ADCS-telemetry-packets/ESAT_ADCSHousekeepingTelemetryPacket.h"
 #include "ESAT_ADCS-telemetry-packets/ESAT_ADCSTelemetryPacket.h"
 
 // Attitude Determination and Control Subsystem (ADCS) library.
@@ -117,9 +116,6 @@ class ESAT_ADCSClass
 
     // Current attitude state vector.
     ESAT_AttitudeStateVector currentAttitudeStateVector;
-
-    // Housekeeping telemetry packet.
-    ESAT_ADCSHousekeepingTelemetryPacket housekeepingTelemetryPacket;
 
     // Number of registered telecommand handlers.
     byte numberOfTelecommandHandlers;

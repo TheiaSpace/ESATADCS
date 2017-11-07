@@ -29,7 +29,8 @@
 // * Attitude state vector.
 // * State of the actuators.
 // * Parameters of the controllers.
-class ESAT_ADCSHousekeepingTelemetryPacket: public ESAT_ADCSTelemetryPacket
+// Use the public instance ESAT_ADCSHousekeepingTelemetryPacket.
+class ESAT_ADCSHousekeepingTelemetryPacketClass: public ESAT_ADCSTelemetryPacket
 {
   public:
     // Return the ADCS housekeeping telemetry packet identifier.
@@ -42,5 +43,8 @@ class ESAT_ADCSHousekeepingTelemetryPacket: public ESAT_ADCSTelemetryPacket
     // Packet identifier of ADCS housekeeping telemetry.
     static const byte PACKET_IDENTIFIER = 0x00;
 };
+
+// Public instance of the ADCS housekeeping telemetry packet library.
+extern ESAT_ADCSHousekeepingTelemetryPacketClass ESAT_ADCSHousekeepingTelemetryPacket;
 
 #endif /* ESAT_ADCSHousekeepingTelemetryPacket_h */

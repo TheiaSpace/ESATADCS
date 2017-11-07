@@ -46,11 +46,12 @@
 #include "ESAT_ADCS-telecommand-handlers/ESAT_MagnetorquerTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_StopActuatorsTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_WheelTelecommandHandler.h"
+#include "ESAT_ADCS-telemetry-packets/ESAT_ADCSHousekeepingTelemetryPacket.h"
 
 
 void ESAT_ADCSClass::addHousekeepingTelemetryPacket()
 {
-  addTelemetryPacket(housekeepingTelemetryPacket);
+  addTelemetryPacket(ESAT_ADCSHousekeepingTelemetryPacket);
 }
 
 void ESAT_ADCSClass::addTelemetryPacket(ESAT_ADCSTelemetryPacket& telemetryPacket)

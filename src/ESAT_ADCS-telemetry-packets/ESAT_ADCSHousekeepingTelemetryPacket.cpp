@@ -26,12 +26,12 @@
 #include "ESAT_ADCS-measurements/ESAT_Gyroscope.h"
 #include "ESAT_ADCS-measurements/ESAT_Magnetometer.h"
 
-byte ESAT_ADCSHousekeepingTelemetryPacket::packetIdentifier()
+byte ESAT_ADCSHousekeepingTelemetryPacketClass::packetIdentifier()
 {
   return PACKET_IDENTIFIER;
 }
 
-void ESAT_ADCSHousekeepingTelemetryPacket::readUserData(ESAT_CCSDSPacket& packet)
+void ESAT_ADCSHousekeepingTelemetryPacketClass::readUserData(ESAT_CCSDSPacket& packet)
 {
   const ESAT_AttitudeStateVector attitudeStateVector =
     ESAT_ADCS.attitudeStateVector();
@@ -63,3 +63,5 @@ void ESAT_ADCSHousekeepingTelemetryPacket::readUserData(ESAT_CCSDSPacket& packet
   packet.writeBoolean(ESAT_Gyroscope.error);
   packet.writeBoolean(ESAT_Magnetometer.error);
 }
+
+ESAT_ADCSHousekeepingTelemetryPacketClass ESAT_ADCSHousekeepingTelemetryPacket;
