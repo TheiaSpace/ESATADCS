@@ -46,14 +46,12 @@
 #include "ESAT_ADCS-telecommand-handlers/ESAT_MagnetorquerTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_StopActuatorsTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_WheelTelecommandHandler.h"
+#include "ESAT_ADCS-telemetry-packets/ESAT_ADCSHousekeepingTelemetryPacket.h"
 
 
 void ESAT_ADCSClass::addHousekeepingTelemetryPacket()
 {
-  housekeepingTelemetryPacket =
-    ESAT_ADCSHousekeepingTelemetryPacket(attitudeStateVector,
-                                         runMode->identifier());
-  addTelemetryPacket(housekeepingTelemetryPacket);
+  addTelemetryPacket(ESAT_ADCSHousekeepingTelemetryPacket);
 }
 
 void ESAT_ADCSClass::addTelemetryPacket(ESAT_ADCSTelemetryPacket& telemetryPacket)
@@ -64,6 +62,11 @@ void ESAT_ADCSClass::addTelemetryPacket(ESAT_ADCSTelemetryPacket& telemetryPacke
   }
   telemetryPackets[numberOfTelemetryPackets] = &telemetryPacket;
   numberOfTelemetryPackets = numberOfTelemetryPackets + 1;
+}
+
+ESAT_AttitudeStateVector ESAT_ADCSClass::attitudeStateVector()
+{
+  return currentAttitudeStateVector;
 }
 
 void ESAT_ADCSClass::begin(const word period)
@@ -120,16 +123,16 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
 
 void ESAT_ADCSClass::readSensors()
 {
-  attitudeStateVector.wheelSpeed = ESAT_Tachometer.read();
+  currentAttitudeStateVector.wheelSpeed = ESAT_Tachometer.read();
   const boolean enableMagnetorquerDriver = ESAT_Magnetorquer.readEnable();
   ESAT_Magnetorquer.writeEnable(false);
   delay(20);
   ESAT_Gyroscope.error = false;
-  attitudeStateVector.rotationalSpeed = ESAT_Gyroscope.read(3);
+  currentAttitudeStateVector.rotationalSpeed = ESAT_Gyroscope.read(3);
   ESAT_Magnetometer.error = false;
-  attitudeStateVector.magneticAngle = ESAT_Magnetometer.read();
+  currentAttitudeStateVector.magneticAngle = ESAT_Magnetometer.read();
   ESAT_Magnetorquer.writeEnable(enableMagnetorquerDriver);
-  attitudeStateVector.sunAngle = ESAT_CoarseSunSensor.readSunAngle();
+  currentAttitudeStateVector.sunAngle = ESAT_CoarseSunSensor.readSunAngle();
 }
 
 boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
@@ -187,7 +190,12 @@ void ESAT_ADCSClass::registerTelecommandHandler(ESAT_ADCSTelecommandHandler& tel
 
 void ESAT_ADCSClass::run()
 {
-  runMode->run(attitudeStateVector);
+  runMode->run();
+}
+
+byte ESAT_ADCSClass::runModeIdentifier()
+{
+  return runMode->identifier();
 }
 
 void ESAT_ADCSClass::setRunMode(ESAT_ADCSRunMode& newRunMode)

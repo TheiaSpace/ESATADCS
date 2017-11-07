@@ -17,6 +17,7 @@
  */
 
 #include "ESAT_ADCS-telemetry-packets/ESAT_ADCSHousekeepingTelemetryPacket.h"
+#include "ESAT_ADCS.h"
 #include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
@@ -25,25 +26,16 @@
 #include "ESAT_ADCS-measurements/ESAT_Gyroscope.h"
 #include "ESAT_ADCS-measurements/ESAT_Magnetometer.h"
 
-ESAT_ADCSHousekeepingTelemetryPacket::ESAT_ADCSHousekeepingTelemetryPacket()
-{
-}
-
-ESAT_ADCSHousekeepingTelemetryPacket::ESAT_ADCSHousekeepingTelemetryPacket(const ESAT_AttitudeStateVector attitudeStateVector,
-                                                                           const byte runModeIdentifier):
-  attitudeStateVector(attitudeStateVector),
-  runModeIdentifier(runModeIdentifier)
-{
-}
-
-byte ESAT_ADCSHousekeepingTelemetryPacket::packetIdentifier()
+byte ESAT_ADCSHousekeepingTelemetryPacketClass::packetIdentifier()
 {
   return PACKET_IDENTIFIER;
 }
 
-void ESAT_ADCSHousekeepingTelemetryPacket::readUserData(ESAT_CCSDSPacket& packet)
+void ESAT_ADCSHousekeepingTelemetryPacketClass::readUserData(ESAT_CCSDSPacket& packet)
 {
-  packet.writeByte(runModeIdentifier);
+  const ESAT_AttitudeStateVector attitudeStateVector =
+    ESAT_ADCS.attitudeStateVector();
+  packet.writeByte(ESAT_ADCS.runModeIdentifier());
   packet.writeWord(ESAT_AttitudePIDController.targetAngle);
   packet.writeWord(attitudeStateVector.magneticAngle);
   packet.writeWord(attitudeStateVector.sunAngle);
@@ -71,3 +63,5 @@ void ESAT_ADCSHousekeepingTelemetryPacket::readUserData(ESAT_CCSDSPacket& packet
   packet.writeBoolean(ESAT_Gyroscope.error);
   packet.writeBoolean(ESAT_Magnetometer.error);
 }
+
+ESAT_ADCSHousekeepingTelemetryPacketClass ESAT_ADCSHousekeepingTelemetryPacket;

@@ -37,7 +37,7 @@ class ESAT_MagnetorquerSetXPolarityRunModeClass: public ESAT_ADCSRunMode
 
     // Perform one iteration of setting the polarity of the
     // magnetorquer.
-    void run(ESAT_AttitudeStateVector attitudeStateVector);
+    void run();
 };
 
 // Global instance of the X-axis magnetorquer polarity setting run

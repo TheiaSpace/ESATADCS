@@ -24,9 +24,9 @@ byte ESAT_WheelSetSpeedRunModeClass::identifier()
   return 0x21;
 }
 
-void ESAT_WheelSetSpeedRunModeClass::run(const ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_WheelSetSpeedRunModeClass::run()
 {
-  ESAT_WheelPIDController.loop(targetSpeed, attitudeStateVector.wheelSpeed);
+  ESAT_WheelPIDController.loop(targetSpeed);
 }
 
 ESAT_WheelSetSpeedRunModeClass ESAT_WheelSetSpeedRunMode;

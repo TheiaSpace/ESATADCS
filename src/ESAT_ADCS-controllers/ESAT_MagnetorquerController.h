@@ -27,45 +27,31 @@
 class ESAT_MagnetorquerControllerClass
 {
   public:
-    // Apply a torque to rotate in the clockwise direction
-    // given the magnetic angle (the angle in degrees of
-    // the magnetic North with respect to the +X axis of the
-    // satellite, measured counterclockwise).
-    void rotateClockwise(word magneticAngle);
+    // Apply a torque to rotate in the clockwise direction.
+    void rotateClockwise();
 
-    // Apply a torque to rotate in the counterclockwise direction
-    // given the magnetic angle (the angle in degrees of
-    // the magnetic North with respect to the +X axis of the
-    // satellite, measured counterclockwise).
-    void rotateCounterclockwise(word magneticAngle);
+    // Apply a torque to rotate in the counterclockwise direction.
+    void rotateCounterclockwise();
 
     // Stop the magnetorquers.
     void stop();
 
   private:
     // Return the X-axis magnetorquer polarity needed for clockwise
-    // rotation at the given magnetic angle (the angle in degrees of
-    // the magnetic North with respect to the +X axis of the
-    // satellite, positive counterclockwise).
-    ESAT_MagnetorquerClass::Polarity clockwiseXPolarity(word magneticAngle);
+    // rotation.
+    ESAT_MagnetorquerClass::Polarity clockwiseXPolarity();
 
     // Return the Y-axis magnetorquer polarity needed for clockwise
-    // rotation at the given magnetic angle (the angle in degrees of
-    // the magnetic North with respect to the +X axis of the
-    // satellite, positive counterclockwise).
-    ESAT_MagnetorquerClass::Polarity clockwiseYPolarity(word magneticAngle);
+    // rotation.
+    ESAT_MagnetorquerClass::Polarity clockwiseYPolarity();
 
     // Return the X-axis magnetorquer polarity needed for
-    // counterclockwise rotation at the given magnetic angle (the
-    // angle in degrees of the magnetic North with respect to the +X
-    // axis of the satellite, positive counterclockwise).
-    ESAT_MagnetorquerClass::Polarity counterclockwiseXPolarity(word magneticAngle);
+    // counterclockwise rotation.
+    ESAT_MagnetorquerClass::Polarity counterclockwiseXPolarity();
 
     // Return the Y-axis magnetorquer polarity needed for
-    // counterclockwise rotation at the given magnetic angle (the
-    // angle in degrees of the magnetic North with respect to the +X
-    // axis of the satellite, positive counterclockwise).
-    ESAT_MagnetorquerClass::Polarity counterclockwiseYPolarity(word magneticAngle);
+    // counterclockwise rotation.
+    ESAT_MagnetorquerClass::Polarity counterclockwiseYPolarity();
 };
 
 // Global instance of the magnetorquer controller library.

@@ -32,7 +32,7 @@ class ESAT_FollowSunAngleRunModeClass: public ESAT_ADCSRunMode
     byte identifier();
 
     // Keep a Sun angle.
-    void run(ESAT_AttitudeStateVector attitudeStateVector);
+    void run();
 };
 
 // Global instance of the library of the run mode for controlling the

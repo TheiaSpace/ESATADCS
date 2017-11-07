@@ -17,9 +17,13 @@
  */
 
 #include "ESAT_ADCS-controllers/ESAT_MagnetorquerController.h"
+#include "ESAT_ADCS.h"
 
-ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::clockwiseXPolarity(const word magneticAngle)
+ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::clockwiseXPolarity()
 {
+  const ESAT_AttitudeStateVector attitudeStateVector =
+    ESAT_ADCS.attitudeStateVector();
+  const word magneticAngle = attitudeStateVector.magneticAngle;
   if ((magneticAngle % 360) < 90)
   {
     return ESAT_Magnetorquer.NEGATIVE;
@@ -35,8 +39,11 @@ ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::clockwiseXPol
   return ESAT_Magnetorquer.POSITIVE;
 }
 
-ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::clockwiseYPolarity(const word magneticAngle)
+ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::clockwiseYPolarity()
 {
+  const ESAT_AttitudeStateVector attitudeStateVector =
+    ESAT_ADCS.attitudeStateVector();
+  const word magneticAngle = attitudeStateVector.magneticAngle;
   if ((magneticAngle % 360) < 90)
   {
     return ESAT_Magnetorquer.POSITIVE;
@@ -52,8 +59,11 @@ ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::clockwiseYPol
   return ESAT_Magnetorquer.POSITIVE;
 }
 
-ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::counterclockwiseXPolarity(const word magneticAngle)
+ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::counterclockwiseXPolarity()
 {
+  const ESAT_AttitudeStateVector attitudeStateVector =
+    ESAT_ADCS.attitudeStateVector();
+  const word magneticAngle = attitudeStateVector.magneticAngle;
   if ((magneticAngle % 360) < 90)
   {
     return ESAT_Magnetorquer.POSITIVE;
@@ -69,8 +79,11 @@ ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::counterclockw
   return ESAT_Magnetorquer.NEGATIVE;
 }
 
-ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::counterclockwiseYPolarity(const word magneticAngle)
+ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::counterclockwiseYPolarity()
 {
+  const ESAT_AttitudeStateVector attitudeStateVector =
+    ESAT_ADCS.attitudeStateVector();
+  const word magneticAngle = attitudeStateVector.magneticAngle;
   if ((magneticAngle % 360) < 90)
   {
     return ESAT_Magnetorquer.NEGATIVE;
@@ -86,19 +99,19 @@ ESAT_MagnetorquerClass::Polarity ESAT_MagnetorquerControllerClass::counterclockw
   return ESAT_Magnetorquer.NEGATIVE;
 }
 
-void ESAT_MagnetorquerControllerClass::rotateClockwise(const word magneticAngle)
+void ESAT_MagnetorquerControllerClass::rotateClockwise()
 {
   ESAT_Magnetorquer.writeEnable(false);
-  ESAT_Magnetorquer.writeX(clockwiseXPolarity(magneticAngle));
-  ESAT_Magnetorquer.writeY(clockwiseYPolarity(magneticAngle));
+  ESAT_Magnetorquer.writeX(clockwiseXPolarity());
+  ESAT_Magnetorquer.writeY(clockwiseYPolarity());
   ESAT_Magnetorquer.writeEnable(true);
 }
 
-void ESAT_MagnetorquerControllerClass::rotateCounterclockwise(const word magneticAngle)
+void ESAT_MagnetorquerControllerClass::rotateCounterclockwise()
 {
   ESAT_Magnetorquer.writeEnable(false);
-  ESAT_Magnetorquer.writeX(counterclockwiseXPolarity(magneticAngle));
-  ESAT_Magnetorquer.writeY(counterclockwiseYPolarity(magneticAngle));
+  ESAT_Magnetorquer.writeX(counterclockwiseXPolarity());
+  ESAT_Magnetorquer.writeY(counterclockwiseYPolarity());
   ESAT_Magnetorquer.writeEnable(true);
 }
 

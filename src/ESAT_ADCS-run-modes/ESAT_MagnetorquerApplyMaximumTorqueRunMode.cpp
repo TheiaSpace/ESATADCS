@@ -24,15 +24,15 @@ byte ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::identifier()
   return 0x33;
 }
 
-void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::run(ESAT_AttitudeStateVector attitudeStateVector)
+void ESAT_MagnetorquerApplyMaximumTorqueRunModeClass::run()
 {
   switch (mode)
   {
     case ROTATE_CLOCKWISE:
-      ESAT_MagnetorquerController.rotateClockwise(attitudeStateVector.magneticAngle);
+      ESAT_MagnetorquerController.rotateClockwise();
       break;
     case ROTATE_COUNTERCLOCKWISE:
-      ESAT_MagnetorquerController.rotateCounterclockwise(attitudeStateVector.magneticAngle);
+      ESAT_MagnetorquerController.rotateCounterclockwise();
       break;
     default:
       break;
