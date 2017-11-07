@@ -48,23 +48,37 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     };
 
     // Handle the telecommand for following the magnetic angle.
+    // The telecommand has one 16-bit unsigned integer parameter:
+    // the target magnetic angle, from 0 degrees to 359 degrees,
+    // measured counterclockwise from the +X axis of the satellite
+    // to the magnetic North.
     // This changes the ADCS run mode.
     void handleFollowMagneticAngleTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for following the sun angle.
+    // The telecommand has one 16-bit unsigned integer parameter:
+    // the target Sun angle, from 0 degrees to 359 degrees,
+    // measured counterclockwise from the +X axis of the satellite
+    // to the Sun direction.
     // This changes the ADCS run mode.
     void handleFollowSunAngleTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the proportional gain of the
     // attitude controller.
+    // The telecommand has one 32-bit floating-point parameter:
+    // the proportional gain.
     void handleAttitudeControllerSetProportionalGainTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the integral gain of the
     // attitude controller.
+    // The telecommand has one 32-bit floating-point parameter:
+    // the integral gain.
     void handleAttitudeControllerSetIntegralGainTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the derivative gain of the
     // attitude controller.
+    // The telecommand has one 32-bit floating-point parameter:
+    // the derivative gain.
     void handleAttitudeControllerSetDerivativeGainTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for resetting the error integral of the
@@ -77,14 +91,20 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
 
     // Handle the telecommand for setting the actuator used for
     // attitude control.
+    // The telecommand has one 8-bit unsigned integer parameter:
+    // the actuator, which is 0 for the magnetorquer and 1 for the wheel.
     void handleAttitudeControllerSetActuatorTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the deadband of the attitude
     // controller.
+    // The telecommand has two 16-bit unsigned integer parameters:
+    // the error deadband and the error derivative deadband.
     void handleAttitudeControllerSetDeadbandTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the detumbling threshold of
     // the attitude controller.
+    // The telecommand has one 16-bit unsigned integer parameter:
+    // the error derivative detumbling threshold.
     void handleAttitudeControllerSetDetumblingThresholdTelecommand(ESAT_CCSDSPacket telecommand);
 };
 
