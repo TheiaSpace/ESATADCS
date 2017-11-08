@@ -35,7 +35,7 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // Available telecommand codes.
     enum TelecommandCodes
     {
-      FOLLOW_MAGNETIC_ANGLE = 0x00,
+      FOLLOW_MAGNETIC_TARGET = 0x00,
       FOLLOW_SUN_ANGLE = 0x01,
       ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN = 0x10,
       ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN = 0x11,
@@ -47,13 +47,13 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
       ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD = 0x17,
     };
 
-    // Handle the telecommand for following the magnetic angle.
+    // Handle the telecommand for following a target magnetic angle.
     // The telecommand has one 16-bit unsigned integer parameter:
     // the target magnetic angle, from 0 degrees to 359 degrees,
     // measured counterclockwise from the +X axis of the satellite
     // to the magnetic North.
     // This changes the ADCS run mode.
-    void handleFollowMagneticAngleTelecommand(ESAT_CCSDSPacket telecommand);
+    void handleFollowMagneticTargetTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for following the sun angle.
     // The telecommand has one 16-bit unsigned integer parameter:

@@ -16,15 +16,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_FollowMagneticAngleRunMode_h
-#define ESAT_FollowMagneticAngleRunMode_h
+#ifndef ESAT_FollowMagneticTargetRunMode_h
+#define ESAT_FollowMagneticTargetRunMode_h
 
 #include <Arduino.h>
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 
-// Run mode for controlling the attitude to follow a magnetic angle.
-// Use the public instance ESAT_FollowMagneticAngleRunMode.
-class ESAT_FollowMagneticAngleRunModeClass: public ESAT_ADCSRunMode
+// Run mode for controlling the attitude to follow a magnetic target angle.
+// Use the public instance ESAT_FollowMagneticTargetRunMode.
+class ESAT_FollowMagneticTargetRunModeClass: public ESAT_ADCSRunMode
 {
   public:
     // Return the identifier number of the mode.  Each run mode has
@@ -37,6 +37,6 @@ class ESAT_FollowMagneticAngleRunModeClass: public ESAT_ADCSRunMode
 
 // Global instance of the library of the run mode for controlling the
 // magnetic attitude.
-extern ESAT_FollowMagneticAngleRunModeClass ESAT_FollowMagneticAngleRunMode;
+extern ESAT_FollowMagneticTargetRunModeClass ESAT_FollowMagneticTargetRunMode;
 
-#endif /* ESAT_FollowMagneticAngleRunMode_h */
+#endif /* ESAT_FollowMagneticTargetRunMode_h */
