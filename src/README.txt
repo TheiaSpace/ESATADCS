@@ -1,4 +1,4 @@
-Attitude Determination and Control Subsystem for ESAT.
+Attitude Determination and Control Subsystem (ADCS) for ESAT.
 
 ESAT_ADCS contains the public interface to the ADCS.  Currently, the
 ADCS runs as a library used by the On-Board Computer program:
