@@ -42,7 +42,7 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
       ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN = 0x12,
       ATTITUDE_CONTROLLER_RESET_ERROR_INTEGRAL = 0x13,
       ATTITUDE_CONTROLLER_USE_GYROSCOPE = 0x14,
-      ATTITUDE_CONTROLLER_SET_ACTUATOR = 0x15,
+      ATTITUDE_CONTROLLER_SET_ACTUATORS = 0x15,
       ATTITUDE_CONTROLLER_SET_DEADBAND = 0x16,
       ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD = 0x17,
     };
@@ -89,11 +89,11 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // for attitude control.
     void handleAttitudeControllerUseGyroscopeTelecommand(ESAT_CCSDSPacket telecommand);
 
-    // Handle the telecommand for setting the actuator used for
+    // Handle the telecommand for setting the actuators used for
     // attitude control.
     // The telecommand has one 8-bit unsigned integer parameter:
     // the actuator, which is 0 for the magnetorquer and 1 for the wheel.
-    void handleAttitudeControllerSetActuatorTelecommand(ESAT_CCSDSPacket telecommand);
+    void handleAttitudeControllerSetActuatorsTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the deadband of the attitude
     // controller.

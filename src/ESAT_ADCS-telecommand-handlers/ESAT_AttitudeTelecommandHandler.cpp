@@ -57,8 +57,8 @@ boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket
       handleAttitudeControllerUseGyroscopeTelecommand(telecommand);
       return true;
       break;
-    case ATTITUDE_CONTROLLER_SET_ACTUATOR:
-      handleAttitudeControllerSetActuatorTelecommand(telecommand);
+    case ATTITUDE_CONTROLLER_SET_ACTUATORS:
+      handleAttitudeControllerSetActuatorsTelecommand(telecommand);
       return true;
       break;
     case ATTITUDE_CONTROLLER_SET_DEADBAND:
@@ -113,7 +113,7 @@ void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerUseGyroscopeT
   ESAT_AttitudePIDController.useGyroscope = telecommand.readBoolean();
 }
 
-void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerSetActuatorTelecommand(ESAT_CCSDSPacket telecommand)
+void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerSetActuatorsTelecommand(ESAT_CCSDSPacket telecommand)
 {
   const byte parameter = telecommand.readByte();
   if (parameter > 0)
