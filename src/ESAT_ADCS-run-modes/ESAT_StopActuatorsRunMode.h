@@ -16,36 +16,27 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATMagnetorquer.h"
+#ifndef ESAT_StopActuatorsRunMode_h
+#define ESAT_StopActuatorsRunMode_h
 
-void ESATMagnetorquer::begin()
+#include <Arduino.h>
+#include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
+
+// Run mode for disabling the actuators.
+// Use the public instance ESAT_StopActuatorsRunMode.
+class ESAT_StopActuatorsRunModeClass: public ESAT_ADCSRunMode
 {
-  configurePins();
-  writeEnable(false);
-}
+  public:
+    // Return the identifier number of the mode.  Each run mode has
+    // its own unique identifier number.
+    byte identifier();
 
-void ESATMagnetorquer::configurePins()
-{
-  pinMode(pinEnableX, OUTPUT);
-  pinMode(pinEnableY, OUTPUT);
-  pinMode(pinX, OUTPUT);
-  pinMode(pinY, OUTPUT);
-}
+    // Stop the actuators
+    void run();
+};
 
-void ESATMagnetorquer::writeEnable(boolean enable)
-{
-  digitalWrite(pinEnableX, enable ? HIGH : LOW);
-  digitalWrite(pinEnableY, enable ? HIGH : LOW);
-}
+// Global instance of the library of the run mode for stopping the
+// actuators.
+extern ESAT_StopActuatorsRunModeClass ESAT_StopActuatorsRunMode;
 
-void ESATMagnetorquer::writeX(int polarity)
-{
-  digitalWrite(pinX, polarity);
-}
-
-void ESATMagnetorquer::writeY(int polarity)
-{
-  digitalWrite(pinY, polarity);
-}
-
-ESATMagnetorquer Magnetorquer;
+#endif /* ESAT_StopActuatorsRunMode_h */

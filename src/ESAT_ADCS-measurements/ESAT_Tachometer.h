@@ -16,37 +16,52 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATTachometer_h
-#define ESATTachometer_h
+#ifndef ESAT_Tachometer_h
+#define ESAT_Tachometer_h
 
-#include <Energia.h>
+#include <Arduino.h>
 
 // Tachometer used for reading the speed of the rotating wheel.
-class ESATTachometer
+// Use the global instance ESAT_Tachometer.
+//
+// The wheel has a series of marks; the tachometer hardware
+// sends a pulse every time a mark passes above it so that
+// the tachometer library can count these pulses to estimate
+// the wheel speed.
+class ESAT_TachometerClass
 {
   public:
     // Start the tachometer.
     void begin();
 
     // Read the speed of the rotating wheel (in revolutions per minute).
+    // This works by counting the number of tachometer pulses since
+    // the latest call to read(), so calling read() too often will
+    // lower the accuracty of the measurement.
     unsigned int read();
 
   private:
+    // Number of tachometer pulses since the latest measurement.
     volatile unsigned int count;
+
+    // Number of tachometer pulses at the previous measurement.
     unsigned int previousCount;
+
+    // Processor uptime in milliseconds at the previous measurements.
     unsigned long previousReadingTime;
 
     // The rotating wheel has several marks, so the tachometer gives
     // as many counts per revolution.
-    static const unsigned int countsPerRevolution = 8;
+    static const unsigned int COUNTS_PER_REVOLUTION = 8;
 
     // The output signal of the tachometer goes to this pin.
-    static const unsigned int pin = 34;
+    static const unsigned int PIN = TCH;
 
     // Increment the counter of the tachometer.
     static void incrementCounter();
 };
 
-extern ESATTachometer Tachometer;
+// Global instance of the tachometer library.
+extern ESAT_TachometerClass ESAT_Tachometer;
 
-#endif
+#endif /* ESAT_Tachometer_h */

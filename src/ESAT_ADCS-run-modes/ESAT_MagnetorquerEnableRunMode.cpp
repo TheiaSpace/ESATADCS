@@ -16,27 +16,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATCoarseSunSensor.h"
-#include "ESATMath.h"
+#include "ESAT_ADCS-run-modes/ESAT_MagnetorquerEnableRunMode.h"
+#include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 
-void ESATCoarseSunSensor::begin()
+byte ESAT_MagnetorquerEnableRunModeClass::identifier()
 {
-  pinMode(pinXPlus, INPUT);
-  pinMode(pinXMinus, INPUT);
-  pinMode(pinYPlus, INPUT);
-  pinMode(pinYMinus, INPUT);
+  return 0x30;
 }
 
-int ESATCoarseSunSensor::read()
+void ESAT_MagnetorquerEnableRunModeClass::run()
 {
-  const int readingXPlus = analogRead(pinXPlus);
-  const int readingXMinus = analogRead(pinXMinus);
-  const int readingYPlus = analogRead(pinYPlus);
-  const int readingYMinus = analogRead(pinYMinus);
-  const int nx = readingXPlus - readingXMinus;
-  const int ny = readingYPlus - readingYMinus;
-  const int reading = round(Math.atan2(ny, nx) * RAD_TO_DEG);
-  return reading;
+  ESAT_Magnetorquer.writeEnable(enable);
 }
 
-ESATCoarseSunSensor CoarseSunSensor;
+ESAT_MagnetorquerEnableRunModeClass ESAT_MagnetorquerEnableRunMode;

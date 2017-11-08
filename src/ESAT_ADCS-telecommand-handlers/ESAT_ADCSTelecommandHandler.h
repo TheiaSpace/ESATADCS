@@ -16,29 +16,25 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESATCoarseSunSensor_h
-#define ESATCoarseSunSensor_h
+#ifndef ESAT_ADCSTelecommandHandler_h
+#define ESAT_ADCSTelecommandHandler_h
 
-#include <Energia.h>
+#include <Arduino.h>
+#include <ESAT_CCSDSPacket.h>
 
-// Coarse sun sensor used for attitude determination.
-class ESATCoarseSunSensor
+// An ADCS telecommand handler has a handleTelecommand() function that
+// accepts a telecommand packet and, if possible, performs the
+// requested actions.  The user can register ADCS telecommand handlers
+// with ESAT_ADCS.registerTelecommandHandler() to add new telecommands
+// to the ADCS.
+class ESAT_ADCSTelecommandHandler
 {
   public:
-    // Set up the coarse sun sensor.
-    void begin();
+    virtual ~ESAT_ADCSTelecommandHandler() {};
 
-    // Read the attitude provided by the coarse sun sensors.
-    int read();
-
-  private:
-    // The individual sensors are connected to these pins.
-    static const int pinXPlus = A9;
-    static const int pinXMinus = A7;
-    static const int pinYPlus = A8;
-    static const int pinYMinus = A6;
+    // Either handle the telecommand provided by the packet and return
+    // true, or do nothing and return false.
+    virtual boolean handleTelecommand(ESAT_CCSDSPacket telecommand) = 0;
 };
 
-extern ESATCoarseSunSensor CoarseSunSensor;
-
-#endif
+#endif /* ESAT_ADCSTelecommandHandler_h */

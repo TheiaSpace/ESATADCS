@@ -16,32 +16,32 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESATTachometer.h"
+#include "ESAT_ADCS-run-modes/ESAT_MagnetorquerDemagnetizeRunMode.h"
+#include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 
-void ESATTachometer::begin()
+byte ESAT_MagnetorquerDemagnetizeRunModeClass::identifier()
 {
-  count = 0;
-  previousCount = 0;
-  previousReadingTime = 0;
-  pinMode(pin, INPUT_PULLUP);
-  attachInterrupt(pin, incrementCounter, FALLING);
+  return 0x34;
 }
 
-void ESATTachometer::incrementCounter()
+void ESAT_MagnetorquerDemagnetizeRunModeClass::run()
 {
-  Tachometer.count = Tachometer.count + 1;
+  if (cycles == 0)
+  {
+    return;
+  }
+  ESAT_Magnetorquer.writeEnable(true);
+  for (int i = 0; i < cycles; i++)
+  {
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.POSITIVE);
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.POSITIVE);
+    delay(20);
+    ESAT_Magnetorquer.writeX(ESAT_Magnetorquer.NEGATIVE);
+    ESAT_Magnetorquer.writeY(ESAT_Magnetorquer.NEGATIVE);
+    delay(20);
+  }
+  ESAT_Magnetorquer.writeEnable(false);
+  cycles = 0;
 }
 
-unsigned int ESATTachometer::read()
-{
-  const unsigned long currentTime = millis();
-  const unsigned long ellapsedMilliseconds = currentTime - previousReadingTime;
-  previousReadingTime = currentTime;
-  const unsigned long millisecondsPerMinute = 60000;
-  const unsigned int reading = (long(millisecondsPerMinute / countsPerRevolution)
-          * long(count - previousCount)) / ellapsedMilliseconds;
-  previousCount = count;
-  return reading;
-}
-
-ESATTachometer Tachometer;
+ESAT_MagnetorquerDemagnetizeRunModeClass ESAT_MagnetorquerDemagnetizeRunMode;
