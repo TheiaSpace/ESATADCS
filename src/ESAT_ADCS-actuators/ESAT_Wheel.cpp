@@ -87,7 +87,6 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
   secondaryHeader.packetIdentifier = POWER_LINE_COMMAND_CODE;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeBoolean(on);
-  packet.flush();
   ESAT_I2CMaster.writeTelecommand(Wire,
                                   POWER_LINE_ADDRESS,
                                   packet,
