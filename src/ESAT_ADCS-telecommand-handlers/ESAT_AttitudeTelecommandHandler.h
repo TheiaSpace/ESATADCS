@@ -35,33 +35,33 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // Available telecommand codes.
     enum TelecommandCodes
     {
-      FOLLOW_MAGNETIC_ANGLE = 0x00,
-      FOLLOW_SUN_ANGLE = 0x01,
+      FOLLOW_MAGNETIC_TARGET = 0x00,
+      FOLLOW_SOLAR_TARGET = 0x01,
       ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN = 0x10,
       ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN = 0x11,
       ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN = 0x12,
       ATTITUDE_CONTROLLER_RESET_ERROR_INTEGRAL = 0x13,
       ATTITUDE_CONTROLLER_USE_GYROSCOPE = 0x14,
-      ATTITUDE_CONTROLLER_SET_ACTUATOR = 0x15,
+      ATTITUDE_CONTROLLER_SET_ACTUATORS = 0x15,
       ATTITUDE_CONTROLLER_SET_DEADBAND = 0x16,
       ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD = 0x17,
     };
 
-    // Handle the telecommand for following the magnetic angle.
+    // Handle the telecommand for following a target magnetic angle.
     // The telecommand has one 16-bit unsigned integer parameter:
     // the target magnetic angle, from 0 degrees to 359 degrees,
     // measured counterclockwise from the +X axis of the satellite
     // to the magnetic North.
     // This changes the ADCS run mode.
-    void handleFollowMagneticAngleTelecommand(ESAT_CCSDSPacket telecommand);
+    void handleFollowMagneticTargetTelecommand(ESAT_CCSDSPacket telecommand);
 
-    // Handle the telecommand for following the sun angle.
+    // Handle the telecommand for following a target solar angle.
     // The telecommand has one 16-bit unsigned integer parameter:
-    // the target Sun angle, from 0 degrees to 359 degrees,
+    // the target solar angle, from 0 degrees to 359 degrees,
     // measured counterclockwise from the +X axis of the satellite
     // to the Sun direction.
     // This changes the ADCS run mode.
-    void handleFollowSunAngleTelecommand(ESAT_CCSDSPacket telecommand);
+    void handleFollowSolarTargetTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the proportional gain of the
     // attitude controller.
@@ -89,11 +89,11 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // for attitude control.
     void handleAttitudeControllerUseGyroscopeTelecommand(ESAT_CCSDSPacket telecommand);
 
-    // Handle the telecommand for setting the actuator used for
+    // Handle the telecommand for setting the actuators used for
     // attitude control.
     // The telecommand has one 8-bit unsigned integer parameter:
     // the actuator, which is 0 for the magnetorquer and 1 for the wheel.
-    void handleAttitudeControllerSetActuatorTelecommand(ESAT_CCSDSPacket telecommand);
+    void handleAttitudeControllerSetActuatorsTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the deadband of the attitude
     // controller.

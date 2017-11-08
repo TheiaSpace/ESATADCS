@@ -16,27 +16,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_FollowMagneticAngleRunMode_h
-#define ESAT_FollowMagneticAngleRunMode_h
+#include "ESAT_ADCS-run-modes/ESAT_FollowSolarTargetRunMode.h"
+#include "ESAT_ADCS.h"
+#include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
 
-#include <Arduino.h>
-#include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
-
-// Run mode for controlling the attitude to follow a magnetic angle.
-// Use the public instance ESAT_FollowMagneticAngleRunMode.
-class ESAT_FollowMagneticAngleRunModeClass: public ESAT_ADCSRunMode
+byte ESAT_FollowSolarTargetRunModeClass::identifier()
 {
-  public:
-    // Return the identifier number of the mode.  Each run mode has
-    // its own unique identifier number.
-    byte identifier();
+  return 0x01;
+}
 
-    // Keep a magnetic angle.
-    void run();
-};
+void ESAT_FollowSolarTargetRunModeClass::run()
+{
+  const ESAT_AttitudeStateVector attitudeStateVector =
+    ESAT_ADCS.attitudeStateVector();
+  ESAT_AttitudePIDController.loop(attitudeStateVector.sunAngle);
+}
 
-// Global instance of the library of the run mode for controlling the
-// magnetic attitude.
-extern ESAT_FollowMagneticAngleRunModeClass ESAT_FollowMagneticAngleRunMode;
-
-#endif /* ESAT_FollowMagneticAngleRunMode_h */
+ESAT_FollowSolarTargetRunModeClass ESAT_FollowSolarTargetRunMode;

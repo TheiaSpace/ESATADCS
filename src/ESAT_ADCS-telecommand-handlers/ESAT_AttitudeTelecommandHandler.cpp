@@ -19,8 +19,8 @@
 #include "ESAT_ADCS-telecommand-handlers/ESAT_AttitudeTelecommandHandler.h"
 #include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
-#include "ESAT_ADCS-run-modes/ESAT_FollowMagneticAngleRunMode.h"
-#include "ESAT_ADCS-run-modes/ESAT_FollowSunAngleRunMode.h"
+#include "ESAT_ADCS-run-modes/ESAT_FollowMagneticTargetRunMode.h"
+#include "ESAT_ADCS-run-modes/ESAT_FollowSolarTargetRunMode.h"
 
 boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket telecommand)
 {
@@ -29,12 +29,12 @@ boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket
     telecommand.readSecondaryHeader();
   switch (secondaryHeader.packetIdentifier)
   {
-    case FOLLOW_MAGNETIC_ANGLE:
-      handleFollowMagneticAngleTelecommand(telecommand);
+    case FOLLOW_MAGNETIC_TARGET:
+      handleFollowMagneticTargetTelecommand(telecommand);
       return true;
       break;
-    case FOLLOW_SUN_ANGLE:
-      handleFollowSunAngleTelecommand(telecommand);
+    case FOLLOW_SOLAR_TARGET:
+      handleFollowSolarTargetTelecommand(telecommand);
       return true;
       break;
     case ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN:
@@ -57,8 +57,8 @@ boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket
       handleAttitudeControllerUseGyroscopeTelecommand(telecommand);
       return true;
       break;
-    case ATTITUDE_CONTROLLER_SET_ACTUATOR:
-      handleAttitudeControllerSetActuatorTelecommand(telecommand);
+    case ATTITUDE_CONTROLLER_SET_ACTUATORS:
+      handleAttitudeControllerSetActuatorsTelecommand(telecommand);
       return true;
       break;
     case ATTITUDE_CONTROLLER_SET_DEADBAND:
@@ -75,15 +75,15 @@ boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket
   }
 }
 
-void ESAT_AttitudeTelecommandHandlerClass::handleFollowMagneticAngleTelecommand(ESAT_CCSDSPacket telecommand)
+void ESAT_AttitudeTelecommandHandlerClass::handleFollowMagneticTargetTelecommand(ESAT_CCSDSPacket telecommand)
 {
-  ESAT_ADCS.setRunMode(ESAT_FollowMagneticAngleRunMode);
+  ESAT_ADCS.setRunMode(ESAT_FollowMagneticTargetRunMode);
   ESAT_AttitudePIDController.targetAngle = (telecommand.readWord() % 360);
 }
 
-void ESAT_AttitudeTelecommandHandlerClass::handleFollowSunAngleTelecommand(ESAT_CCSDSPacket telecommand)
+void ESAT_AttitudeTelecommandHandlerClass::handleFollowSolarTargetTelecommand(ESAT_CCSDSPacket telecommand)
 {
-  ESAT_ADCS.setRunMode(ESAT_FollowSunAngleRunMode);
+  ESAT_ADCS.setRunMode(ESAT_FollowSolarTargetRunMode);
   ESAT_AttitudePIDController.targetAngle = (telecommand.readWord() % 360);
 }
 
@@ -113,7 +113,7 @@ void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerUseGyroscopeT
   ESAT_AttitudePIDController.useGyroscope = telecommand.readBoolean();
 }
 
-void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerSetActuatorTelecommand(ESAT_CCSDSPacket telecommand)
+void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerSetActuatorsTelecommand(ESAT_CCSDSPacket telecommand)
 {
   const byte parameter = telecommand.readByte();
   if (parameter > 0)
