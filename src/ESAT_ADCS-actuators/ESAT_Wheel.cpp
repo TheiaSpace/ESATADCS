@@ -71,7 +71,7 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
   byte buffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(buffer, packetDataBufferLength);
-  packet.clear();
+  packet.flush();
   ESAT_CCSDSPrimaryHeader primaryHeader;
   primaryHeader.packetVersionNumber = 0;
   primaryHeader.packetType = primaryHeader.TELECOMMAND;
@@ -87,7 +87,6 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
   secondaryHeader.packetIdentifier = POWER_LINE_COMMAND_CODE;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeBoolean(on);
-  packet.flush();
   ESAT_I2CMaster.writeTelecommand(Wire,
                                   POWER_LINE_ADDRESS,
                                   packet,

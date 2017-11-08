@@ -40,7 +40,6 @@ class ESAT_ADCSTelemetryPacket
 
     // Fill the user data field of a packet with telemetry.
     // The primary header and secondary header are already filled.
-    // ESAT_ADCS will flush the packet.
     virtual void readUserData(ESAT_CCSDSPacket& packet) = 0;
 };
 

@@ -152,7 +152,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   {
     return false;
   }
-  packet.clear();
+  packet.flush();
   // Primary header.
   ESAT_CCSDSPrimaryHeader primaryHeader;
   primaryHeader.packetVersionNumber = 0;
@@ -179,7 +179,6 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
     telemetryPackets[numberOfTelemetryPackets - 1]->packetIdentifier();
   packet.writeSecondaryHeader(secondaryHeader);
   telemetryPackets[numberOfTelemetryPackets - 1]->readUserData(packet);
-  packet.flush();
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   numberOfTelemetryPackets = numberOfTelemetryPackets - 1;
   return true;
