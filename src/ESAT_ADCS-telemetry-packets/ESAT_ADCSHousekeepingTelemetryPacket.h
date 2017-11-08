@@ -24,12 +24,14 @@
 #include "ESAT_ADCS-telemetry-packets/ESAT_ADCSTelemetryPacket.h"
 #include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 
-// ADCS housekeeping telemetry:
+// ADCS housekeeping telemetry.
+// Use the public instance ESAT_ADCSHousekeepingTelemetryPacket.
+//
+// This packet has the following contents:
 // * Mode of operation.
 // * Attitude state vector.
 // * State of the actuators.
 // * Parameters of the controllers.
-// Use the public instance ESAT_ADCSHousekeepingTelemetryPacket.
 class ESAT_ADCSHousekeepingTelemetryPacketClass: public ESAT_ADCSTelemetryPacket
 {
   public:

@@ -42,12 +42,12 @@
 //
 // The ADCS has different run modes.  A run mode is an object that
 // implements the ESAT_ADCSRunMode interface.  To change the run mode,
-// use ESAT_ADCS.setRunMode()
+// use ESAT_ADCS.setRunMode().
 //
 // It is possible to define new ADCS telecommands with new telecommand
 // handlers.  A telecommand handler is an object that implements the
 // ESAT_ADCSTelecommandHandler interface.  To add new telecommand handler,
-// use ESAT_ADCS.registerTelecommandHandler()
+// use ESAT_ADCS.registerTelecommandHandler().
 class ESAT_ADCSClass
 {
   public:

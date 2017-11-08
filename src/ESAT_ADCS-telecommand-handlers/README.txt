@@ -25,7 +25,7 @@ Telecommand arguments are part of the user data field (the part of the
 packet data that comes after the secondary header).
 
 To register a new telecommand handler, use
-ESAT_ADCS.registerTelecommandHandler()
+ESAT_ADCS.registerTelecommandHandler().
 
 
 # ESAT_AttitudeTelecommandHandler
