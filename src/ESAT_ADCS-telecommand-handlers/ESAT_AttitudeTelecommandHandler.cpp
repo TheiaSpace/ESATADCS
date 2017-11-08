@@ -20,7 +20,7 @@
 #include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
 #include "ESAT_ADCS-run-modes/ESAT_FollowMagneticTargetRunMode.h"
-#include "ESAT_ADCS-run-modes/ESAT_FollowSunAngleRunMode.h"
+#include "ESAT_ADCS-run-modes/ESAT_FollowSolarTargetRunMode.h"
 
 boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket telecommand)
 {
@@ -33,8 +33,8 @@ boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket
       handleFollowMagneticTargetTelecommand(telecommand);
       return true;
       break;
-    case FOLLOW_SUN_ANGLE:
-      handleFollowSunAngleTelecommand(telecommand);
+    case FOLLOW_SOLAR_TARGET:
+      handleFollowSolarTargetTelecommand(telecommand);
       return true;
       break;
     case ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN:
@@ -81,9 +81,9 @@ void ESAT_AttitudeTelecommandHandlerClass::handleFollowMagneticTargetTelecommand
   ESAT_AttitudePIDController.targetAngle = (telecommand.readWord() % 360);
 }
 
-void ESAT_AttitudeTelecommandHandlerClass::handleFollowSunAngleTelecommand(ESAT_CCSDSPacket telecommand)
+void ESAT_AttitudeTelecommandHandlerClass::handleFollowSolarTargetTelecommand(ESAT_CCSDSPacket telecommand)
 {
-  ESAT_ADCS.setRunMode(ESAT_FollowSunAngleRunMode);
+  ESAT_ADCS.setRunMode(ESAT_FollowSolarTargetRunMode);
   ESAT_AttitudePIDController.targetAngle = (telecommand.readWord() % 360);
 }
 

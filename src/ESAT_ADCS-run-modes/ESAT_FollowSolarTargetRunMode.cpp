@@ -16,20 +16,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_ADCS-run-modes/ESAT_FollowSunAngleRunMode.h"
+#include "ESAT_ADCS-run-modes/ESAT_FollowSolarTargetRunMode.h"
 #include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
 
-byte ESAT_FollowSunAngleRunModeClass::identifier()
+byte ESAT_FollowSolarTargetRunModeClass::identifier()
 {
   return 0x01;
 }
 
-void ESAT_FollowSunAngleRunModeClass::run()
+void ESAT_FollowSolarTargetRunModeClass::run()
 {
   const ESAT_AttitudeStateVector attitudeStateVector =
     ESAT_ADCS.attitudeStateVector();
   ESAT_AttitudePIDController.loop(attitudeStateVector.sunAngle);
 }
 
-ESAT_FollowSunAngleRunModeClass ESAT_FollowSunAngleRunMode;
+ESAT_FollowSolarTargetRunModeClass ESAT_FollowSolarTargetRunMode;
