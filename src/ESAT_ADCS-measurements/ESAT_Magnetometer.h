@@ -22,11 +22,12 @@
 #include <Arduino.h>
 
 // Magnetometer used for attitude determination.
+// Use the global instance ESAT_Magnetometer.
+//
 // The underlying hardware is the MPU-9250 3-axis
 // gyroscope, accelerometer and magnetometer chip
 // mounted on the ESATOBC board.
 // Communications are done though the OBC I2C bus.
-// Use the global instance ESAT_Magnetometer.
 class ESAT_MagnetometerClass
 {
   public:

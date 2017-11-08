@@ -13,12 +13,17 @@ ADCS runs as a library used by the On-Board Computer program:
 
 The ADCS has different run modes.  A run mode is an object that
 implements the ESAT_ADCSRunMode interface.  To change the run mode,
-use ESAT_ADCS.setRunMode()
+use ESAT_ADCS.setRunMode().
 
 It is possible to define new ADCS telecommands with new telecommand
 handlers.  A telecommand handler is an object that implements the
 ESAT_ADCSTelecommandHandler interface.  To add new telecommand
-handler, use ESAT_ADCS.registerTelecommandHandler()
+handler, use ESAT_ADCS.registerTelecommandHandler().
+
+It is possible to stack new ADCS telemetry packets for emission on
+each ADCS cycle.  A telemetry packet object implements the
+ESAT_ADCSTelemetryPacket interface.  To stack a new telemetry packet
+on a given ADCS cycle, use ESAT_ADCS.addTelemetryPacket().
 
 There are 5 subdirectories with the libraries that provide the
 detailed ADCS functionality:
@@ -36,3 +41,5 @@ detailed ADCS functionality:
 
   * ESAT_ADCS-telecommand-handlers: libraries that handle groups of
     telecommands.
+
+  * ESAT_ADCS-telemetry-packets: library that fill telemetry packets.

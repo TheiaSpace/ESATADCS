@@ -22,6 +22,8 @@
 #include <Arduino.h>
 
 // Coarse sun sensor used for attitude determination.
+// Use the global instance ESAT_CoarseSunSensor.
+//
 // The coarse sun sensor consists of 4 light detectors,
 // one on each side panel.  By comparing the readings
 // of these 4 light detector, the coarse sun sensor library

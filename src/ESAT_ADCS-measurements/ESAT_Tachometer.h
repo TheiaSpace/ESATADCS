@@ -22,11 +22,12 @@
 #include <Arduino.h>
 
 // Tachometer used for reading the speed of the rotating wheel.
+// Use the global instance ESAT_Tachometer.
+//
 // The wheel has a series of marks; the tachometer hardware
 // sends a pulse every time a mark passes above it so that
 // the tachometer library can count these pulses to estimate
 // the wheel speed.
-// Use the global instance ESAT_Tachometer.
 class ESAT_TachometerClass
 {
   public:

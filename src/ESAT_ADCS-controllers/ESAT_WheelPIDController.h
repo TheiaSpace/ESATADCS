@@ -22,8 +22,9 @@
 #include <Arduino.h>
 
 // Wheel control loop, PID variant.
-// This is a simple PID control loop.
 // Use the public instance ESAT_WheelPIDController.
+//
+// This is a simple PID control loop.
 class ESAT_WheelPIDControllerClass
 {
   public:

@@ -22,11 +22,12 @@
 #include <Arduino.h>
 
 // Gyroscope used for measuring the angular speed.
+// Use the global instance ESAT_Gyroscope.
+//
 // The underlying hardware is the MPU-9250 3-axis
 // gyroscope, accelerometer and magnetometer chip
 // mounted on the ESAT OBC board.
 // Communications are done though the OBC I2C bus.
-// Use the global instance ESAT_Gyroscope.
 class ESAT_GyroscopeClass
 {
   public:

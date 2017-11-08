@@ -24,10 +24,11 @@
 #include <Servo.h>
 
 // Reaction wheel.
+// Use the global instance ESAT_Wheel.
+//
 // The ESAT has a heavy flywheel attached to a motor.  Changing the
 // rotational speed of the wheel changes the rotational speed of the
 // satellite in the opposite direction.
-// Use the global instance ESAT_Wheel.
 class ESAT_WheelClass
 {
   public:

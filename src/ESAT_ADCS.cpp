@@ -178,7 +178,9 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   secondaryHeader.packetIdentifier =
     telemetryPackets[numberOfTelemetryPackets - 1]->packetIdentifier();
   packet.writeSecondaryHeader(secondaryHeader);
+  // User data.
   telemetryPackets[numberOfTelemetryPackets - 1]->readUserData(packet);
+  // Bookkeeping.
   telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
   numberOfTelemetryPackets = numberOfTelemetryPackets - 1;
   return true;

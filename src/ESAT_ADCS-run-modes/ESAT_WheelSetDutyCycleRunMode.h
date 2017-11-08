@@ -23,8 +23,7 @@
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 
 // Wheel duty cycle controller.
-// Just set the duty cycle of the wheel.
-// Use the global instance ESAT_WheelSetDutyCycleRunMode
+// Use the global instance ESAT_WheelSetDutyCycleRunMode.
 class ESAT_WheelSetDutyCycleRunModeClass: public ESAT_ADCSRunMode
 {
   public:
