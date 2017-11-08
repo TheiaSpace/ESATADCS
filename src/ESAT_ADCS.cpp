@@ -152,7 +152,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   {
     return false;
   }
-  packet.clear();
+  packet.flush();
   // Primary header.
   ESAT_CCSDSPrimaryHeader primaryHeader;
   primaryHeader.packetVersionNumber = 0;

@@ -71,7 +71,7 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
   byte buffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(buffer, packetDataBufferLength);
-  packet.clear();
+  packet.flush();
   ESAT_CCSDSPrimaryHeader primaryHeader;
   primaryHeader.packetVersionNumber = 0;
   primaryHeader.packetType = primaryHeader.TELECOMMAND;
