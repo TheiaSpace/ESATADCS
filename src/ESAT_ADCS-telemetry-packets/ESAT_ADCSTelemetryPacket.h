@@ -27,7 +27,7 @@
 // the next calls to ESAT_ADCS.readTelemetry() with
 // ESAT_ADCS.addTelemetryPacket().  ESAT_ADCS.readTelemetry() will
 // remove ADCS telemetry packet objects from the stack and call their
-// readUserData() methods to fill the packet data fields of the
+// readUserData() methods to fill the user data fields of the
 // packets.
 class ESAT_ADCSTelemetryPacket
 {
