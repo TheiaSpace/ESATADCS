@@ -70,7 +70,7 @@ class ESAT_WheelPIDControllerClass
     // Integral of the error term.
     float errorIntegral;
 
-    // Wheel speed (in revolutions per second) at the previous
+    // Wheel speed (in revolutions per minute) at the previous
     // iteration of the control loop.
     word previousError;
 

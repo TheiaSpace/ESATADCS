@@ -26,14 +26,15 @@
 //
 // There are two magnetorquers: one aligned with the X-axis and one
 // aligned with the Y-axis.  These magnetorquers are electromagnets
-// that can be switched on or off in either positive or negative
-// polarity.  Together they form a 2D magnetorquer that works like a
-// compass needle that can be magnetized in 1 of 4 perpendicular
-// directions at will by changing the polarities of the X-axis and
-// Y-axis 1D magnetorquers.  Like a compass needle tends to point to
-// the North, so will do the satellite (one corner of the satellite
-// that depends on the X-axis and Y-axis 1D magnetorquer polarities)
-// when the 2D magnetorquer is switched on.
+// whose power (on/off) and polarity (positive/negative) can be 
+// switched thanks to a H-bridge.  Together they form
+// a 2D magnetorquer that works like a compass needle that can be 
+// magnetized in 1 of 4 perpendicular directions at will by changing
+// the polarities of the X-axis and Y-axis 1D magnetorquers.  Like a
+// compass needle tends to point to the North, so will do the
+// satellite (one corner of the satellite that depends on the X-axis
+// and Y-axis 1D magnetorquer polarities) when the 2D magnetorquer is
+// switched on.
 class ESAT_MagnetorquerClass
 {
   public:
@@ -67,16 +68,16 @@ class ESAT_MagnetorquerClass
     void writeY(Polarity polarity);
 
   private:
-    // This pin enables the X magnetorquer.
+    // This pin enables the X magnetorquer power.
     static const int PIN_ENABLE_X = ENMTQX;
 
-    // This pin enables the X magnetorquer.
+    // This pin enables the Y magnetorquer power.
     static const int PIN_ENABLE_Y = ENMTQY;
 
-    // This pin activates the X magnetorquer.
+    // This pin selects the X magnetorquer polarity.
     static const int PIN_X_POLARITY = MTQX;
 
-    // This pin activates the Y magnetorquer.
+    // This pin selects the Y magnetorquer polarity.
     static const int PIN_Y_POLARITY = MTQY;
 
     // True if the magnetorquer driver is powered up; false otherwise.
