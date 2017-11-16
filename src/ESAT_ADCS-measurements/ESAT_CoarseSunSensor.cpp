@@ -24,28 +24,28 @@ void ESAT_CoarseSunSensorClass::begin()
   pinMode(PIN_X_MINUS, INPUT);
   pinMode(PIN_Y_PLUS, INPUT);
   pinMode(PIN_Y_MINUS, INPUT);
-  setXPlusSource(READ_X_PLUS);
-  setXMinusSource(READ_X_MINUS);
-  setYPlusSource(READ_Y_PLUS);
-  setYMinusSource(READ_Y_MINUS);
+  setXPlusReadingsSource(READ_X_PLUS);
+  setXMinusReadingsSource(READ_X_MINUS);
+  setYPlusReadingsSource(READ_Y_PLUS);
+  setYMinusReadingsSource(READ_Y_MINUS);
 }
 
-void ESAT_CoarseSunSensorClass::setXMinusSource(const ESAT_CoarseSunSensorClass::Source source)
+void ESAT_CoarseSunSensorClass::setXMinusReadingsSource(const ESAT_CoarseSunSensorClass::ReadingsSource source)
 {
   sourceXMinus = source;
 }
 
-void ESAT_CoarseSunSensorClass::setXPlusSource(const ESAT_CoarseSunSensorClass::Source source)
+void ESAT_CoarseSunSensorClass::setXPlusReadingsSource(const ESAT_CoarseSunSensorClass::ReadingsSource source)
 {
   sourceXPlus = source;
 }
 
-void ESAT_CoarseSunSensorClass::setYMinusSource(const ESAT_CoarseSunSensorClass::Source source)
+void ESAT_CoarseSunSensorClass::setYMinusReadingsSource(const ESAT_CoarseSunSensorClass::ReadingsSource source)
 {
   sourceYMinus = source;
 }
 
-void ESAT_CoarseSunSensorClass::setYPlusSource(const ESAT_CoarseSunSensorClass::Source source)
+void ESAT_CoarseSunSensorClass::setYPlusReadingsSource(const ESAT_CoarseSunSensorClass::ReadingsSource source)
 {
   sourceYPlus = source;
 }
@@ -69,7 +69,7 @@ word ESAT_CoarseSunSensorClass::readSunAngle()
   }
 }
 
-float ESAT_CoarseSunSensorClass::read(const ESAT_CoarseSunSensorClass::Source source)
+float ESAT_CoarseSunSensorClass::read(const ESAT_CoarseSunSensorClass::ReadingsSource source)
 {
   switch (source)
   {

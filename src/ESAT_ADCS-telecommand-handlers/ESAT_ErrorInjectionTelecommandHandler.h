@@ -35,17 +35,17 @@ class ESAT_ErrorInjectionTelecommandHandlerClass: public ESAT_ADCSTelecommandHan
     // Available telecommand codes.
     enum TelecommandCodes
     {
-      ERROR_INJECTION_SET_COARSE_SUN_SENSOR_SOURCES = 0xE0,
+      ERROR_INJECTION_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xE0,
       ERROR_INJECTION_SWAP_MAGNETORQUER_AXES_AND_POLARITIES = 0xE1,
     };
 
     // Handle the telecommand for setting the coarse sun sensor
-    // reading sources.  The telecommand has four 8-bit enumerated
+    // readings sources.  The telecommand has four 8-bit enumerated
     // parameters:
-    // * the source of the +X reading;
-    // * the source of the +Y reading;
-    // * the source of the -X reading;
-    // * the source of the -Y reading.
+    // * the source of the +X readings;
+    // * the source of the +Y readings;
+    // * the source of the -X readings;
+    // * the source of the -Y readings.
     // These sources can be:
     // 0: +X sensor.
     // 1: +Y sensor.
@@ -53,7 +53,7 @@ class ESAT_ErrorInjectionTelecommandHandlerClass: public ESAT_ADCSTelecommandHan
     // 3: -Y sensor.
     // 4: 0 % (dark).
     // 5: 100 % (saturated).
-    void handleErrorInjectionSetCoarseSunSensorSources(ESAT_CCSDSPacket telecommand);
+    void handleErrorInjectionSetCoarseSunSensorReadingsSources(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for swapping the magnetorquer axes and
     // polarities.  The telecommand has three 8-bit boolean parameters:

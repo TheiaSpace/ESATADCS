@@ -28,8 +28,8 @@ boolean ESAT_ErrorInjectionTelecommandHandlerClass::handleTelecommand(ESAT_CCSDS
     telecommand.readSecondaryHeader();
   switch (secondaryHeader.packetIdentifier)
   {
-    case ERROR_INJECTION_SET_COARSE_SUN_SENSOR_SOURCES:
-      handleErrorInjectionSetCoarseSunSensorSources(telecommand);
+    case ERROR_INJECTION_SET_COARSE_SUN_SENSOR_READINGS_SOURCES:
+      handleErrorInjectionSetCoarseSunSensorReadingsSources(telecommand);
       return true;
       break;
     case ERROR_INJECTION_SWAP_MAGNETORQUER_AXES_AND_POLARITIES:
@@ -42,20 +42,20 @@ boolean ESAT_ErrorInjectionTelecommandHandlerClass::handleTelecommand(ESAT_CCSDS
   }
 }
 
-void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionSetCoarseSunSensorSources(ESAT_CCSDSPacket telecommand)
+void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionSetCoarseSunSensorReadingsSources(ESAT_CCSDSPacket telecommand)
 {
-  const ESAT_CoarseSunSensorClass::Source sourceXPlus =
-    ESAT_CoarseSunSensorClass::Source(telecommand.readByte());
-  const ESAT_CoarseSunSensorClass::Source sourceYPlus =
-    ESAT_CoarseSunSensorClass::Source(telecommand.readByte());
-  const ESAT_CoarseSunSensorClass::Source sourceXMinus =
-    ESAT_CoarseSunSensorClass::Source(telecommand.readByte());
-  const ESAT_CoarseSunSensorClass::Source sourceYMinus =
-    ESAT_CoarseSunSensorClass::Source(telecommand.readByte());
-  ESAT_CoarseSunSensor.setXPlusSource(sourceXPlus);
-  ESAT_CoarseSunSensor.setYPlusSource(sourceYPlus);
-  ESAT_CoarseSunSensor.setXMinusSource(sourceXMinus);
-  ESAT_CoarseSunSensor.setYMinusSource(sourceYMinus);
+  const ESAT_CoarseSunSensorClass::ReadingsSource sourceXPlus =
+    ESAT_CoarseSunSensorClass::ReadingsSource(telecommand.readByte());
+  const ESAT_CoarseSunSensorClass::ReadingsSource sourceYPlus =
+    ESAT_CoarseSunSensorClass::ReadingsSource(telecommand.readByte());
+  const ESAT_CoarseSunSensorClass::ReadingsSource sourceXMinus =
+    ESAT_CoarseSunSensorClass::ReadingsSource(telecommand.readByte());
+  const ESAT_CoarseSunSensorClass::ReadingsSource sourceYMinus =
+    ESAT_CoarseSunSensorClass::ReadingsSource(telecommand.readByte());
+  ESAT_CoarseSunSensor.setXPlusReadingsSource(sourceXPlus);
+  ESAT_CoarseSunSensor.setYPlusReadingsSource(sourceYPlus);
+  ESAT_CoarseSunSensor.setXMinusReadingsSource(sourceXMinus);
+  ESAT_CoarseSunSensor.setYMinusReadingsSource(sourceYMinus);
 }
 
 void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionSwapMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand)

@@ -35,7 +35,7 @@ class ESAT_CoarseSunSensorClass
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
     // simulated failure injection.
-    enum Source
+    enum ReadingsSource
     {
       READ_X_PLUS = 0,
       READ_Y_PLUS = 1,
@@ -52,25 +52,25 @@ class ESAT_CoarseSunSensorClass
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
     // simulated failure injection.
-    void setXMinusSource(Source source);
+    void setXMinusReadingsSource(ReadingsSource source);
 
     // Set what to actually read when querying the +X sun sensor.
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
     // simulated failure injection.
-    void setXPlusSource(Source source);
+    void setXPlusReadingsSource(ReadingsSource source);
 
     // Set what to actually read when querying the -Y sun sensor.
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
     // simulated failure injection.
-    void setYMinusSource(Source source);
+    void setYMinusReadingsSource(ReadingsSource source);
 
     // Set what to actually read when querying the +Y sun sensor.
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
     // simulated failure injection.
-    void setYPlusSource(Source source);
+    void setYPlusReadingsSource(ReadingsSource source);
 
     // Read the attitude provided by the coarse sun sensors:
     // the angle of the Sun direction measured counterclockwise from
@@ -107,14 +107,14 @@ class ESAT_CoarseSunSensorClass
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
     // simulated failure injection.
-    Source sourceXMinus;
-    Source sourceXPlus;
-    Source sourceYMinus;
-    Source sourceYPlus;
+    ReadingsSource sourceXMinus;
+    ReadingsSource sourceXPlus;
+    ReadingsSource sourceYMinus;
+    ReadingsSource sourceYPlus;
 
     // Return the raw reading of a connection as a percentage
     // from 0 % (dark) to 100 % (saturated).
-    float read(Source source);
+    float read(ReadingsSource source);
 };
 
 // Global instance of the coarse sun sensor library.
