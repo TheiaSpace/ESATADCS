@@ -36,7 +36,7 @@ class ESAT_ErrorInjectionTelecommandHandlerClass: public ESAT_ADCSTelecommandHan
     enum TelecommandCodes
     {
       ERROR_INJECTION_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xE0,
-      ERROR_INJECTION_SWAP_MAGNETORQUER_AXES_AND_POLARITIES = 0xE1,
+      ERROR_INJECTION_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xE1,
     };
 
     // Handle the telecommand for setting the coarse sun sensor
@@ -56,11 +56,12 @@ class ESAT_ErrorInjectionTelecommandHandlerClass: public ESAT_ADCSTelecommandHan
     void handleErrorInjectionSetCoarseSunSensorReadingsSources(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for swapping the magnetorquer axes and
-    // polarities.  The telecommand has three 8-bit boolean parameters:
+    // inverting the polarities.  The telecommand has three 8-bit
+    // boolean parameters:
     // * swap (true) or don't swap (false) the magnetorquer axes;
     // * invert (true) or don't invert (false) the X magnetorquer polarity;
     // * invert (true) or don't invert (false) the Y magnetorquer polarity.
-    void handleErrorInjectionSwapMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand);
+    void handleErrorInjectionChangeMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand);
 };
 
 // Global instance of the wheel telecommand handler library.

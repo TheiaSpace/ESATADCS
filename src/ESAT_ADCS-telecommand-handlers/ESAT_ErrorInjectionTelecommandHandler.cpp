@@ -32,8 +32,8 @@ boolean ESAT_ErrorInjectionTelecommandHandlerClass::handleTelecommand(ESAT_CCSDS
       handleErrorInjectionSetCoarseSunSensorReadingsSources(telecommand);
       return true;
       break;
-    case ERROR_INJECTION_SWAP_MAGNETORQUER_AXES_AND_POLARITIES:
-      handleErrorInjectionSwapMagnetorquerAxesAndPolarities(telecommand);
+    case ERROR_INJECTION_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES:
+      handleErrorInjectionChangeMagnetorquerAxesAndPolarities(telecommand);
       return true;
       break;
     default:
@@ -58,7 +58,7 @@ void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionSetCoarseSu
   ESAT_CoarseSunSensor.setYMinusReadingsSource(sourceYMinus);
 }
 
-void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionSwapMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand)
+void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionChangeMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand)
 {
   const boolean swapAxes = telecommand.readBoolean();
   const boolean invertXPolarity = telecommand.readBoolean();
