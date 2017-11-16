@@ -67,6 +67,14 @@ Telecommands related to the magnetorquer:
   MAGNETORQUER_DEMAGNETIZE = 0x34
 
 
+# ESAT_ErrorInjectionTelecommandHandler
+
+Telecommands for injecting simulated errors:
+
+  ERROR_INJECTION_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xE0
+  ERROR_INJECTION_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xE1
+
+
 # ESAT_StopActuatorsTelecommandHandler
 
 Just one telecommand for stopping the actuators (mangetorquer and
