@@ -34,7 +34,7 @@ class ESAT_CoarseSunSensorClass
     // Set what to actually read when querying the sun sensors.
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
-    // simulated failure injection.
+    // diagnostics and troubleshooting.
     enum ReadingsSource
     {
       READ_X_PLUS = 0,
@@ -51,25 +51,25 @@ class ESAT_CoarseSunSensorClass
     // Set what to actually read when querying the -X sun sensor.
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
-    // simulated failure injection.
+    // diagnostics and troubleshooting.
     void setXMinusReadingsSource(ReadingsSource source);
 
     // Set what to actually read when querying the +X sun sensor.
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
-    // simulated failure injection.
+    // diagnostics and troubleshooting.
     void setXPlusReadingsSource(ReadingsSource source);
 
     // Set what to actually read when querying the -Y sun sensor.
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
-    // simulated failure injection.
+    // diagnostics and troubleshooting.
     void setYMinusReadingsSource(ReadingsSource source);
 
     // Set what to actually read when querying the +Y sun sensor.
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
-    // simulated failure injection.
+    // diagnostics and troubleshooting.
     void setYPlusReadingsSource(ReadingsSource source);
 
     // Read the attitude provided by the coarse sun sensors:
@@ -106,7 +106,7 @@ class ESAT_CoarseSunSensorClass
     // Set what to actually read when querying the sun sensors.
     // Either read the actual sensors, a constant 0 % value (dark), or
     // a constant 100 % value (saturated).  This is useful for
-    // simulated failure injection.
+    // diagnostics and troubleshooting.
     ReadingsSource sourceXMinus;
     ReadingsSource sourceXPlus;
     ReadingsSource sourceYMinus;
