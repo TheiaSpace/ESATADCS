@@ -16,15 +16,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_ErrorInjectionTelecommandHandler_h
-#define ESAT_ErrorInjectionTelecommandHandler_h
+#ifndef ESAT_DiagnosticsTelecommandHandler_h
+#define ESAT_DiagnosticsTelecommandHandler_h
 
 #include <Arduino.h>
 #include "ESAT_ADCSTelecommandHandler.h"
 
-// Telecommand handler for simulated error injection.
-// Use the global instance ESAT_ErrorInjectionTelecommandHandler.
-class ESAT_ErrorInjectionTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
+// Telecommand handler for diagnostics and troubleshooting.
+// Use the global instance ESAT_DiagnosticsTelecommandHandler.
+class ESAT_DiagnosticsTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
 {
   public:
     // Either handle the telecommand provided by the packet and return
@@ -35,8 +35,8 @@ class ESAT_ErrorInjectionTelecommandHandlerClass: public ESAT_ADCSTelecommandHan
     // Available telecommand codes.
     enum TelecommandCodes
     {
-      ERROR_INJECTION_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xE0,
-      ERROR_INJECTION_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xE1,
+      DIAGNOSTICS_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xE0,
+      DIAGNOSTICS_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xE1,
     };
 
     // Handle the telecommand for setting the coarse sun sensor
@@ -53,7 +53,7 @@ class ESAT_ErrorInjectionTelecommandHandlerClass: public ESAT_ADCSTelecommandHan
     // 3: -Y sensor.
     // 4: 0 % (dark).
     // 5: 100 % (saturated).
-    void handleErrorInjectionSetCoarseSunSensorReadingsSources(ESAT_CCSDSPacket telecommand);
+    void handleDiagnosticsSetCoarseSunSensorReadingsSources(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for swapping the magnetorquer axes and
     // inverting the polarities.  The telecommand has three 8-bit
@@ -61,10 +61,10 @@ class ESAT_ErrorInjectionTelecommandHandlerClass: public ESAT_ADCSTelecommandHan
     // * swap (true) or don't swap (false) the magnetorquer axes;
     // * invert (true) or don't invert (false) the X magnetorquer polarity;
     // * invert (true) or don't invert (false) the Y magnetorquer polarity.
-    void handleErrorInjectionChangeMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand);
+    void handleDiagnosticsChangeMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand);
 };
 
-// Global instance of the wheel telecommand handler library.
-extern ESAT_ErrorInjectionTelecommandHandlerClass ESAT_ErrorInjectionTelecommandHandler;
+// Global instance of the diagnostics telecommand handler library.
+extern ESAT_DiagnosticsTelecommandHandlerClass ESAT_DiagnosticsTelecommandHandler;
 
-#endif /* ESAT_ErrorInjectionTelecommandHandler_h */
+#endif /* ESAT_DiagnosticsTelecommandHandler_h */

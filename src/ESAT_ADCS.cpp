@@ -43,7 +43,7 @@
 #include "ESAT_ADCS-measurements/ESAT_Tachometer.h"
 #include "ESAT_ADCS-run-modes/ESAT_StopActuatorsRunMode.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_AttitudeTelecommandHandler.h"
-#include "ESAT_ADCS-telecommand-handlers/ESAT_ErrorInjectionTelecommandHandler.h"
+#include "ESAT_ADCS-telecommand-handlers/ESAT_DiagnosticsTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_MagnetorquerTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_StopActuatorsTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_WheelTelecommandHandler.h"
@@ -87,7 +87,7 @@ void ESAT_ADCSClass::begin()
   numberOfTelemetryPackets = 0;
   numberOfTelecommandHandlers = 0;
   registerTelecommandHandler(ESAT_AttitudeTelecommandHandler);
-  registerTelecommandHandler(ESAT_ErrorInjectionTelecommandHandler);
+  registerTelecommandHandler(ESAT_DiagnosticsTelecommandHandler);
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
   registerTelecommandHandler(ESAT_MagnetorquerTelecommandHandler);
   registerTelecommandHandler(ESAT_StopActuatorsTelecommandHandler);

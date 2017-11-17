@@ -16,24 +16,24 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_ADCS-telecommand-handlers/ESAT_ErrorInjectionTelecommandHandler.h"
+#include "ESAT_ADCS-telecommand-handlers/ESAT_DiagnosticsTelecommandHandler.h"
 #include "ESAT_ADCS.h"
 #include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 #include "ESAT_ADCS-measurements/ESAT_CoarseSunSensor.h"
 
-boolean ESAT_ErrorInjectionTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket telecommand)
+boolean ESAT_DiagnosticsTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket telecommand)
 {
   telecommand.rewind();
   const ESAT_CCSDSSecondaryHeader secondaryHeader =
     telecommand.readSecondaryHeader();
   switch (secondaryHeader.packetIdentifier)
   {
-    case ERROR_INJECTION_SET_COARSE_SUN_SENSOR_READINGS_SOURCES:
-      handleErrorInjectionSetCoarseSunSensorReadingsSources(telecommand);
+    case DIAGNOSTICS_SET_COARSE_SUN_SENSOR_READINGS_SOURCES:
+      handleDiagnosticsSetCoarseSunSensorReadingsSources(telecommand);
       return true;
       break;
-    case ERROR_INJECTION_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES:
-      handleErrorInjectionChangeMagnetorquerAxesAndPolarities(telecommand);
+    case DIAGNOSTICS_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES:
+      handleDiagnosticsChangeMagnetorquerAxesAndPolarities(telecommand);
       return true;
       break;
     default:
@@ -42,7 +42,7 @@ boolean ESAT_ErrorInjectionTelecommandHandlerClass::handleTelecommand(ESAT_CCSDS
   }
 }
 
-void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionSetCoarseSunSensorReadingsSources(ESAT_CCSDSPacket telecommand)
+void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsSetCoarseSunSensorReadingsSources(ESAT_CCSDSPacket telecommand)
 {
   const ESAT_CoarseSunSensorClass::ReadingsSource sourceXPlus =
     ESAT_CoarseSunSensorClass::ReadingsSource(telecommand.readByte());
@@ -58,7 +58,7 @@ void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionSetCoarseSu
   ESAT_CoarseSunSensor.setYMinusReadingsSource(sourceYMinus);
 }
 
-void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionChangeMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand)
+void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsChangeMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand)
 {
   const boolean swapAxes = telecommand.readBoolean();
   const boolean invertXPolarity = telecommand.readBoolean();
@@ -68,4 +68,4 @@ void ESAT_ErrorInjectionTelecommandHandlerClass::handleErrorInjectionChangeMagne
   ESAT_Magnetorquer.invertYPolarity(invertYPolarity);
 }
 
-ESAT_ErrorInjectionTelecommandHandlerClass ESAT_ErrorInjectionTelecommandHandler;
+ESAT_DiagnosticsTelecommandHandlerClass ESAT_DiagnosticsTelecommandHandler;
