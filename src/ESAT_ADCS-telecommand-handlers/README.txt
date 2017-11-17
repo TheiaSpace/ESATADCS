@@ -67,6 +67,14 @@ Telecommands related to the magnetorquer:
   MAGNETORQUER_DEMAGNETIZE = 0x34
 
 
+# ESAT_DiagnosticsTelecommandHandler
+
+Telecommands for diagnostics and troubleshooting:
+
+  DIAGNOSTICS_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xD0
+  DIAGNOSTICS_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xD1
+
+
 # ESAT_StopActuatorsTelecommandHandler
 
 Just one telecommand for stopping the actuators (mangetorquer and
