@@ -50,12 +50,14 @@ class ESAT_MagnetorquerClass
 
     // Invert (if the argument is true) or don't invert (if the
     // argument is false; default value) the polarity of the X
-    // magnetorquer.  This is useful for simulated failure injection.
+    // magnetorquer.  This is useful for diagnostics and
+    // troubleshooting.
     void invertXPolarity(boolean invert);
 
     // Invert (if the argument is true) or don't invert (if the
     // argument is false; default value) the polarity of the Y
-    // magnetorquer.  This is useful for simulated failure injection.
+    // magnetorquer.  This is useful for diagnostics and
+    // troubleshooting.
     void invertYPolarity(boolean invert);
 
     // Return true if the magnetorquer driver is powered up; otherwise
@@ -70,7 +72,7 @@ class ESAT_MagnetorquerClass
 
     // Swap (if the argument is true) or don't swap (if the argument
     // is false; default value) the axes of the magnetorquer.  This is
-    // useful for simulated failure injection.
+    // useful for diagnostics and troubleshooting.
     void swapAxes(boolean swap);
 
     // Power up or down the magnetorquer driver.
@@ -99,15 +101,15 @@ class ESAT_MagnetorquerClass
     boolean enable;
 
     // True if the the X magnetorquer polarity is inverted; false
-    // otherwise.  This is useful for simulated failure injection.
+    // otherwise.  This is useful for diagnostics and troubleshooting.
     boolean invertXPolarityLevel;
 
     // True if the the Y magnetorquer polarity is inverted; false
-    // otherwise.  This is useful for simulated failure injection.
+    // otherwise.  This is useful for diagnostics and troubleshooting.
     boolean invertYPolarityLevel;
 
     // True if the axes of the magnetorquer are swapped; false
-    // otherwise.  This is useful for simulated failure injection.
+    // otherwise.  This is useful for diagnostics and troubleshooting.
     boolean swapPolarityPins;
 
     // Polarity of the X-axis magnetorquer.
@@ -125,12 +127,12 @@ class ESAT_MagnetorquerClass
 
     // Return the pin used for selecting the X magnetorquer polarity.
     // It can be the wrong one if the polarity pins are swapped; this
-    // is useful for failure injection.
+    // is useful for diagnostics and troubleshooting.
     int pinXPolarity() const;
 
     // Return the pin used for selecting the Y magnetorquer polarity.
     // It can be the wrong one if the polarity pins are swapped; this
-    // is useful for failure injection.
+    // is useful for diagnostics and troubleshooting.
     int pinYPolarity() const;
 
     // Return the line level corresponding to a magnetorquer polarity.
@@ -138,12 +140,12 @@ class ESAT_MagnetorquerClass
 
     // Return the line level for selecting the X magnetorquer
     // polarity.  It can be the wrong one if the X polarity is
-    // swapped; this is useful for failure injection.
+    // swapped; this is useful for diagnostics and troubleshooting.
     int polarityXLevel() const;
 
     // Return the line level for selecting the X magnetorquer
     // polarity.  It can be the wrong one if the Y polarity is
-    // swapped; this is useful for failure injection.
+    // swapped; this is useful for diagnostics and troubleshooting.
     int polarityYLevel() const;
 };
 
