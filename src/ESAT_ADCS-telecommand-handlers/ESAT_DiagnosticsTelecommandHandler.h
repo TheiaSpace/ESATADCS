@@ -35,8 +35,8 @@ class ESAT_DiagnosticsTelecommandHandlerClass: public ESAT_ADCSTelecommandHandle
     // Available telecommand codes.
     enum TelecommandCodes
     {
-      DIAGNOSTICS_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xE0,
-      DIAGNOSTICS_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xE1,
+      DIAGNOSTICS_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xD0,
+      DIAGNOSTICS_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xD1,
     };
 
     // Handle the telecommand for setting the coarse sun sensor
