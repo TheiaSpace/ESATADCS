@@ -26,9 +26,9 @@
 //
 // There are two magnetorquers: one aligned with the X-axis and one
 // aligned with the Y-axis.  These magnetorquers are electromagnets
-// whose power (on/off) and polarity (positive/negative) can be 
+// whose power (on/off) and polarity (positive/negative) can be
 // switched thanks to a H-bridge.  Together they form
-// a 2D magnetorquer that works like a compass needle that can be 
+// a 2D magnetorquer that works like a compass needle that can be
 // magnetized in 1 of 4 perpendicular directions at will by changing
 // the polarities of the X-axis and Y-axis 1D magnetorquers.  Like a
 // compass needle tends to point to the North, so will do the
