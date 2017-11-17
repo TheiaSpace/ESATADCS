@@ -75,7 +75,7 @@ void ESAT_MagnetorquerTelecommandHandlerClass::handleMagnetorquerSetXPolarityTel
   else
   {
     ESAT_MagnetorquerSetXPolarityRunMode.polarity =
-      ESAT_Magnetorquer.NEGATIVE;
+      ESAT_Magnetorquer.POSITIVE;
   }
 }
 
@@ -90,7 +90,7 @@ void ESAT_MagnetorquerTelecommandHandlerClass::handleMagnetorquerSetYPolarityTel
   else
   {
     ESAT_MagnetorquerSetYPolarityRunMode.polarity =
-      ESAT_Magnetorquer.NEGATIVE;
+      ESAT_Magnetorquer.POSITIVE;
   }
 }
 
