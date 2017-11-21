@@ -37,6 +37,7 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     {
       FOLLOW_MAGNETIC_TARGET = 0x00,
       FOLLOW_SOLAR_TARGET = 0x01,
+      DETUMBLE = 0x02,
       ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN = 0x10,
       ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN = 0x11,
       ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN = 0x12,
@@ -62,6 +63,12 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // to the Sun direction.
     // This changes the ADCS run mode.
     void handleFollowSolarTargetTelecommand(ESAT_CCSDSPacket telecommand);
+
+    // Handle the telecommand for nullifying ESAT angular velocity.
+    // The telecommand has not any parameters. It just read angular velocity
+    // and apply magnetic torque in the opposite direction.
+    // This changes the ADCS run mode.
+    void handleDetumbleTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the proportional gain of the
     // attitude controller.
