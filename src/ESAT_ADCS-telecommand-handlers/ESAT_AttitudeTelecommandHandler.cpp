@@ -21,6 +21,7 @@
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
 #include "ESAT_ADCS-run-modes/ESAT_FollowMagneticTargetRunMode.h"
 #include "ESAT_ADCS-run-modes/ESAT_FollowSolarTargetRunMode.h"
+#include "ESAT_ADCS-run-modes/ESAT_DetumbleRunMode.h"
 
 boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket telecommand)
 {
@@ -35,6 +36,10 @@ boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket
       break;
     case FOLLOW_SOLAR_TARGET:
       handleFollowSolarTargetTelecommand(telecommand);
+      return true;
+      break;
+    case DETUMBLE:
+      handleDetumbleTelecommand(telecommand);
       return true;
       break;
     case ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN:
@@ -85,6 +90,11 @@ void ESAT_AttitudeTelecommandHandlerClass::handleFollowSolarTargetTelecommand(ES
 {
   ESAT_ADCS.setRunMode(ESAT_FollowSolarTargetRunMode);
   ESAT_AttitudePIDController.targetAngle = (telecommand.readWord() % 360);
+}
+
+void ESAT_AttitudeTelecommandHandlerClass::handleDetumbleTelecommand(ESAT_CCSDSPacket telecommand)
+{
+  ESAT_ADCS.setRunMode(ESAT_DetumbleRunMode);
 }
 
 
