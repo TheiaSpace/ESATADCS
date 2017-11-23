@@ -29,12 +29,16 @@ void ESAT_DetumbleRunModeClass::run()
 {
   const ESAT_AttitudeStateVector attitudeStateVector =
     ESAT_ADCS.attitudeStateVector();
-  
-  if (attitudeStateVector.rotationalSpeed > 0){
+  if (attitudeStateVector.rotationalSpeed > 0)
+  {
     ESAT_MagnetorquerController.rotateClockwise();
-  }else if (attitudeStateVector.rotationalSpeed < 0){
+  }
+  else if (attitudeStateVector.rotationalSpeed < 0)
+  {
     ESAT_MagnetorquerController.rotateCounterclockwise();
-  }else{
+  }
+  else
+  {
     ESAT_MagnetorquerController.stop();
   }
 }
