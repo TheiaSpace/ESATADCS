@@ -39,7 +39,8 @@ class ESAT_StopActuatorsTelecommandHandlerClass: public ESAT_ADCSTelecommandHand
     };
 
     // HAndle the telecommand for stopping the actuators.
-    // This changes the ADCS run mode.
+    // The telecommand has no parameters.
+    // This changes the ADCS run mode to STOP_ACTUATORS.
     void handleStopActuatorsTelecommand(ESAT_CCSDSPacket telecommand);
 };
 

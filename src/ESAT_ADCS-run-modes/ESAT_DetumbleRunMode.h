@@ -22,7 +22,7 @@
 #include <Arduino.h>
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 
-// Magnetorquer detumble mode.
+// Run mode for detumbling (stopping the rotation of the satellite).
 // Use the public instance ESAT_DetumbleRunMode.
 class ESAT_DetumbleRunModeClass: public ESAT_ADCSRunMode
 {
@@ -31,12 +31,12 @@ class ESAT_DetumbleRunModeClass: public ESAT_ADCSRunMode
     // its own unique identifier number.
     byte identifier();
 
-    // Apply the maximum possible torque towards the specified direction
-    // given the angular velocity of the satellite oposing to it.
+    // Use the magnetorquers to apply the maximum possible torque
+    // against the angular velocity of the satellite.
     void run();
 };
 
-// Global instance of the magnetorquer maximum torque run mode library.
+// Global instance of the detumbling run mode library.
 extern ESAT_DetumbleRunModeClass ESAT_DetumbleRunMode;
 
 #endif /* ESAT_DetumbleRunMode_h */
