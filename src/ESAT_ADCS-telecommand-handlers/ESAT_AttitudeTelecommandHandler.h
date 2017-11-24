@@ -53,7 +53,7 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // the target magnetic angle, from 0 degrees to 359 degrees,
     // measured counterclockwise from the +X axis of the satellite
     // to the magnetic North.
-    // This changes the ADCS run mode.
+    // This changes the ADCS run mode to FOLLOW_MAGNETIC_TARGET.
     void handleFollowMagneticTargetTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for following a target solar angle.
@@ -61,13 +61,13 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // the target solar angle, from 0 degrees to 359 degrees,
     // measured counterclockwise from the +X axis of the satellite
     // to the Sun direction.
-    // This changes the ADCS run mode.
+    // This changes the ADCS run mode to FOLLOW_SOLAR_TARGET.
     void handleFollowSolarTargetTelecommand(ESAT_CCSDSPacket telecommand);
 
-    // Handle the telecommand for nullifying ESAT angular velocity.
-    // The telecommand has not any parameters. It just read angular velocity
-    // and apply magnetic torque in the opposite direction.
-    // This changes the ADCS run mode.
+    // Handle the telecommand for nullifying ESAT angular velocity
+    // using the magnetorquers.
+    // The telecommand has no parameters.
+    // This changes the ADCS run mode to DETUMBLE.
     void handleDetumbleTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the proportional gain of the
@@ -90,10 +90,12 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
 
     // Handle the telecommand for resetting the error integral of the
     // attitude controller.
+    // The telecommand has no parameters.
     void handleAttitudeControllerResetErrorIntegralTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the usage of the gyroscope
     // for attitude control.
+    // The telecommand has no parameters.
     void handleAttitudeControllerUseGyroscopeTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the actuators used for
