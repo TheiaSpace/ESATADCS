@@ -26,14 +26,15 @@
 //
 // There are two magnetorquers: one aligned with the X-axis and one
 // aligned with the Y-axis.  These magnetorquers are electromagnets
-// that can be switched on or off in either positive or negative
-// polarity.  Together they form a 2D magnetorquer that works like a
-// compass needle that can be magnetized in 1 of 4 perpendicular
-// directions at will by changing the polarities of the X-axis and
-// Y-axis 1D magnetorquers.  Like a compass needle tends to point to
-// the North, so will do the satellite (one corner of the satellite
-// that depends on the X-axis and Y-axis 1D magnetorquer polarities)
-// when the 2D magnetorquer is switched on.
+// whose power (on/off) and polarity (positive/negative) can be
+// switched thanks to a H-bridge.  Together they form
+// a 2D magnetorquer that works like a compass needle that can be
+// magnetized in 1 of 4 perpendicular directions at will by changing
+// the polarities of the X-axis and Y-axis 1D magnetorquers.  Like a
+// compass needle tends to point to the North, so will do the
+// satellite (one corner of the satellite that depends on the X-axis
+// and Y-axis 1D magnetorquer polarities) when the 2D magnetorquer is
+// switched on.
 class ESAT_MagnetorquerClass
 {
   public:
@@ -47,6 +48,18 @@ class ESAT_MagnetorquerClass
     // Set up the magnetorquers.
     void begin();
 
+    // Invert (if the argument is true) or don't invert (if the
+    // argument is false; default value) the polarity of the X
+    // magnetorquer.  This is useful for diagnostics and
+    // troubleshooting.
+    void invertXPolarity(boolean invert);
+
+    // Invert (if the argument is true) or don't invert (if the
+    // argument is false; default value) the polarity of the Y
+    // magnetorquer.  This is useful for diagnostics and
+    // troubleshooting.
+    void invertYPolarity(boolean invert);
+
     // Return true if the magnetorquer driver is powered up; otherwise
     // return false.
     boolean readEnable() const;
@@ -56,6 +69,11 @@ class ESAT_MagnetorquerClass
 
     // Return the polarity of the Y-axis magnetorquer.
     Polarity readY() const;
+
+    // Swap (if the argument is true) or don't swap (if the argument
+    // is false; default value) the axes of the magnetorquer.  This is
+    // useful for diagnostics and troubleshooting.
+    void swapAxes(boolean swap);
 
     // Power up or down the magnetorquer driver.
     void writeEnable(boolean enable);
@@ -67,20 +85,32 @@ class ESAT_MagnetorquerClass
     void writeY(Polarity polarity);
 
   private:
-    // This pin enables the X magnetorquer.
+    // This pin enables the X magnetorquer power.
     static const int PIN_ENABLE_X = ENMTQX;
 
-    // This pin enables the X magnetorquer.
+    // This pin enables the Y magnetorquer power.
     static const int PIN_ENABLE_Y = ENMTQY;
 
-    // This pin activates the X magnetorquer.
+    // This pin selects the X magnetorquer polarity.
     static const int PIN_X_POLARITY = MTQX;
 
-    // This pin activates the Y magnetorquer.
+    // This pin selects the Y magnetorquer polarity.
     static const int PIN_Y_POLARITY = MTQY;
 
     // True if the magnetorquer driver is powered up; false otherwise.
     boolean enable;
+
+    // True if the the X magnetorquer polarity is inverted; false
+    // otherwise.  This is useful for diagnostics and troubleshooting.
+    boolean invertXPolarityLevel;
+
+    // True if the the Y magnetorquer polarity is inverted; false
+    // otherwise.  This is useful for diagnostics and troubleshooting.
+    boolean invertYPolarityLevel;
+
+    // True if the axes of the magnetorquer are swapped; false
+    // otherwise.  This is useful for diagnostics and troubleshooting.
+    boolean swapPolarityPins;
 
     // Polarity of the X-axis magnetorquer.
     Polarity xPolarity;
@@ -90,6 +120,33 @@ class ESAT_MagnetorquerClass
 
     // Configure the control pins.
     void configurePins();
+
+    // Invert a digital line level: from HIGH to LOW and from LOW to
+    // HIGH.
+    int invertLevel(int level) const;
+
+    // Return the pin used for selecting the X magnetorquer polarity.
+    // It can be the wrong one if the polarity pins are swapped; this
+    // is useful for diagnostics and troubleshooting.
+    int pinXPolarity() const;
+
+    // Return the pin used for selecting the Y magnetorquer polarity.
+    // It can be the wrong one if the polarity pins are swapped; this
+    // is useful for diagnostics and troubleshooting.
+    int pinYPolarity() const;
+
+    // Return the line level corresponding to a magnetorquer polarity.
+    int polarityLevel(Polarity polarity) const;
+
+    // Return the line level for selecting the X magnetorquer
+    // polarity.  It can be the wrong one if the X polarity is
+    // swapped; this is useful for diagnostics and troubleshooting.
+    int polarityXLevel() const;
+
+    // Return the line level for selecting the X magnetorquer
+    // polarity.  It can be the wrong one if the Y polarity is
+    // swapped; this is useful for diagnostics and troubleshooting.
+    int polarityYLevel() const;
 };
 
 // Global instance of the magnetorquer library.

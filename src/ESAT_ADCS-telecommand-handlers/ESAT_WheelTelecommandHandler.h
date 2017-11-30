@@ -47,13 +47,13 @@ class ESAT_WheelTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // The telecommand has one 32-bit floating-point parameter:
     // the duty cycle of the electronic speed controller, from -100 %
     // to +100 %.
-    // This changes the ADCS run mode.
+    // This changes the ADCS run mode to WHEEL_SET_DUTY_CYCLE.
     void handleWheelSetDutyCycleTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the wheel speed.
     // The telecommand has one 16-bit unsigned integer parameter:
     // the target wheel speed in revolutions per minute.
-    // This changes the ADCS run mode.
+    // This changes the ADCS run mode to WHEEL_SET_SPEED.
     void handleWheelSetSpeedTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the proportional gain of the
@@ -76,6 +76,7 @@ class ESAT_WheelTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
 
     // Handle the telecommand for resetting the error integral of the
     // wheel controller.
+    // The telecommand has no parameters.
     void handleWheelControllerResetErrorIntegralTelecommand(ESAT_CCSDSPacket telecommand);
 };
 

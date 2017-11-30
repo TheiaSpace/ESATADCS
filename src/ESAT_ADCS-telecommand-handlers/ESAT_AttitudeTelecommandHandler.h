@@ -37,11 +37,12 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     {
       FOLLOW_MAGNETIC_TARGET = 0x00,
       FOLLOW_SOLAR_TARGET = 0x01,
+      DETUMBLE = 0x02,
       ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN = 0x10,
       ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN = 0x11,
       ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN = 0x12,
       ATTITUDE_CONTROLLER_RESET_ERROR_INTEGRAL = 0x13,
-      ATTITUDE_CONTROLLER_USE_GYROSCOPE = 0x14,
+      ATTITUDE_CONTROLLER_SET_GYROSCOPE_USAGE = 0x14,
       ATTITUDE_CONTROLLER_SET_ACTUATORS = 0x15,
       ATTITUDE_CONTROLLER_SET_DEADBAND = 0x16,
       ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD = 0x17,
@@ -52,7 +53,7 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // the target magnetic angle, from 0 degrees to 359 degrees,
     // measured counterclockwise from the +X axis of the satellite
     // to the magnetic North.
-    // This changes the ADCS run mode.
+    // This changes the ADCS run mode to FOLLOW_MAGNETIC_TARGET.
     void handleFollowMagneticTargetTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for following a target solar angle.
@@ -60,8 +61,14 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // the target solar angle, from 0 degrees to 359 degrees,
     // measured counterclockwise from the +X axis of the satellite
     // to the Sun direction.
-    // This changes the ADCS run mode.
+    // This changes the ADCS run mode to FOLLOW_SOLAR_TARGET.
     void handleFollowSolarTargetTelecommand(ESAT_CCSDSPacket telecommand);
+
+    // Handle the telecommand for nullifying ESAT angular velocity
+    // using the magnetorquers.
+    // The telecommand has no parameters.
+    // This changes the ADCS run mode to DETUMBLE.
+    void handleDetumbleTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the proportional gain of the
     // attitude controller.
@@ -83,11 +90,13 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
 
     // Handle the telecommand for resetting the error integral of the
     // attitude controller.
+    // The telecommand has no parameters.
     void handleAttitudeControllerResetErrorIntegralTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the usage of the gyroscope
     // for attitude control.
-    void handleAttitudeControllerUseGyroscopeTelecommand(ESAT_CCSDSPacket telecommand);
+    // The telecommand has no parameters.
+    void handleAttitudeControllerSetGyroscopeUsageTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the actuators used for
     // attitude control.

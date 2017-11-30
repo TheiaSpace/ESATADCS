@@ -58,6 +58,10 @@ class ESAT_AttitudePIDControllerClass
     // deadband.
     word errorDerivativeDeadband;
 
+    // When true, use the gyroscope for error derivative estimation;
+    // when false, use numerical differentiation.
+    boolean gyroscopeUsage;
+
     // Integral gain of the PID control algorithm.
     // Expressed in 1 / second.
     float integralGain;
@@ -71,10 +75,6 @@ class ESAT_AttitudePIDControllerClass
     // attitude of the +X axis relative to a reference direction,
     // measured clockwise.  From 0 degrees to 359 degrees.
     word targetAngle;
-
-    // When true, use the gyroscope for error derivative estimation;
-    // when false, use numerical differentiation.
-    boolean useGyroscope;
 
     // Start the control loop.
     // Set the default gains.
@@ -114,6 +114,9 @@ class ESAT_AttitudePIDControllerClass
     // error derivative deadband.
     static const word DEFAULT_ERROR_DERIVATIVE_DEADBAND = 2;
 
+    // Default value of the gyroscopeUsage property.
+    static const boolean DEFAULT_GYROSCOPE_USAGE_VALUE = true;
+
     // Default value of the integral gain of the PID control
     // algorithm.  Expressed in 1 / second.
     static constexpr float DEFAULT_INTEGRAL_GAIN = 0;
@@ -121,9 +124,6 @@ class ESAT_AttitudePIDControllerClass
     // Default value of the proportional gain of the PID control
     // algorithm.  Dimensionless.
     static constexpr float DEFAULT_PROPORTIONAL_GAIN = 5.5;
-
-    // Default value of the useGyroscope property.
-    static const boolean DEFAULT_USE_GYROSCOPE_VALUE = true;
 
     // Current actuation signal for compensating for the error signal.
     float actuation;

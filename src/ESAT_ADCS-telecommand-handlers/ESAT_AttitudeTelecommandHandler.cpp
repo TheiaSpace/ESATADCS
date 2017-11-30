@@ -21,6 +21,7 @@
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
 #include "ESAT_ADCS-run-modes/ESAT_FollowMagneticTargetRunMode.h"
 #include "ESAT_ADCS-run-modes/ESAT_FollowSolarTargetRunMode.h"
+#include "ESAT_ADCS-run-modes/ESAT_DetumbleRunMode.h"
 
 boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket telecommand)
 {
@@ -35,6 +36,10 @@ boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket
       break;
     case FOLLOW_SOLAR_TARGET:
       handleFollowSolarTargetTelecommand(telecommand);
+      return true;
+      break;
+    case DETUMBLE:
+      handleDetumbleTelecommand(telecommand);
       return true;
       break;
     case ATTITUDE_CONTROLLER_SET_PROPORTIONAL_GAIN:
@@ -53,8 +58,8 @@ boolean ESAT_AttitudeTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket
       handleAttitudeControllerResetErrorIntegralTelecommand(telecommand);
       return true;
       break;
-    case ATTITUDE_CONTROLLER_USE_GYROSCOPE:
-      handleAttitudeControllerUseGyroscopeTelecommand(telecommand);
+    case ATTITUDE_CONTROLLER_SET_GYROSCOPE_USAGE:
+      handleAttitudeControllerSetGyroscopeUsageTelecommand(telecommand);
       return true;
       break;
     case ATTITUDE_CONTROLLER_SET_ACTUATORS:
@@ -87,6 +92,11 @@ void ESAT_AttitudeTelecommandHandlerClass::handleFollowSolarTargetTelecommand(ES
   ESAT_AttitudePIDController.targetAngle = (telecommand.readWord() % 360);
 }
 
+void ESAT_AttitudeTelecommandHandlerClass::handleDetumbleTelecommand(ESAT_CCSDSPacket telecommand)
+{
+  ESAT_ADCS.setRunMode(ESAT_DetumbleRunMode);
+}
+
 
 void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerSetProportionalGainTelecommand(ESAT_CCSDSPacket telecommand)
 {
@@ -108,9 +118,9 @@ void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerResetErrorInt
   ESAT_AttitudePIDController.resetErrorIntegral();
 }
 
-void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerUseGyroscopeTelecommand(ESAT_CCSDSPacket telecommand)
+void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerSetGyroscopeUsageTelecommand(ESAT_CCSDSPacket telecommand)
 {
-  ESAT_AttitudePIDController.useGyroscope = telecommand.readBoolean();
+  ESAT_AttitudePIDController.gyroscopeUsage = telecommand.readBoolean();
 }
 
 void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerSetActuatorsTelecommand(ESAT_CCSDSPacket telecommand)

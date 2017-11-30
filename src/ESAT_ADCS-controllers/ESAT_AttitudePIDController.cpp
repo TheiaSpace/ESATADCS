@@ -94,7 +94,7 @@ void ESAT_AttitudePIDControllerClass::begin()
   errorDerivativeDeadband = DEFAULT_ERROR_DERIVATIVE_DEADBAND;
   integralGain = DEFAULT_INTEGRAL_GAIN;
   proportionalGain = DEFAULT_PROPORTIONAL_GAIN;
-  useGyroscope = DEFAULT_USE_GYROSCOPE_VALUE;
+  gyroscopeUsage = DEFAULT_GYROSCOPE_USAGE_VALUE;
   errorIntegral = 0;
   previousError = 0;
 }
@@ -159,7 +159,7 @@ void ESAT_AttitudePIDControllerClass::updateError(const word currentAngle)
 
 void ESAT_AttitudePIDControllerClass::updateErrorDerivative()
 {
-  if (useGyroscope)
+  if (gyroscopeUsage)
   {
     const ESAT_AttitudeStateVector attitudeStateVector =
       ESAT_ADCS.attitudeStateVector();

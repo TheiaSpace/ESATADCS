@@ -31,8 +31,46 @@
 class ESAT_CoarseSunSensorClass
 {
   public:
+    // Set what to actually read when querying the sun sensors.
+    // Either read the actual sensors, a constant 0 % value (dark), or
+    // a constant 100 % value (saturated).  This is useful for
+    // diagnostics and troubleshooting.
+    enum ReadingsSource
+    {
+      READ_X_PLUS = 0,
+      READ_Y_PLUS = 1,
+      READ_X_MINUS = 2,
+      READ_Y_MINUS = 3,
+      READ_DARK = 4,
+      READ_SATURATED = 5,
+    };
+
     // Set up the coarse sun sensor.
     void begin();
+
+    // Set what to actually read when querying the -X sun sensor.
+    // Either read the actual sensors, a constant 0 % value (dark), or
+    // a constant 100 % value (saturated).  This is useful for
+    // diagnostics and troubleshooting.
+    void setXMinusReadingsSource(ReadingsSource source);
+
+    // Set what to actually read when querying the +X sun sensor.
+    // Either read the actual sensors, a constant 0 % value (dark), or
+    // a constant 100 % value (saturated).  This is useful for
+    // diagnostics and troubleshooting.
+    void setXPlusReadingsSource(ReadingsSource source);
+
+    // Set what to actually read when querying the -Y sun sensor.
+    // Either read the actual sensors, a constant 0 % value (dark), or
+    // a constant 100 % value (saturated).  This is useful for
+    // diagnostics and troubleshooting.
+    void setYMinusReadingsSource(ReadingsSource source);
+
+    // Set what to actually read when querying the +Y sun sensor.
+    // Either read the actual sensors, a constant 0 % value (dark), or
+    // a constant 100 % value (saturated).  This is useful for
+    // diagnostics and troubleshooting.
+    void setYPlusReadingsSource(ReadingsSource source);
 
     // Read the attitude provided by the coarse sun sensors:
     // the angle of the Sun direction measured counterclockwise from
@@ -64,6 +102,19 @@ class ESAT_CoarseSunSensorClass
     static const int PIN_X_MINUS = CSSXMINUS;
     static const int PIN_Y_PLUS = CSSYPLUS;
     static const int PIN_Y_MINUS = CSSYMINUS;
+
+    // Set what to actually read when querying the sun sensors.
+    // Either read the actual sensors, a constant 0 % value (dark), or
+    // a constant 100 % value (saturated).  This is useful for
+    // diagnostics and troubleshooting.
+    ReadingsSource sourceXMinus;
+    ReadingsSource sourceXPlus;
+    ReadingsSource sourceYMinus;
+    ReadingsSource sourceYPlus;
+
+    // Return the raw reading of a connection as a percentage
+    // from 0 % (dark) to 100 % (saturated).
+    float read(ReadingsSource source);
 };
 
 // Global instance of the coarse sun sensor library.
