@@ -109,7 +109,7 @@ class ESAT_ADCSClass
 
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 3;
-    static const byte MINOR_VERSION_NUMBER = 0;
+    static const byte MINOR_VERSION_NUMBER = 1;
     static const byte PATCH_VERSION_NUMBER = 0;
 
     // Maximum number of telecommand handlers.

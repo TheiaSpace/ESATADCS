@@ -42,7 +42,7 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
       ATTITUDE_CONTROLLER_SET_INTEGRAL_GAIN = 0x11,
       ATTITUDE_CONTROLLER_SET_DERIVATIVE_GAIN = 0x12,
       ATTITUDE_CONTROLLER_RESET_ERROR_INTEGRAL = 0x13,
-      ATTITUDE_CONTROLLER_USE_GYROSCOPE = 0x14,
+      ATTITUDE_CONTROLLER_SET_GYROSCOPE_USAGE = 0x14,
       ATTITUDE_CONTROLLER_SET_ACTUATORS = 0x15,
       ATTITUDE_CONTROLLER_SET_DEADBAND = 0x16,
       ATTITUDE_CONTROLLER_SET_DETUMBLING_THRESHOLD = 0x17,
@@ -96,7 +96,7 @@ class ESAT_AttitudeTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // Handle the telecommand for setting the usage of the gyroscope
     // for attitude control.
     // The telecommand has no parameters.
-    void handleAttitudeControllerUseGyroscopeTelecommand(ESAT_CCSDSPacket telecommand);
+    void handleAttitudeControllerSetGyroscopeUsageTelecommand(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for setting the actuators used for
     // attitude control.

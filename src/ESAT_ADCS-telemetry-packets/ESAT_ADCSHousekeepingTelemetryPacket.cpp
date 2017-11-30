@@ -47,7 +47,7 @@ void ESAT_ADCSHousekeepingTelemetryPacketClass::readUserData(ESAT_CCSDSPacket& p
   packet.writeFloat(ESAT_AttitudePIDController.proportionalGain);
   packet.writeFloat(ESAT_AttitudePIDController.integralGain);
   packet.writeFloat(ESAT_AttitudePIDController.derivativeGain);
-  packet.writeBoolean(ESAT_AttitudePIDController.useGyroscope);
+  packet.writeBoolean(ESAT_AttitudePIDController.gyroscopeUsage);
   packet.writeByte(ESAT_AttitudePIDController.actuator);
   packet.writeWord(ESAT_AttitudePIDController.errorDeadband);
   packet.writeWord(ESAT_AttitudePIDController.errorDerivativeDeadband);
