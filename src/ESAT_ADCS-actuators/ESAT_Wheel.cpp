@@ -17,20 +17,48 @@
  */
 
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
+#ifdef ARDUINO_ESAT_ADCS
+#include <ESAT_Util.h>
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
 #include <ESAT_CCSDSPacket.h>
 #include <ESAT_I2CMaster.h>
+#endif /* ARDUINO_ESAT_OBC */
 #include <Wire.h>
 
 void ESAT_WheelClass::begin()
 {
-  pinMode(PIN, OUTPUT);
-  writeDutyCycle(0);
-  electronicSpeedController.attach(PIN);
+#ifdef ARDUINO_ESAT_ADCS
+  pinMode(EN5V, OUTPUT);
   calibrateElectronicSpeedController();
+  writeDutyCycle(0);
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  pinMode(PWM, OUTPUT);
+  writeDutyCycle(0);
+  electronicSpeedController.attach(PWM);
+  calibrateElectronicSpeedController();
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 void ESAT_WheelClass::calibrateElectronicSpeedController()
 {
+#ifdef ARDUINO_ESAT_ADCS
+  switchElectronicSpeedController(false);
+  delay(1000);
+  switchElectronicSpeedController(true);
+  delay(1000);
+  Wire1.beginTransmission(ELECTRONIC_SPEED_CONTROLLER_ADDRESS);
+  Wire1.write(WHEEL_SPEED_REGISTER);
+  Wire1.write(0xFF);
+  Wire1.write(0xFF);
+  (void) Wire1.endTransmission();
+  Wire1.beginTransmission(ELECTRONIC_SPEED_CONTROLLER_ADDRESS);
+  Wire1.write(WHEEL_SPEED_REGISTER);
+  Wire1.write(0x00);
+  Wire1.write(0x00);
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
   // Perform the ESC calibration sequence (high, low and medium again).
   switchElectronicSpeedController(false);
   delay(1000);
@@ -41,6 +69,7 @@ void ESAT_WheelClass::calibrateElectronicSpeedController()
   delay(1000);
   writeDutyCycle(0);
   delay(1000);
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 float ESAT_WheelClass::constrainDutyCycle(const float dutyCycle)
@@ -68,6 +97,17 @@ float ESAT_WheelClass::readDutyCycle()
 
 void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
 {
+#ifdef ARDUINO_ESAT_ADCS
+  if (on)
+  {
+    digitalWrite(EN5V, HIGH);
+  }
+  else
+  {
+    digitalWrite(EN5V, LOW);
+  }
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
   byte buffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(buffer, packetDataBufferLength);
@@ -93,6 +133,7 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
                                   POWER_LINE_MILLISECONDS_AFTER_WRITES,
                                   POWER_LINE_ATTEMPTS,
                                   POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS);
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 void ESAT_WheelClass::writeSpeed(const int rpm)
@@ -102,12 +143,24 @@ void ESAT_WheelClass::writeSpeed(const int rpm)
 
 void ESAT_WheelClass::writeDutyCycle(const float newDutyCycle)
 {
+#ifdef ARDUINO_ESAT_ADCS
+  dutyCycle = constrainDutyCycle(newDutyCycle);
+  const int integerDutyCycle = map(dutyCycle, -100, 100, -32768, 32767);
+  const word dutyCycleBytes = ESAT_Util.intToWord(integerDutyCycle);
+  Wire1.beginTransmission(ELECTRONIC_SPEED_CONTROLLER_ADDRESS);
+  (void) Wire1.write(WHEEL_SPEED_REGISTER);
+  (void) Wire1.write(highByte(dutyCycleBytes));
+  (void) Wire1.write(lowByte(dutyCycleBytes));
+  (void) Wire1.endTransmission();
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
   dutyCycle = constrainDutyCycle(newDutyCycle);
   const word microseconds =
     (MAXIMUM_PULSE_WIDTH + MINIMUM_PULSE_WIDTH) / 2
     + (MAXIMUM_PULSE_WIDTH - MINIMUM_PULSE_WIDTH) / 2
       * dutyCycle / 100;
   electronicSpeedController.writeMicroseconds(microseconds);
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 ESAT_WheelClass ESAT_Wheel;
