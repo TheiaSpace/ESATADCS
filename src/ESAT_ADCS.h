@@ -21,6 +21,7 @@
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
+#include <ESAT_KISSStream.h>
 #include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_ADCSTelecommandHandler.h"
@@ -60,8 +61,16 @@ class ESAT_ADCSClass
     // Get all ADCS subsystems ready.
     void begin();
 
-    // Disable the emission of telemetry through the USB interface.
+    // Disable the reception of telecommands through the USB interface.
+    void disableUSBTelecommands();
+
+    // Disable the emission of telemetry from the USB interface.
     void disableUSBTelemetry();
+
+    // Enable the reception of telecommands from the USB interface.
+    // Use the buffer for accumulating the partially-received
+    // telecommands from one call to readTelecommand() to the next.
+    void enableUSBTelecommands(byte buffer[], unsigned long bufferLength);
 
     // Enable the emission of telemetry through the USB interface.
     void enableUSBTelemetry();
@@ -153,6 +162,13 @@ class ESAT_ADCSClass
 
     // Counter of generated telemetry packets.
     word telemetryPacketSequenceCount;
+
+    // Decode USB KISS frames with telecommands with this stream.
+    ESAT_KISSStream usbTelecommandDecoder;
+
+    // True if the reception of telecommands from the USB interface
+    // is enabled; false otherwise.
+    boolean usbTelecommandsEnabled;
 
     // True if the emission of telemetry through the USB interface is
     // enabled; false otherwise.

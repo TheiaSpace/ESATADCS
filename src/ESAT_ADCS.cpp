@@ -95,12 +95,33 @@ void ESAT_ADCSClass::begin()
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
   registerTelecommandHandler(ESAT_MagnetorquerTelecommandHandler);
   registerTelecommandHandler(ESAT_StopActuatorsTelecommandHandler);
+  disableUSBTelecommands();
   disableUSBTelemetry();
+}
+
+void ESAT_ADCSClass::disableUSBTelecommands()
+{
+  usbTelecommandsEnabled = false;
 }
 
 void ESAT_ADCSClass::disableUSBTelemetry()
 {
   usbTelemetryEnabled = false;
+}
+
+void ESAT_ADCSClass::enableUSBTelecommands(byte buffer[],
+                                           const unsigned long bufferLength)
+{
+#ifdef ARDUINO_ESAT_ADCS
+  usbTelecommandDecoder = ESAT_KISSStream(Serial,
+                                          buffer,
+                                          bufferLength);
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  usbTelecommandDecoder = ESAT_KISSStream(USB,
+                                          buffer,
+                                          bufferLength);
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 void ESAT_ADCSClass::enableUSBTelemetry()
