@@ -94,7 +94,6 @@ void ESAT_ADCSClass::begin()
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
   registerTelecommandHandler(ESAT_MagnetorquerTelecommandHandler);
   registerTelecommandHandler(ESAT_StopActuatorsTelecommandHandler);
-  disableUSBTelemetry();
 }
 
 void ESAT_ADCSClass::disableUSBTelecommands()
