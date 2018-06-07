@@ -32,6 +32,10 @@
  */
 
 #include "ESAT_ADCS.h"
+#ifdef ARDUINO_ESAT_ADCS
+#include <ESAT_I2CSlave.h>
+#include <Wire.h>
+#endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
 #include <ESAT_OBCClock.h>
 #include <USBSerial.h>
@@ -94,6 +98,13 @@ void ESAT_ADCSClass::begin()
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
   registerTelecommandHandler(ESAT_MagnetorquerTelecommandHandler);
   registerTelecommandHandler(ESAT_StopActuatorsTelecommandHandler);
+#ifdef ARDUINO_ESAT_ADCS
+  ESAT_I2CSlave.begin(Wire,
+                      i2cTelecommandPacketData,
+                      MAXIMUM_TELECOMMAND_PACKET_DATA_LENGTH,
+                      i2cTelemetryPacketData,
+                      MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
+#endif /* ARDUINO_ESAT_ADCS */
 }
 
 void ESAT_ADCSClass::disableUSBTelecommands()

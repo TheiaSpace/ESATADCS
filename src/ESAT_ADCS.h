@@ -141,6 +141,24 @@ class ESAT_ADCSClass
     // Maximum number of telemetry packets.
     static const byte MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS = 16;
 
+#ifdef ARDUINO_ESAT_ADCS
+    // Maximum number of bytes of the telecommand packet data field
+    // of telecommand packets coming from the I2C bus.
+    static const unsigned long MAXIMUM_TELECOMMAND_PACKET_DATA_LENGTH = 1024;
+
+    // Maximum number of bytes of the telemetry packet data field
+    // of telemetry packets going out through the I2C bus.
+    static const unsigned long MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH = 1024;
+
+    // Back buffer for the packet data field of telecommand packets
+    // coming from the I2C bus.
+    byte i2cTelecommandPacketData[MAXIMUM_TELECOMMAND_PACKET_DATA_LENGTH];
+
+    // Back buffer for the packet data field of telemetry packets
+    // going out through the I2C bus.
+    byte i2cTelemetryPacketData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
+#endif /* ARDUINO_ESAT_ADCS */
+
     // Current attitude state vector.
     ESAT_AttitudeStateVector currentAttitudeStateVector;
 
