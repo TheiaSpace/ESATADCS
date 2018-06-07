@@ -32,7 +32,6 @@
  */
 
 #include "ESAT_ADCS.h"
-#include <ESAT_KISSStream.h>
 #ifdef ARDUINO_ESAT_OBC
 #include <ESAT_OBCClock.h>
 #include <USBSerial.h>
