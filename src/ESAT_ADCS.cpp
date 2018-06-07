@@ -95,6 +95,17 @@ void ESAT_ADCSClass::begin()
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
   registerTelecommandHandler(ESAT_MagnetorquerTelecommandHandler);
   registerTelecommandHandler(ESAT_StopActuatorsTelecommandHandler);
+  disableUSBTelemetry();
+}
+
+void ESAT_ADCSClass::disableUSBTelemetry()
+{
+  usbTelemetryEnabled = false;
+}
+
+void ESAT_ADCSClass::enableUSBTelemetry()
+{
+  usbTelemetryEnabled = true;
 }
 
 word ESAT_ADCSClass::getApplicationProcessIdentifier()
@@ -248,24 +259,30 @@ void ESAT_ADCSClass::updatePeriod()
 void ESAT_ADCSClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
 #ifdef ARDUINO_ESAT_ADCS
-  packet.rewind();
-  const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.length());
-  byte encoderBuffer[encoderBufferLength];
-  ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
-  (void) encoder.beginFrame();
-  (void) packet.writeTo(encoder);
-  (void) encoder.endFrame();
+  if (usbTelemetryEnabled)
+  {
+    packet.rewind();
+    const unsigned long encoderBufferLength =
+      ESAT_KISSStream::frameLength(packet.length());
+    byte encoderBuffer[encoderBufferLength];
+    ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+    (void) encoder.beginFrame();
+    (void) packet.writeTo(encoder);
+    (void) encoder.endFrame();
+  }
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
-  packet.rewind();
-  const unsigned long encoderBufferLength =
-    ESAT_KISSStream::frameLength(packet.length());
-  byte encoderBuffer[encoderBufferLength];
-  ESAT_KISSStream encoder(USB, encoderBuffer, encoderBufferLength);
-  (void) encoder.beginFrame();
-  (void) packet.writeTo(encoder);
-  (void) encoder.endFrame();
+  if (usbTelemetryEnabled)
+  {
+    packet.rewind();
+    const unsigned long encoderBufferLength =
+      ESAT_KISSStream::frameLength(packet.length());
+    byte encoderBuffer[encoderBufferLength];
+    ESAT_KISSStream encoder(USB, encoderBuffer, encoderBufferLength);
+    (void) encoder.beginFrame();
+    (void) packet.writeTo(encoder);
+    (void) encoder.endFrame();
+  }
 #endif /* ARDUINO_ESAT_OBC */
 }
 

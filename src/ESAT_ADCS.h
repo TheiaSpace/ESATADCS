@@ -60,6 +60,12 @@ class ESAT_ADCSClass
     // Get all ADCS subsystems ready.
     void begin();
 
+    // Disable the emission of telemetry through the USB interface.
+    void disableUSBTelemetry();
+
+    // Enable the emission of telemetry through the USB interface.
+    void enableUSBTelemetry();
+
     // Handle a telecommand.
     void handleTelecommand(ESAT_CCSDSPacket& packet);
 
@@ -147,6 +153,10 @@ class ESAT_ADCSClass
 
     // Counter of generated telemetry packets.
     word telemetryPacketSequenceCount;
+
+    // True if the emission of telemetry through the USB interface is
+    // enabled; false otherwise.
+    boolean usbTelemetryEnabled;
 
     // Add the housekeeping telemetry packet to the telemetry packet stack.
     void addHousekeepingTelemetryPacket();
