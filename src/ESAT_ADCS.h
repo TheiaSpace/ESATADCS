@@ -97,6 +97,9 @@ class ESAT_ADCSClass
     // * Make available a new housekeeping telemetry packet.
     void update();
 
+    // Send a telemetry packet through the USB debugging interface.
+    void writeTelemetry(ESAT_CCSDSPacket& packet);
+
   private:
     // Telemetry packet identifiers.
     enum TelemetryPacketIdentifier

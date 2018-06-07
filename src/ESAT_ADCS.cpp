@@ -32,8 +32,10 @@
  */
 
 #include "ESAT_ADCS.h"
+#include <ESAT_KISSStream.h>
 #ifdef ARDUINO_ESAT_OBC
 #include <ESAT_OBCClock.h>
+#include <USBSerial.h>
 #endif /* ARDUINO_ESAT_OBC */
 #include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
@@ -241,6 +243,30 @@ void ESAT_ADCSClass::updatePeriod()
 {
   previousUpdateTime = currentUpdateTime;
   currentUpdateTime = millis();
+}
+
+void ESAT_ADCSClass::writeTelemetry(ESAT_CCSDSPacket& packet)
+{
+#ifdef ARDUINO_ESAT_ADCS
+  packet.rewind();
+  const unsigned long encoderBufferLength =
+    ESAT_KISSStream::frameLength(packet.length());
+  byte encoderBuffer[encoderBufferLength];
+  ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+  (void) encoder.beginFrame();
+  (void) packet.writeTo(encoder);
+  (void) encoder.endFrame();
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  packet.rewind();
+  const unsigned long encoderBufferLength =
+    ESAT_KISSStream::frameLength(packet.length());
+  byte encoderBuffer[encoderBufferLength];
+  ESAT_KISSStream encoder(USB, encoderBuffer, encoderBufferLength);
+  (void) encoder.beginFrame();
+  (void) packet.writeTo(encoder);
+  (void) encoder.endFrame();
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 ESAT_ADCSClass ESAT_ADCS;
