@@ -179,6 +179,50 @@ void ESAT_ADCSClass::readSensors()
   currentAttitudeStateVector.sunAngle = ESAT_CoarseSunSensor.readSunAngle();
 }
 
+boolean ESAT_ADCSClass::readTelecommand(ESAT_CCSDSPacket& packet)
+{
+  (void) packet;
+  packet.flush();
+  if (packet.capacity() < ESAT_CCSDSSecondaryHeader::LENGTH)
+  {
+    return false;
+  }
+  boolean pendingTelecommand = false;
+  if (!pendingTelecommand && usbTelecommandsEnabled)
+  {
+    pendingTelecommand = readTelecommandFromUSB(packet);
+  }
+  if (!pendingTelecommand)
+  {
+    return false;
+  }
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
+  {
+    return false;
+  }
+  if (primaryHeader.applicationProcessIdentifier
+      != getApplicationProcessIdentifier())
+  {
+    return false;
+  }
+  if (primaryHeader.packetDataLength < ESAT_CCSDSSecondaryHeader::LENGTH)
+  {
+    return false;
+  }
+  return true;
+}
+
+boolean ESAT_ADCSClass::readTelecommandFromUSB(ESAT_CCSDSPacket& packet)
+{
+  const boolean gotFrame = usbTelecommandDecoder.receiveFrame();
+  if (!gotFrame)
+  {
+    return false;
+  }
+  return packet.readFrom(usbTelecommandDecoder);
+}
+
 boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
   if (!telemetryAvailable())

@@ -86,6 +86,11 @@ class ESAT_ADCSClass
     // loops may need this.
     float period();
 
+    // Read an incomming telecommand and write it into a packet.
+    // Return true if there was a valid telecommand available;
+    // otherwise return false.
+    boolean readTelecommand(ESAT_CCSDSPacket& packet);
+
     // Fill a packet with the next ADCS telemetry packet available.
     // Return true if the operation was successful;
     // otherwise return false.
@@ -179,6 +184,12 @@ class ESAT_ADCSClass
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();
+
+    // Read a telecommand from the USB interface.
+    // Buffer incoming data into usbTelecommandDecoder
+    // from call to call.
+    // Return true on success; otherwise return false.
+    boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
 
     // Actuate according to the current run mode.
     void run();
