@@ -145,14 +145,24 @@ void ESAT_WheelClass::writeSpeed(const int rpm)
 void ESAT_WheelClass::writeDutyCycle(const float newDutyCycle)
 {
 #ifdef ARDUINO_ESAT_ADCS
+  const word scale = 32767;
   dutyCycle = constrainDutyCycle(newDutyCycle);
-  const int integerDutyCycle = map(dutyCycle, -100, 100, -32768, 32767);
-  const word dutyCycleBytes = ESAT_Util.intToWord(integerDutyCycle);
   Wire1.beginTransmission(ELECTRONIC_SPEED_CONTROLLER_ADDRESS);
   (void) Wire1.write(WHEEL_SPEED_REGISTER);
-  (void) Wire1.write(highByte(dutyCycleBytes));
-  (void) Wire1.write(lowByte(dutyCycleBytes));
+  if (dutyCycle > 0)
+  {
+    const word integerDutyCycle = scale + round(scale * dutyCycle / 100);
+    (void) Wire1.write(highByte(integerDutyCycle));
+    (void) Wire1.write(lowByte(integerDutyCycle));
+  }
+  else
+  {
+    const word integerDutyCycle = round(scale * (-dutyCycle) / 100);
+    (void) Wire1.write(highByte(integerDutyCycle));
+    (void) Wire1.write(lowByte(integerDutyCycle));
+  }
   (void) Wire1.endTransmission();
+  delay(5);
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   dutyCycle = constrainDutyCycle(newDutyCycle);
