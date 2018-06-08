@@ -397,7 +397,6 @@ void ESAT_ADCSClass::respondToNextPacketTelemetryRequest()
   if (ESAT_I2CSlave.telemetryQueueResetReceived())
   {
     i2cPendingTelemetry = pendingTelemetry;
-    i2cPendingTelemetry.clear();
   }
   const int identifier = i2cPendingTelemetry.readNext();
   if (identifier >= 0)
