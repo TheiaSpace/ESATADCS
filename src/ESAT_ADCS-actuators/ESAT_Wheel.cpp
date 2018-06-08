@@ -57,6 +57,7 @@ void ESAT_WheelClass::calibrateElectronicSpeedController()
   Wire1.write(WHEEL_SPEED_REGISTER);
   Wire1.write(0x00);
   Wire1.write(0x00);
+  (void) Wire1.endTransmission();
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   // Perform the ESC calibration sequence (high, low and medium again).
