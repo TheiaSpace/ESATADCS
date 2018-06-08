@@ -17,6 +17,7 @@
  */
 
 #include "ESAT_ADCS-measurements/ESAT_Gyroscope.h"
+#include <ESAT_Util.h>
 
 void ESAT_GyroscopeClass::begin(const byte fullScaleConfiguration)
 {
@@ -53,7 +54,7 @@ int ESAT_GyroscopeClass::read(unsigned int samples)
   {
     cumulativeRawReading = cumulativeRawReading + readRawSample();
   }
-  const long averageRawReading = cumulativeRawReading / samples;
+  const long averageRawReading = cumulativeRawReading / long(samples);
   return averageRawReading / gain;
 }
 
@@ -75,7 +76,9 @@ int ESAT_GyroscopeClass::readRawSample()
   }
   const byte highByte = bus->read();
   const byte lowByte = bus->read();
-  return word(highByte, lowByte);
+  const word bits = word(highByte, lowByte);
+  const int reading = ESAT_Util.wordToInt(bits);
+  return reading;
 }
 
 void ESAT_GyroscopeClass::setGain(const byte fullScaleConfiguration)
