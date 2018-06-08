@@ -356,7 +356,7 @@ void ESAT_ADCSClass::respondToI2CRequests()
   const int requestedPacket = ESAT_I2CSlave.requestedPacket();
   switch (requestedPacket)
   {
-    case ESAT_I2CSlave.NO_TELEMETRY_PACKET_REQUESTED:
+    case ESAT_I2CSlave.NO_PACKET_REQUESTED:
       break;
     case ESAT_I2CSlave.NEXT_TELEMETRY_PACKET_REQUESTED:
       respondToNextPacketTelemetryRequest();
