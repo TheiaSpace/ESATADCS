@@ -251,7 +251,7 @@ boolean ESAT_ADCSClass::readTelecommand(ESAT_CCSDSPacket& packet)
   }
   boolean pendingTelecommand = false;
 #ifdef ARDUINO_ESAT_ADCS
-  pendingTelecommand = ESAT_I2CSlave.readTelecommand(packet);
+  pendingTelecommand = ESAT_I2CSlave.readPacket(packet);
 #endif /* ARDUINO_ESAT_ADCS */
   if (!pendingTelecommand && usbTelecommandsEnabled)
   {
