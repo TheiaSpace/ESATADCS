@@ -21,6 +21,7 @@
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
+#include <ESAT_FlagContainer.h>
 #include <ESAT_KISSStream.h>
 #include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
@@ -157,6 +158,11 @@ class ESAT_ADCSClass
     // Back buffer for the packet data field of telemetry packets
     // going out through the I2C bus.
     byte i2cTelemetryPacketData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
+
+    // List of pending telemetry identifiers for I2C requests: packets
+    // not read yet in the current I2C next-packet telemetry request
+    // cycle.
+    ESAT_FlagContainer i2cPendingTelemetry;
 #endif /* ARDUINO_ESAT_ADCS */
 
     // Current attitude state vector.
@@ -170,6 +176,10 @@ class ESAT_ADCSClass
 
     // Number of stacked telemetry packets.
     byte numberOfTelemetryPackets;
+
+    // List of pending telemetry packet identifiers: packets not read
+    // yet in the current ADCS cycle.
+    ESAT_FlagContainer pendingTelemetry;
 
     // Processor uptime (in milliseconds) at the previous call to update().
     unsigned long previousUpdateTime;
@@ -200,6 +210,11 @@ class ESAT_ADCSClass
     // Add the housekeeping telemetry packet to the telemetry packet stack.
     void addHousekeepingTelemetryPacket();
 
+    // Fill a telemetry packet with the contents of the
+    // ESAT_ADCSTelemetryPacket added with the given identifier.
+    // Return true on success; otherwise return false.
+    boolean fillTelemetryPacket(ESAT_CCSDSPacket& packet, byte identifier);
+
     // Read the sensors needed for attitude determination and control.
     void readSensors();
 
@@ -209,8 +224,28 @@ class ESAT_ADCSClass
     // Return true on success; otherwise return false.
     boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
 
+#ifdef ARDUINO_ESAT_ADCS
+    // Respond to telemetry and telecommand requests coming from the I2C bus.
+    void respondToI2CRequests();
+
+    // Respond to a named-packet (of given identifier) telemetry
+    // request coming from the I2C bus.
+    void respondToNamedPacketTelemetryRequest(byte identifier);
+
+    // Respond to a next-packet telecommand request coming from the
+    // I2C bus.
+    void respondToNextPacketTelecommandRequest();
+
+    // Respond to a next-packet telemetry request coming from the I2C
+    // bus.
+    void respondToNextPacketTelemetryRequest();
+#endif /* ARDUINO_ESAT_ADCS */
+
     // Actuate according to the current run mode.
     void run();
+
+    // Update the lists of pending telemetry packets.
+    void updatePendingTelemetryLists();
 
     // Recalculate the period.
     void updatePeriod();
