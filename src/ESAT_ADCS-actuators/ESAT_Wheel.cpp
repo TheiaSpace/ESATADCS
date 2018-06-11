@@ -128,12 +128,12 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
   secondaryHeader.packetIdentifier = POWER_LINE_COMMAND_CODE;
   packet.writeSecondaryHeader(secondaryHeader);
   packet.writeBoolean(on);
-  ESAT_I2CMaster.writeTelecommand(Wire,
-                                  POWER_LINE_ADDRESS,
-                                  packet,
-                                  POWER_LINE_MILLISECONDS_AFTER_WRITES,
-                                  POWER_LINE_ATTEMPTS,
-                                  POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS);
+  ESAT_I2CMaster.writePacket(Wire,
+                             POWER_LINE_ADDRESS,
+                             packet,
+                             POWER_LINE_MILLISECONDS_AFTER_WRITES,
+                             POWER_LINE_ATTEMPTS,
+                             POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS);
 #endif /* ARDUINO_ESAT_OBC */
 }
 
