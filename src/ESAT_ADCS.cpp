@@ -421,9 +421,6 @@ void ESAT_ADCSClass::updatePendingTelemetryLists()
   {
     const byte packetIdentifier = telemetryPackets[index]->packetIdentifier();
     pendingTelemetry.write(packetIdentifier, true);
-#ifdef ARDUINO_ESAT_ADCS
-    i2cPendingTelemetry.write(packetIdentifier, true);
-#endif /* ARDUINO_ESAT_ADCS */
   }
 }
 
