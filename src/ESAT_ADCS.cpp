@@ -295,7 +295,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   {
     return false;
   }
-  const boolean gotPacket = fillTelemetryPacket(packet, identifier);
+  const boolean gotPacket = fillTelemetryPacket(packet, byte(identifier));
   pendingTelemetry.clear(byte(identifier));
   return gotPacket;
 }
