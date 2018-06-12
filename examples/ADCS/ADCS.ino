@@ -44,6 +44,7 @@ void setup()
 {
 #ifdef ARDUINO_ESAT_ADCS
   Serial.begin(9600);
+  Serial.blockOnOverrun(false);
   Wire.begin(ESAT_ADCS.getApplicationProcessIdentifier());
   Wire1.begin();
 #endif /* ARDUINO_ESAT_ADCS */
