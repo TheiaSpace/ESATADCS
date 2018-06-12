@@ -296,7 +296,7 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
     return false;
   }
   const boolean gotPacket = fillTelemetryPacket(packet, identifier);
-  pendingTelemetry.write(identifier, false);
+  pendingTelemetry.clear(byte(identifier));
   return gotPacket;
 }
 
@@ -405,7 +405,7 @@ void ESAT_ADCSClass::respondToNextPacketTelemetryRequest()
     ESAT_CCSDSPacket packet(packetData, MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
     const boolean gotPacket = fillTelemetryPacket(packet, identifier);
     ESAT_I2CSlave.writePacket(packet);
-    i2cPendingTelemetry.write(byte(identifier), false);
+    i2cPendingTelemetry.clear(byte(identifier));
   }
   else
   {
@@ -416,11 +416,11 @@ void ESAT_ADCSClass::respondToNextPacketTelemetryRequest()
 
 void ESAT_ADCSClass::updatePendingTelemetryLists()
 {
-  pendingTelemetry.clear();
+  pendingTelemetry.clearAll();
   for (int index = 0; index < numberOfTelemetryPackets; index++)
   {
     const byte packetIdentifier = telemetryPackets[index]->packetIdentifier();
-    pendingTelemetry.write(packetIdentifier, true);
+    pendingTelemetry.set(packetIdentifier);
   }
 }
 
