@@ -124,11 +124,13 @@ void ESAT_ADCSClass::enableUSBTelecommands(byte buffer[],
   usbTelecommandDecoder = ESAT_KISSStream(Serial,
                                           buffer,
                                           bufferLength);
+  usbTelecommandsEnabled = true;
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   usbTelecommandDecoder = ESAT_KISSStream(USB,
                                           buffer,
                                           bufferLength);
+  usbTelecommandsEnabled = true;
 #endif /* ARDUINO_ESAT_OBC */
 }
 
