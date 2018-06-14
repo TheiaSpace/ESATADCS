@@ -35,7 +35,7 @@ word ESAT_MagnetometerClass::getReading()
 {
   bus->beginTransmission(MAGNETOMETER_ADDRESS);
   bus->write(READING_REGISTER);
-  const byte writeStatus = Wire.endTransmission();
+  const byte writeStatus = bus->endTransmission();
   if (writeStatus != 0)
   {
     error = true;
