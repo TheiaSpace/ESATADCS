@@ -89,6 +89,7 @@ void ESAT_WheelTelecommandHandlerClass::handleWheelControllerSetDerivativeGainTe
 
 void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetErrorIntegralTelecommand(ESAT_CCSDSPacket telecommand)
 {
+  (void) telecommand;
   ESAT_WheelPIDController.resetErrorIntegral();
 }
 
