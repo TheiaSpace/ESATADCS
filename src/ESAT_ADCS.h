@@ -21,6 +21,8 @@
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
+#include <ESAT_FlagContainer.h>
+#include <ESAT_KISSStream.h>
 #include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_ADCSTelecommandHandler.h"
@@ -60,6 +62,20 @@ class ESAT_ADCSClass
     // Get all ADCS subsystems ready.
     void begin();
 
+    // Disable the reception of telecommands through the USB interface.
+    void disableUSBTelecommands();
+
+    // Disable the emission of telemetry from the USB interface.
+    void disableUSBTelemetry();
+
+    // Enable the reception of telecommands from the USB interface.
+    // Use the buffer for accumulating the partially-received
+    // telecommands from one call to readTelecommand() to the next.
+    void enableUSBTelecommands(byte buffer[], unsigned long bufferLength);
+
+    // Enable the emission of telemetry through the USB interface.
+    void enableUSBTelemetry();
+
     // Handle a telecommand.
     void handleTelecommand(ESAT_CCSDSPacket& packet);
 
@@ -70,6 +86,11 @@ class ESAT_ADCSClass
     // update() to the current call to update().  Attitude control
     // loops may need this.
     float period();
+
+    // Read an incomming telecommand and write it into a packet.
+    // Return true if there was a valid telecommand available;
+    // otherwise return false.
+    boolean readTelecommand(ESAT_CCSDSPacket& packet);
 
     // Fill a packet with the next ADCS telemetry packet available.
     // Return true if the operation was successful;
@@ -97,6 +118,9 @@ class ESAT_ADCSClass
     // * Make available a new housekeeping telemetry packet.
     void update();
 
+    // Send a telemetry packet through the USB debugging interface.
+    void writeTelemetry(ESAT_CCSDSPacket& packet);
+
   private:
     // Telemetry packet identifiers.
     enum TelemetryPacketIdentifier
@@ -118,6 +142,29 @@ class ESAT_ADCSClass
     // Maximum number of telemetry packets.
     static const byte MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS = 16;
 
+#ifdef ARDUINO_ESAT_ADCS
+    // Maximum number of bytes of the telecommand packet data field
+    // of telecommand packets coming from the I2C bus.
+    static const unsigned long MAXIMUM_TELECOMMAND_PACKET_DATA_LENGTH = 1024;
+
+    // Maximum number of bytes of the telemetry packet data field
+    // of telemetry packets going out through the I2C bus.
+    static const unsigned long MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH = 1024;
+
+    // Back buffer for the packet data field of telecommand packets
+    // coming from the I2C bus.
+    byte i2cTelecommandPacketData[MAXIMUM_TELECOMMAND_PACKET_DATA_LENGTH];
+
+    // Back buffer for the packet data field of telemetry packets
+    // going out through the I2C bus.
+    byte i2cTelemetryPacketData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
+
+    // List of pending telemetry identifiers for I2C requests: packets
+    // not read yet in the current I2C next-packet telemetry request
+    // cycle.
+    ESAT_FlagContainer i2cPendingTelemetry;
+#endif /* ARDUINO_ESAT_ADCS */
+
     // Current attitude state vector.
     ESAT_AttitudeStateVector currentAttitudeStateVector;
 
@@ -129,6 +176,10 @@ class ESAT_ADCSClass
 
     // Number of stacked telemetry packets.
     byte numberOfTelemetryPackets;
+
+    // List of pending telemetry packet identifiers: packets not read
+    // yet in the current ADCS cycle.
+    ESAT_FlagContainer pendingTelemetry;
 
     // Processor uptime (in milliseconds) at the previous call to update().
     unsigned long previousUpdateTime;
@@ -145,14 +196,56 @@ class ESAT_ADCSClass
     // Counter of generated telemetry packets.
     word telemetryPacketSequenceCount;
 
+    // Decode USB KISS frames with telecommands with this stream.
+    ESAT_KISSStream usbTelecommandDecoder;
+
+    // True if the reception of telecommands from the USB interface
+    // is enabled; false otherwise.
+    boolean usbTelecommandsEnabled;
+
+    // True if the emission of telemetry through the USB interface is
+    // enabled; false otherwise.
+    boolean usbTelemetryEnabled;
+
     // Add the housekeeping telemetry packet to the telemetry packet stack.
     void addHousekeepingTelemetryPacket();
+
+    // Fill a telemetry packet with the contents of the
+    // ESAT_ADCSTelemetryPacket added with the given identifier.
+    // Return true on success; otherwise return false.
+    boolean fillTelemetryPacket(ESAT_CCSDSPacket& packet, byte identifier);
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();
 
+    // Read a telecommand from the USB interface.
+    // Buffer incoming data into usbTelecommandDecoder
+    // from call to call.
+    // Return true on success; otherwise return false.
+    boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
+
+#ifdef ARDUINO_ESAT_ADCS
+    // Respond to telemetry and telecommand requests coming from the I2C bus.
+    void respondToI2CRequests();
+
+    // Respond to a named-packet (of given identifier) telemetry
+    // request coming from the I2C bus.
+    void respondToNamedPacketTelemetryRequest(byte identifier);
+
+    // Respond to a next-packet telecommand request coming from the
+    // I2C bus.
+    void respondToNextPacketTelecommandRequest();
+
+    // Respond to a next-packet telemetry request coming from the I2C
+    // bus.
+    void respondToNextPacketTelemetryRequest();
+#endif /* ARDUINO_ESAT_ADCS */
+
     // Actuate according to the current run mode.
     void run();
+
+    // Update the lists of pending telemetry packets.
+    void updatePendingTelemetryLists();
 
     // Recalculate the period.
     void updatePeriod();

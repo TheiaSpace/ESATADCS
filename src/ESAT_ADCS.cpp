@@ -32,7 +32,14 @@
  */
 
 #include "ESAT_ADCS.h"
+#ifdef ARDUINO_ESAT_ADCS
+#include <ESAT_I2CSlave.h>
+#include <Wire.h>
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
 #include <ESAT_OBCClock.h>
+#include <USBSerial.h>
+#endif /* ARDUINO_ESAT_OBC */
 #include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
@@ -91,6 +98,98 @@ void ESAT_ADCSClass::begin()
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
   registerTelecommandHandler(ESAT_MagnetorquerTelecommandHandler);
   registerTelecommandHandler(ESAT_StopActuatorsTelecommandHandler);
+#ifdef ARDUINO_ESAT_ADCS
+  ESAT_I2CSlave.begin(Wire,
+                      i2cTelecommandPacketData,
+                      MAXIMUM_TELECOMMAND_PACKET_DATA_LENGTH,
+                      i2cTelemetryPacketData,
+                      MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
+#endif /* ARDUINO_ESAT_ADCS */
+}
+
+void ESAT_ADCSClass::disableUSBTelecommands()
+{
+  usbTelecommandsEnabled = false;
+}
+
+void ESAT_ADCSClass::disableUSBTelemetry()
+{
+  usbTelemetryEnabled = false;
+}
+
+void ESAT_ADCSClass::enableUSBTelecommands(byte buffer[],
+                                           const unsigned long bufferLength)
+{
+#ifdef ARDUINO_ESAT_ADCS
+  usbTelecommandDecoder = ESAT_KISSStream(Serial,
+                                          buffer,
+                                          bufferLength);
+  usbTelecommandsEnabled = true;
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  usbTelecommandDecoder = ESAT_KISSStream(USB,
+                                          buffer,
+                                          bufferLength);
+  usbTelecommandsEnabled = true;
+#endif /* ARDUINO_ESAT_OBC */
+}
+
+void ESAT_ADCSClass::enableUSBTelemetry()
+{
+  usbTelemetryEnabled = true;
+}
+
+boolean ESAT_ADCSClass::fillTelemetryPacket(ESAT_CCSDSPacket& packet,
+                                            const byte identifier)
+{
+  if (packet.capacity() < ESAT_CCSDSSecondaryHeader::LENGTH)
+  {
+    return false;
+  }
+  for (int index = 0; index < numberOfTelemetryPackets; index++)
+  {
+    if (!telemetryPackets[index])
+    {
+      return false;
+    }
+    if (telemetryPackets[index]->packetIdentifier() == identifier)
+    {
+      packet.flush();
+      // Primary header.
+      ESAT_CCSDSPrimaryHeader primaryHeader;
+      primaryHeader.packetVersionNumber = 0;
+      primaryHeader.packetType =
+        primaryHeader.TELEMETRY;
+      primaryHeader.secondaryHeaderFlag =
+        primaryHeader.SECONDARY_HEADER_IS_PRESENT;
+      primaryHeader.applicationProcessIdentifier =
+        getApplicationProcessIdentifier();
+      primaryHeader.sequenceFlags =
+        primaryHeader.UNSEGMENTED_USER_DATA;
+      primaryHeader.packetSequenceCount =
+        telemetryPacketSequenceCount;
+      packet.writePrimaryHeader(primaryHeader);
+      // Secondary header.
+      ESAT_CCSDSSecondaryHeader secondaryHeader;
+      secondaryHeader.preamble =
+        secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
+#ifdef ARDUINO_ESAT_OBC
+      secondaryHeader.timestamp = ESAT_OBCClock.read();
+#endif /* ARDUINO_ESAT_OBC */
+      secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
+      secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
+      secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
+      secondaryHeader.packetIdentifier =
+        telemetryPackets[index]->packetIdentifier();
+      packet.writeSecondaryHeader(secondaryHeader);
+      // User data.
+      telemetryPackets[index]->readUserData(packet);
+      // Bookkeeping.
+      telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+      return true;
+    }
+  }
+  return false;
 }
 
 word ESAT_ADCSClass::getApplicationProcessIdentifier()
@@ -144,48 +243,63 @@ void ESAT_ADCSClass::readSensors()
   currentAttitudeStateVector.sunAngle = ESAT_CoarseSunSensor.readSunAngle();
 }
 
-boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
+boolean ESAT_ADCSClass::readTelecommand(ESAT_CCSDSPacket& packet)
 {
-  if (!telemetryAvailable())
-  {
-    return false;
-  }
+  (void) packet;
+  packet.flush();
   if (packet.capacity() < ESAT_CCSDSSecondaryHeader::LENGTH)
   {
     return false;
   }
-  packet.flush();
-  // Primary header.
-  ESAT_CCSDSPrimaryHeader primaryHeader;
-  primaryHeader.packetVersionNumber = 0;
-  primaryHeader.packetType =
-    primaryHeader.TELEMETRY;
-  primaryHeader.secondaryHeaderFlag =
-    primaryHeader.SECONDARY_HEADER_IS_PRESENT;
-  primaryHeader.applicationProcessIdentifier =
-    getApplicationProcessIdentifier();
-  primaryHeader.sequenceFlags =
-    primaryHeader.UNSEGMENTED_USER_DATA;
-  primaryHeader.packetSequenceCount =
-    telemetryPacketSequenceCount;
-  packet.writePrimaryHeader(primaryHeader);
-  // Secondary header.
-  ESAT_CCSDSSecondaryHeader secondaryHeader;
-  secondaryHeader.preamble =
-    secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
-  secondaryHeader.timestamp = ESAT_OBCClock.read();
-  secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
-  secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
-  secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
-  secondaryHeader.packetIdentifier =
-    telemetryPackets[numberOfTelemetryPackets - 1]->packetIdentifier();
-  packet.writeSecondaryHeader(secondaryHeader);
-  // User data.
-  telemetryPackets[numberOfTelemetryPackets - 1]->readUserData(packet);
-  // Bookkeeping.
-  telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
-  numberOfTelemetryPackets = numberOfTelemetryPackets - 1;
+  boolean pendingTelecommand = false;
+#ifdef ARDUINO_ESAT_ADCS
+  pendingTelecommand = ESAT_I2CSlave.readPacket(packet);
+#endif /* ARDUINO_ESAT_ADCS */
+  if (!pendingTelecommand && usbTelecommandsEnabled)
+  {
+    pendingTelecommand = readTelecommandFromUSB(packet);
+  }
+  if (!pendingTelecommand)
+  {
+    return false;
+  }
+  const ESAT_CCSDSPrimaryHeader primaryHeader = packet.readPrimaryHeader();
+  if (primaryHeader.packetType != primaryHeader.TELECOMMAND)
+  {
+    return false;
+  }
+  if (primaryHeader.applicationProcessIdentifier
+      != getApplicationProcessIdentifier())
+  {
+    return false;
+  }
+  if (primaryHeader.packetDataLength < ESAT_CCSDSSecondaryHeader::LENGTH)
+  {
+    return false;
+  }
   return true;
+}
+
+boolean ESAT_ADCSClass::readTelecommandFromUSB(ESAT_CCSDSPacket& packet)
+{
+  const boolean gotFrame = usbTelecommandDecoder.receiveFrame();
+  if (!gotFrame)
+  {
+    return false;
+  }
+  return packet.readFrom(usbTelecommandDecoder);
+}
+
+boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
+{
+  const int identifier = pendingTelemetry.readNext();
+  if (identifier < 0)
+  {
+    return false;
+  }
+  const boolean gotPacket = fillTelemetryPacket(packet, byte(identifier));
+  pendingTelemetry.clear(byte(identifier));
+  return gotPacket;
 }
 
 void ESAT_ADCSClass::registerTelecommandHandler(ESAT_ADCSTelecommandHandler& telecommandHandler)
@@ -227,16 +341,125 @@ boolean ESAT_ADCSClass::telemetryAvailable()
 
 void ESAT_ADCSClass::update()
 {
+  numberOfTelemetryPackets = 0;
   updatePeriod();
   readSensors();
   run();
   addHousekeepingTelemetryPacket();
+  updatePendingTelemetryLists();
+#ifdef ARDUINO_ESAT_ADCS
+  respondToI2CRequests();
+#endif /* ARDUINO_ESAT_ADCS */
+}
+
+#ifdef ARDUINO_ESAT_ADCS
+void ESAT_ADCSClass::respondToI2CRequests()
+{
+  const int requestedPacket = ESAT_I2CSlave.requestedPacket();
+  switch (requestedPacket)
+  {
+    case ESAT_I2CSlave.NO_PACKET_REQUESTED:
+      break;
+    case ESAT_I2CSlave.NEXT_TELEMETRY_PACKET_REQUESTED:
+      respondToNextPacketTelemetryRequest();
+      break;
+    case ESAT_I2CSlave.NEXT_TELECOMMAND_PACKET_REQUESTED:
+      respondToNextPacketTelecommandRequest();
+      break;
+    default:
+      respondToNamedPacketTelemetryRequest(byte(requestedPacket));
+      break;
+  }
+}
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_ADCS
+void ESAT_ADCSClass::respondToNamedPacketTelemetryRequest(const byte identifier)
+{
+  if (pendingTelemetry.read(identifier))
+  {
+    byte packetData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
+    ESAT_CCSDSPacket packet(packetData, MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
+    const boolean gotPacket = fillTelemetryPacket(packet, identifier);
+    ESAT_I2CSlave.writePacket(packet);
+  }
+}
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_ADCS
+void ESAT_ADCSClass::respondToNextPacketTelecommandRequest()
+{
+  ESAT_I2CSlave.rejectPacket();
+}
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_ADCS
+void ESAT_ADCSClass::respondToNextPacketTelemetryRequest()
+{
+  if (ESAT_I2CSlave.telemetryQueueResetReceived())
+  {
+    i2cPendingTelemetry = pendingTelemetry;
+  }
+  const int identifier = i2cPendingTelemetry.readNext();
+  if (identifier >= 0)
+  {
+    byte packetData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
+    ESAT_CCSDSPacket packet(packetData, MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
+    const boolean gotPacket = fillTelemetryPacket(packet, identifier);
+    ESAT_I2CSlave.writePacket(packet);
+    i2cPendingTelemetry.clear(byte(identifier));
+  }
+  else
+  {
+    ESAT_I2CSlave.rejectPacket();
+  }
+}
+#endif /* ARDUINO_ESAT_ADCS */
+
+void ESAT_ADCSClass::updatePendingTelemetryLists()
+{
+  pendingTelemetry.clearAll();
+  for (int index = 0; index < numberOfTelemetryPackets; index++)
+  {
+    const byte packetIdentifier = telemetryPackets[index]->packetIdentifier();
+    pendingTelemetry.set(packetIdentifier);
+  }
 }
 
 void ESAT_ADCSClass::updatePeriod()
 {
   previousUpdateTime = currentUpdateTime;
   currentUpdateTime = millis();
+}
+
+void ESAT_ADCSClass::writeTelemetry(ESAT_CCSDSPacket& packet)
+{
+#ifdef ARDUINO_ESAT_ADCS
+  if (usbTelemetryEnabled)
+  {
+    packet.rewind();
+    const unsigned long encoderBufferLength =
+      ESAT_KISSStream::frameLength(packet.length());
+    byte encoderBuffer[encoderBufferLength];
+    ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+    (void) encoder.beginFrame();
+    (void) packet.writeTo(encoder);
+    (void) encoder.endFrame();
+  }
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  if (usbTelemetryEnabled)
+  {
+    packet.rewind();
+    const unsigned long encoderBufferLength =
+      ESAT_KISSStream::frameLength(packet.length());
+    byte encoderBuffer[encoderBufferLength];
+    ESAT_KISSStream encoder(USB, encoderBuffer, encoderBufferLength);
+    (void) encoder.beginFrame();
+    (void) packet.writeTo(encoder);
+    (void) encoder.endFrame();
+  }
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 ESAT_ADCSClass ESAT_ADCS;

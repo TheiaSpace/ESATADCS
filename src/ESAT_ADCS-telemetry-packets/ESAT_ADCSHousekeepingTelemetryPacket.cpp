@@ -43,7 +43,7 @@ void ESAT_ADCSHousekeepingTelemetryPacketClass::readUserData(ESAT_CCSDSPacket& p
   packet.writeFloat(ESAT_CoarseSunSensor.readYPlus());
   packet.writeFloat(ESAT_CoarseSunSensor.readXMinus());
   packet.writeFloat(ESAT_CoarseSunSensor.readYMinus());
-  packet.writeWord(attitudeStateVector.rotationalSpeed);
+  packet.writeInt(attitudeStateVector.rotationalSpeed);
   packet.writeFloat(ESAT_AttitudePIDController.proportionalGain);
   packet.writeFloat(ESAT_AttitudePIDController.integralGain);
   packet.writeFloat(ESAT_AttitudePIDController.derivativeGain);

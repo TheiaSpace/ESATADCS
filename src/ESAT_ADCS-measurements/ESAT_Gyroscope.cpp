@@ -17,11 +17,17 @@
  */
 
 #include "ESAT_ADCS-measurements/ESAT_Gyroscope.h"
-#include <Wire.h>
+#include <ESAT_Util.h>
 
 void ESAT_GyroscopeClass::begin(const byte fullScaleConfiguration)
 {
   error = false;
+#ifdef ARDUINO_ESAT_ADCS
+  bus = &Wire1;
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  bus = &Wire;
+#endif /* ARDUINO_ESAT_OBC */
   configureRange(fullScaleConfiguration);
   setGain(fullScaleConfiguration);
 }
@@ -31,10 +37,10 @@ void ESAT_GyroscopeClass::configureRange(const byte fullScaleConfiguration)
   const byte fullScaleConfigurationOffset = 3;
   const byte configuration =
     fullScaleConfiguration << fullScaleConfigurationOffset;
-  Wire.beginTransmission(ADDRESS);
-  Wire.write(CONFIGURATION_REGISTER);
-  Wire.write(configuration);
-  const byte writeStatus = Wire.endTransmission();
+  bus->beginTransmission(ADDRESS);
+  bus->write(CONFIGURATION_REGISTER);
+  bus->write(configuration);
+  const byte writeStatus = bus->endTransmission();
   if (writeStatus != 0)
   {
     error = true;
@@ -48,29 +54,31 @@ int ESAT_GyroscopeClass::read(unsigned int samples)
   {
     cumulativeRawReading = cumulativeRawReading + readRawSample();
   }
-  const long averageRawReading = cumulativeRawReading / samples;
+  const long averageRawReading = cumulativeRawReading / long(samples);
   return averageRawReading / gain;
 }
 
 int ESAT_GyroscopeClass::readRawSample()
 {
-  Wire.beginTransmission(ADDRESS);
-  Wire.write(GYROSCOPE_READING_REGISTER);
-  const byte writeStatus = Wire.endTransmission();
+  bus->beginTransmission(ADDRESS);
+  bus->write(GYROSCOPE_READING_REGISTER);
+  const byte writeStatus = bus->endTransmission();
   if (writeStatus != 0)
   {
     error = true;
     return 0;
   }
-  const byte bytesRead = Wire.requestFrom(int(ADDRESS), 2);
+  const byte bytesRead = bus->requestFrom(int(ADDRESS), 2);
   if (bytesRead != 2)
   {
     error = true;
     return 0;
   }
-  const byte highByte = Wire.read();
-  const byte lowByte = Wire.read();
-  return word(highByte, lowByte);
+  const byte highByte = bus->read();
+  const byte lowByte = bus->read();
+  const word bits = word(highByte, lowByte);
+  const int reading = ESAT_Util.wordToInt(bits);
+  return reading;
 }
 
 void ESAT_GyroscopeClass::setGain(const byte fullScaleConfiguration)

@@ -41,6 +41,15 @@ class ESAT_TachometerClass
     unsigned int read();
 
   private:
+#ifdef ARDUINO_ESAT_ADCS
+    // I2C address of the electronic speed controller.
+    static const byte ELECTRONIC_SPEED_CONTROLLER_ADDRESS = 0x29;
+
+    // I2C register of the wheel speed.
+    static const byte WHEEL_SPEED_REGISTER = 0x00;
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_OBC
     // Number of tachometer pulses since the latest measurement.
     volatile unsigned int count;
 
@@ -59,6 +68,7 @@ class ESAT_TachometerClass
 
     // Increment the counter of the tachometer.
     static void incrementCounter();
+#endif /* ARDUINO_ESAT_OBC */
 };
 
 // Global instance of the tachometer library.

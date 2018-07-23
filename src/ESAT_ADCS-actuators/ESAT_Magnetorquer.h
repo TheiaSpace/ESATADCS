@@ -85,18 +85,6 @@ class ESAT_MagnetorquerClass
     void writeY(Polarity polarity);
 
   private:
-    // This pin enables the X magnetorquer power.
-    static const int PIN_ENABLE_X = ENMTQX;
-
-    // This pin enables the Y magnetorquer power.
-    static const int PIN_ENABLE_Y = ENMTQY;
-
-    // This pin selects the X magnetorquer polarity.
-    static const int PIN_X_POLARITY = MTQX;
-
-    // This pin selects the Y magnetorquer polarity.
-    static const int PIN_Y_POLARITY = MTQY;
-
     // True if the magnetorquer driver is powered up; false otherwise.
     boolean enable;
 
@@ -125,15 +113,51 @@ class ESAT_MagnetorquerClass
     // HIGH.
     int invertLevel(int level) const;
 
+#ifdef ARDUINO_ESAT_OBC
     // Return the pin used for selecting the X magnetorquer polarity.
     // It can be the wrong one if the polarity pins are swapped; this
     // is useful for diagnostics and troubleshooting.
     int pinXPolarity() const;
+#endif /* ARDUINO_ESAT_OBC */
 
+#ifdef ARDUINO_ESAT_ADCS
+    // Return the pin used for selecting the X magnetorquer polarity
+    // (negative).
+    // It can be the wrong one if the polarity pins are swapped; this
+    // is useful for diagnostics and troubleshooting.
+    int pinXPolarityMinus() const;
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_ADCS
+    // Return the pin used for selecting the X magnetorquer polarity
+    // (positive).
+    // It can be the wrong one if the polarity pins are swapped; this
+    // is useful for diagnostics and troubleshooting.
+    int pinXPolarityPlus() const;
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_OBC
     // Return the pin used for selecting the Y magnetorquer polarity.
     // It can be the wrong one if the polarity pins are swapped; this
     // is useful for diagnostics and troubleshooting.
     int pinYPolarity() const;
+#endif /* ARDUINO_ESAT_OBC */
+
+#ifdef ARDUINO_ESAT_ADCS
+    // Return the pin used for selecting the Y magnetorquer polarity
+    // (negative).
+    // It can be the wrong one if the polarity pins are swapped; this
+    // is useful for diagnostics and troubleshooting.
+    int pinYPolarityMinus() const;
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_ADCS
+    // Return the pin used for selecting the Y magnetorquer polarity
+    // (positive).
+    // It can be the wrong one if the polarity pins are swapped; this
+    // is useful for diagnostics and troubleshooting.
+    int pinYPolarityPlus() const;
+#endif /* ARDUINO_ESAT_ADCS */
 
     // Return the line level corresponding to a magnetorquer polarity.
     int polarityLevel(Polarity polarity) const;

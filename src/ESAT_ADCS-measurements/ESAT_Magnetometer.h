@@ -20,6 +20,7 @@
 #define ESAT_Magnetometer_h
 
 #include <Arduino.h>
+#include <Wire.h>
 
 // Magnetometer used for attitude determination.
 // Use the global instance ESAT_Magnetometer.
@@ -55,6 +56,9 @@ class ESAT_MagnetometerClass
     static const byte MAGNETOMETER_ADDRESS = 0x0C;
     static const byte READING_REGISTER = 0x03;
     static const byte SINGLE_MEASUREMENT_MODE = B00000001;
+
+    // Communicate with the magnetometer through this bus.
+    TwoWire* bus;
 
     // Get the current reading of the magnetic attitude.
     // Set the error flag on error.

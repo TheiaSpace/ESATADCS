@@ -31,10 +31,18 @@ void ESAT_MagnetorquerClass::begin()
 
 void ESAT_MagnetorquerClass::configurePins()
 {
-  pinMode(PIN_ENABLE_X, OUTPUT);
-  pinMode(PIN_ENABLE_Y, OUTPUT);
-  pinMode(PIN_X_POLARITY, OUTPUT);
-  pinMode(PIN_Y_POLARITY, OUTPUT);
+#ifdef ARDUINO_ESAT_ADCS
+  pinMode(MTQXPLUS, OUTPUT);
+  pinMode(MTQYPLUS, OUTPUT);
+  pinMode(MTQXMINUS, OUTPUT);
+  pinMode(MTQYMINUS, OUTPUT);
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  pinMode(ENMTQX, OUTPUT);
+  pinMode(ENMTQY, OUTPUT);
+  pinMode(MTQX, OUTPUT);
+  pinMode(MTQY, OUTPUT);
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 int ESAT_MagnetorquerClass::invertLevel(const int level) const
@@ -59,29 +67,89 @@ void ESAT_MagnetorquerClass::invertYPolarity(const boolean invert)
   invertYPolarityLevel = invert;
 }
 
+#ifdef ARDUINO_ESAT_OBC
 int ESAT_MagnetorquerClass::pinXPolarity() const
 {
   if (swapPolarityPins)
   {
-    return PIN_Y_POLARITY;
+    return MTQY;
   }
   else
   {
-    return PIN_X_POLARITY;
+    return MTQX;
   }
 }
+#endif /* ARDUINO_ESAT_OBC */
 
+#ifdef ARDUINO_ESAT_ADCS
+int ESAT_MagnetorquerClass::pinXPolarityMinus() const
+{
+  if (swapPolarityPins)
+  {
+    return MTQYMINUS;
+  }
+  else
+  {
+    return MTQXMINUS;
+  }
+}
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_ADCS
+int ESAT_MagnetorquerClass::pinXPolarityPlus() const
+{
+  if (swapPolarityPins)
+  {
+    return MTQYPLUS;
+  }
+  else
+  {
+    return MTQXPLUS;
+  }
+}
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_OBC
 int ESAT_MagnetorquerClass::pinYPolarity() const
 {
   if (swapPolarityPins)
   {
-    return PIN_X_POLARITY;
+    return MTQX;
   }
   else
   {
-    return PIN_Y_POLARITY;
+    return MTQY;
   }
 }
+#endif /* ARDUINO_ESAT_OBC */
+
+#ifdef ARDUINO_ESAT_ADCS
+int ESAT_MagnetorquerClass::pinYPolarityMinus() const
+{
+  if (swapPolarityPins)
+  {
+    return MTQXMINUS;
+  }
+  else
+  {
+    return MTQYMINUS;
+  }
+}
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_ADCS
+int ESAT_MagnetorquerClass::pinYPolarityPlus() const
+{
+  if (swapPolarityPins)
+  {
+    return MTQXPLUS;
+  }
+  else
+  {
+    return MTQYPLUS;
+  }
+}
+#endif /* ARDUINO_ESAT_ADCS */
 
 int ESAT_MagnetorquerClass::polarityLevel(const ESAT_MagnetorquerClass::Polarity polarity) const
 {
@@ -144,32 +212,74 @@ void ESAT_MagnetorquerClass::swapAxes(const boolean swap)
 void ESAT_MagnetorquerClass::writeEnable(const boolean enableDriver)
 {
   enable = enableDriver;
+#ifdef ARDUINO_ESAT_ADCS
   if (enable)
   {
-    digitalWrite(PIN_ENABLE_X, HIGH);
-    digitalWrite(PIN_ENABLE_Y, HIGH);
+    writeX(readX());
+    writeY(readY());
   }
   else
   {
-    digitalWrite(PIN_ENABLE_X, LOW);
-    digitalWrite(PIN_ENABLE_Y, LOW);
+    digitalWrite(MTQXPLUS, LOW);
+    digitalWrite(MTQYPLUS, LOW);
+    digitalWrite(MTQXMINUS, LOW);
+    digitalWrite(MTQYMINUS, LOW);
   }
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  if (enable)
+  {
+    digitalWrite(ENMTQX, HIGH);
+    digitalWrite(ENMTQY, HIGH);
+  }
+  else
+  {
+    digitalWrite(ENMTQX, LOW);
+    digitalWrite(ENMTQY, LOW);
+  }
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 void ESAT_MagnetorquerClass::writeX(const ESAT_MagnetorquerClass::Polarity polarity)
 {
   xPolarity = polarity;
+#ifdef ARDUINO_ESAT_ADCS
+  if (enable)
+  {
+    const int pinPlus = pinXPolarityPlus();
+    const int pinMinus = pinXPolarityMinus();
+    const int levelPlus = polarityXLevel();
+    const int levelMinus = invertLevel(levelPlus);
+    digitalWrite(pinPlus, levelPlus);
+    digitalWrite(pinMinus, levelMinus);
+  }
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
   const int pin = pinXPolarity();
   const int level = polarityXLevel();
   digitalWrite(pin, level);
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 void ESAT_MagnetorquerClass::writeY(const ESAT_MagnetorquerClass::Polarity polarity)
 {
   yPolarity = polarity;
+#ifdef ARDUINO_ESAT_ADCS
+  if (enable)
+  {
+    const int pinPlus = pinYPolarityPlus();
+    const int pinMinus = pinYPolarityMinus();
+    const int levelPlus = polarityYLevel();
+    const int levelMinus = invertLevel(levelPlus);
+    digitalWrite(pinPlus, levelPlus);
+    digitalWrite(pinMinus, levelMinus);
+  }
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
   const int pin = pinYPolarity();
   const int level = polarityYLevel();
   digitalWrite(pin, level);
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 ESAT_MagnetorquerClass ESAT_Magnetorquer;
