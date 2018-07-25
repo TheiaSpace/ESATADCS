@@ -17,21 +17,20 @@
  */
 
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
-#ifdef ARDUINO_ESAT_ADCS
-#include <ESAT_Util.h>
-#endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
 #include <ESAT_CCSDSPacket.h>
 #include <ESAT_I2CMaster.h>
-#endif /* ARDUINO_ESAT_OBC */
 #include <Wire.h>
+#endif /* ARDUINO_ESAT_OBC */
 
 void ESAT_WheelClass::begin()
 {
 #ifdef ARDUINO_ESAT_ADCS
   pinMode(EN5V, OUTPUT);
-  calibrateElectronicSpeedController();
+  pinMode(PWM_A, OUTPUT);
   writeDutyCycle(0);
+  electronicSpeedController.attach(PWM_A);
+  calibrateElectronicSpeedController();
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   pinMode(PWM, OUTPUT);
@@ -43,23 +42,6 @@ void ESAT_WheelClass::begin()
 
 void ESAT_WheelClass::calibrateElectronicSpeedController()
 {
-#ifdef ARDUINO_ESAT_ADCS
-  switchElectronicSpeedController(false);
-  delay(1000);
-  switchElectronicSpeedController(true);
-  delay(1000);
-  Wire1.beginTransmission(ELECTRONIC_SPEED_CONTROLLER_ADDRESS);
-  Wire1.write(WHEEL_SPEED_REGISTER);
-  Wire1.write(0xFF);
-  Wire1.write(0xFF);
-  (void) Wire1.endTransmission();
-  Wire1.beginTransmission(ELECTRONIC_SPEED_CONTROLLER_ADDRESS);
-  Wire1.write(WHEEL_SPEED_REGISTER);
-  Wire1.write(0x00);
-  Wire1.write(0x00);
-  (void) Wire1.endTransmission();
-#endif /* ARDUINO_ESAT_ADCS */
-#ifdef ARDUINO_ESAT_OBC
   // Perform the ESC calibration sequence (high, low and medium again).
   switchElectronicSpeedController(false);
   delay(1000);
@@ -70,7 +52,6 @@ void ESAT_WheelClass::calibrateElectronicSpeedController()
   delay(1000);
   writeDutyCycle(0);
   delay(1000);
-#endif /* ARDUINO_ESAT_OBC */
 }
 
 float ESAT_WheelClass::constrainDutyCycle(const float dutyCycle)
@@ -144,34 +125,12 @@ void ESAT_WheelClass::writeSpeed(const int rpm)
 
 void ESAT_WheelClass::writeDutyCycle(const float newDutyCycle)
 {
-#ifdef ARDUINO_ESAT_ADCS
-  const word scale = 32767;
-  dutyCycle = constrainDutyCycle(newDutyCycle);
-  Wire1.beginTransmission(ELECTRONIC_SPEED_CONTROLLER_ADDRESS);
-  (void) Wire1.write(WHEEL_SPEED_REGISTER);
-  if (dutyCycle > 0)
-  {
-    const word integerDutyCycle = scale + round(scale * dutyCycle / 100);
-    (void) Wire1.write(highByte(integerDutyCycle));
-    (void) Wire1.write(lowByte(integerDutyCycle));
-  }
-  else
-  {
-    const word integerDutyCycle = round(scale * (-dutyCycle) / 100);
-    (void) Wire1.write(highByte(integerDutyCycle));
-    (void) Wire1.write(lowByte(integerDutyCycle));
-  }
-  (void) Wire1.endTransmission();
-  delay(5);
-#endif /* ARDUINO_ESAT_ADCS */
-#ifdef ARDUINO_ESAT_OBC
   dutyCycle = constrainDutyCycle(newDutyCycle);
   const word microseconds =
     (MAXIMUM_PULSE_WIDTH + MINIMUM_PULSE_WIDTH) / 2
     + (MAXIMUM_PULSE_WIDTH - MINIMUM_PULSE_WIDTH) / 2
       * dutyCycle / 100;
   electronicSpeedController.writeMicroseconds(microseconds);
-#endif /* ARDUINO_ESAT_OBC */
 }
 
 ESAT_WheelClass ESAT_Wheel;
