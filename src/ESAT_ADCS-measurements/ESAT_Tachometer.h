@@ -51,7 +51,7 @@ class ESAT_TachometerClass
     // previous measurement.
     word previousReading;
 
-    // Processor uptime in milliseconds at the previous measurements.
+    // Processor uptime in milliseconds at the previous measurement.
     unsigned long previousReadingTime;
 
     // The rotating wheel has several marks, so the tachometer gives
