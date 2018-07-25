@@ -41,19 +41,6 @@ class ESAT_TachometerClass
     unsigned int read();
 
   private:
-    // Number of tachometer pulses since the latest measurement.
-    volatile unsigned int count;
-
-    // Number of tachometer pulses at the previous measurement.
-    unsigned int previousCount;
-
-    // Speed of the rotating wheel (in revolutions per minute) at the
-    // previous measurement.
-    word previousReading;
-
-    // Processor uptime in milliseconds at the previous measurement.
-    unsigned long previousReadingTime;
-
     // The rotating wheel has several marks, so the tachometer gives
     // as many counts per revolution.
     static const unsigned int COUNTS_PER_REVOLUTION = 8;
@@ -73,6 +60,19 @@ class ESAT_TachometerClass
     // The output signal of the tachometer goes to this pin.
     static const unsigned int PIN = TCH;
 #endif /* ARDUINO_ESAT_OBC */
+
+    // Number of tachometer pulses since the latest measurement.
+    volatile unsigned int count;
+
+    // Number of tachometer pulses at the previous measurement.
+    unsigned int previousCount;
+
+    // Speed of the rotating wheel (in revolutions per minute) at the
+    // previous measurement.
+    word previousReading;
+
+    // Processor uptime in milliseconds at the previous measurement.
+    unsigned long previousReadingTime;
 
     // Increment the counter of the tachometer.
     static void incrementCounter();
