@@ -41,20 +41,15 @@ class ESAT_TachometerClass
     unsigned int read();
 
   private:
-#ifdef ARDUINO_ESAT_ADCS
-    // I2C address of the electronic speed controller.
-    static const byte ELECTRONIC_SPEED_CONTROLLER_ADDRESS = 0x29;
-
-    // I2C register of the wheel speed.
-    static const byte WHEEL_SPEED_REGISTER = 0x00;
-#endif /* ARDUINO_ESAT_ADCS */
-
-#ifdef ARDUINO_ESAT_OBC
     // Number of tachometer pulses since the latest measurement.
     volatile unsigned int count;
 
     // Number of tachometer pulses at the previous measurement.
     unsigned int previousCount;
+
+    // Speed of the rotating wheel (in revolutions per minute) at the
+    // previous measurement.
+    word previousReading;
 
     // Processor uptime in milliseconds at the previous measurements.
     unsigned long previousReadingTime;
@@ -63,12 +58,24 @@ class ESAT_TachometerClass
     // as many counts per revolution.
     static const unsigned int COUNTS_PER_REVOLUTION = 8;
 
+    // Update the tachometer reading up to once every PERIOD
+    // milliseconds.  If PERIOD is too long, then we will not respond
+    // to quick transients.  If PERIOD is too short, then we will lose
+    // resolution.
+    static const unsigned long PERIOD = 1000;
+
+#ifdef ARDUINO_ESAT_ADCS
+    // The output signal of the tachometer goes to this pin.
+    static const unsigned int PIN = TCH_A;
+#endif /* ARDUINO_ESAT_ADCS */
+
+#ifdef ARDUINO_ESAT_OBC
     // The output signal of the tachometer goes to this pin.
     static const unsigned int PIN = TCH;
+#endif /* ARDUINO_ESAT_OBC */
 
     // Increment the counter of the tachometer.
     static void incrementCounter();
-#endif /* ARDUINO_ESAT_OBC */
 };
 
 // Global instance of the tachometer library.

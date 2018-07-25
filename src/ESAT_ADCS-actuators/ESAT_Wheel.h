@@ -20,10 +20,7 @@
 #define ESAT_Wheel_h
 
 #include <Arduino.h>
-#ifdef ARDUINO_ESAT_OBC
-#include <ESAT_CCSDSSecondaryHeader.h>
 #include <Servo.h>
-#endif /* ARDUINO_ESAT_OBC */
 
 // Reaction wheel.
 // Use the global instance ESAT_Wheel.
@@ -55,20 +52,12 @@ class ESAT_WheelClass
     void writeDutyCycle(float dutyCycle);
 
   private:
-#ifdef ARDUINO_ESAT_ADCS
-    // I2C address of the electronic speed controller.
-    static const byte ELECTRONIC_SPEED_CONTROLLER_ADDRESS = 0x29;
-
-    // I2C register of the wheel speed.
-    static const byte WHEEL_SPEED_REGISTER = 0x00;
-#endif /* ARDUINO_ESAT_ADCS */
-
-#ifdef ARDUINO_ESAT_OBC
     // Maximum and minimum pulse widths
     // for the electronic speed controller.
     static const word MAXIMUM_PULSE_WIDTH = 1860;
     static const word MINIMUM_PULSE_WIDTH = 1060;
 
+#ifdef ARDUINO_ESAT_OBC
     // Power line switch on message.
     static const byte POWER_LINE_ADDRESS = 1;
     static const byte POWER_LINE_TELECOMMAND_PRIMARY_HEADER_REGISTER = 0;
@@ -95,10 +84,8 @@ class ESAT_WheelClass
     // speed.
     float dutyCycle;
 
-#ifdef ARDUINO_ESAT_OBC
     // Servo object for commanding the electronic speed controller.
     Servo electronicSpeedController;
-#endif /* ARDUINO_ESAT_OBC */
 
     // Run the calibration sequence of the electronic speed controller.
     void calibrateElectronicSpeedController();
