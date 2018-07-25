@@ -381,7 +381,18 @@ void ESAT_ADCSClass::respondToNamedPacketTelemetryRequest(const byte identifier)
     byte packetData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
     ESAT_CCSDSPacket packet(packetData, MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
     const boolean gotPacket = fillTelemetryPacket(packet, identifier);
-    ESAT_I2CSlave.writePacket(packet);
+    if (gotPacket)
+    {
+      ESAT_I2CSlave.writePacket(packet);
+    }
+    else
+    {
+      ESAT_I2CSlave.rejectPacket();
+    }
+  }
+  else
+  {
+    ESAT_I2CSlave.rejectPacket();
   }
 }
 #endif /* ARDUINO_ESAT_ADCS */
@@ -406,7 +417,10 @@ void ESAT_ADCSClass::respondToNextPacketTelemetryRequest()
     byte packetData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
     ESAT_CCSDSPacket packet(packetData, MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
     const boolean gotPacket = fillTelemetryPacket(packet, identifier);
-    ESAT_I2CSlave.writePacket(packet);
+    if (gotPacket)
+    {
+      ESAT_I2CSlave.writePacket(packet);
+    }
     i2cPendingTelemetry.clear(byte(identifier));
   }
   else
