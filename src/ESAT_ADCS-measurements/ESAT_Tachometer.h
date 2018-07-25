@@ -47,12 +47,22 @@ class ESAT_TachometerClass
     // Number of tachometer pulses at the previous measurement.
     unsigned int previousCount;
 
+    // Speed of the rotating wheel (in revolutions per minute) at the
+    // previous measurement.
+    word previousReading;
+
     // Processor uptime in milliseconds at the previous measurements.
     unsigned long previousReadingTime;
 
     // The rotating wheel has several marks, so the tachometer gives
     // as many counts per revolution.
     static const unsigned int COUNTS_PER_REVOLUTION = 8;
+
+    // Update the tachometer reading up to once every PERIOD
+    // milliseconds.  If PERIOD is too long, then we will not respond
+    // to quick transients.  If PERIOD is too short, then we will lose
+    // resolution.
+    static const unsigned long PERIOD = 1000;
 
 #ifdef ARDUINO_ESAT_ADCS
     // The output signal of the tachometer goes to this pin.
