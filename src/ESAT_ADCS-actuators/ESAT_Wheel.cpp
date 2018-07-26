@@ -28,13 +28,11 @@ void ESAT_WheelClass::begin()
 #ifdef ARDUINO_ESAT_ADCS
   pinMode(EN5V, OUTPUT);
   pinMode(PWM_A, OUTPUT);
-  writeDutyCycle(0);
   electronicSpeedController.attach(PWM_A);
   calibrateElectronicSpeedController();
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   pinMode(PWM, OUTPUT);
-  writeDutyCycle(0);
   electronicSpeedController.attach(PWM);
   calibrateElectronicSpeedController();
 #endif /* ARDUINO_ESAT_OBC */
