@@ -329,7 +329,7 @@ void ESAT_ADCSClass::setRunMode(ESAT_ADCSRunMode& newRunMode)
 
 boolean ESAT_ADCSClass::telemetryAvailable()
 {
-  if (numberOfTelemetryPackets > 0)
+  if (pendingTelemetry.readNext() != pendingTelemetry.NO_ACTIVE_FLAGS)
   {
     return true;
   }
