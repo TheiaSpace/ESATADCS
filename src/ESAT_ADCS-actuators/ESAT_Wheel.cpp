@@ -39,10 +39,10 @@ void ESAT_WheelClass::begin()
 void ESAT_WheelClass::calibrateElectronicSpeedController()
 {
   // Perform the ESC calibration sequence (high, low and medium again).
-  switchElectronicSpeedController(false);
+  switchOffElectronicSpeedController();
   delay(1000);
   writeDutyCycle(100);
-  switchElectronicSpeedController(true);
+  switchOnElectronicSpeedController();
   delay(2000);
   writeDutyCycle(-100);
   delay(1000);
@@ -73,17 +73,10 @@ float ESAT_WheelClass::readDutyCycle()
   return dutyCycle;
 }
 
-void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
+void ESAT_WheelClass::switchOffElectronicSpeedController()
 {
 #ifdef ARDUINO_ESAT_ADCS
-  if (on)
-  {
-    digitalWrite(EN5V, HIGH);
-  }
-  else
-  {
-    digitalWrite(EN5V, LOW);
-  }
+  digitalWrite(EN5V, LOW);
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
@@ -104,7 +97,41 @@ void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
   secondaryHeader.patchVersionNumber = POWER_LINE_PATCH_VERSION_NUMBER;
   secondaryHeader.packetIdentifier = POWER_LINE_COMMAND_CODE;
   packet.writeSecondaryHeader(secondaryHeader);
-  packet.writeBoolean(on);
+  packet.writeByte(POWER_LINE_SWITCH_OFF);
+  ESAT_I2CMaster.writePacket(Wire,
+                             POWER_LINE_ADDRESS,
+                             packet,
+                             POWER_LINE_MILLISECONDS_AFTER_WRITES,
+                             POWER_LINE_ATTEMPTS,
+                             POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS);
+#endif /* ARDUINO_ESAT_OBC */
+}
+
+void ESAT_WheelClass::switchOnElectronicSpeedController()
+{
+#ifdef ARDUINO_ESAT_ADCS
+  digitalWrite(EN5V, HIGH);
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
+  byte buffer[packetDataBufferLength];
+  ESAT_CCSDSPacket packet(buffer, packetDataBufferLength);
+  packet.flush();
+  ESAT_CCSDSPrimaryHeader primaryHeader;
+  primaryHeader.packetVersionNumber = 0;
+  primaryHeader.packetType = primaryHeader.TELECOMMAND;
+  primaryHeader.secondaryHeaderFlag = primaryHeader.SECONDARY_HEADER_IS_PRESENT;
+  primaryHeader.applicationProcessIdentifier = POWER_LINE_IDENTIFIER;
+  primaryHeader.sequenceFlags = primaryHeader.UNSEGMENTED_USER_DATA;
+  primaryHeader.packetSequenceCount = 0;
+  packet.writePrimaryHeader(primaryHeader);
+  ESAT_CCSDSSecondaryHeader secondaryHeader;
+  secondaryHeader.majorVersionNumber = POWER_LINE_MAJOR_VERSION_NUMBER;
+  secondaryHeader.minorVersionNumber = POWER_LINE_MINOR_VERSION_NUMBER;
+  secondaryHeader.patchVersionNumber = POWER_LINE_PATCH_VERSION_NUMBER;
+  secondaryHeader.packetIdentifier = POWER_LINE_COMMAND_CODE;
+  packet.writeSecondaryHeader(secondaryHeader);
+  packet.writeByte(POWER_LINE_SWITCH_ON);
   ESAT_I2CMaster.writePacket(Wire,
                              POWER_LINE_ADDRESS,
                              packet,

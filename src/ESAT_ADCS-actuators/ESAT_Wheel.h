@@ -70,6 +70,8 @@ class ESAT_WheelClass
     static const byte POWER_LINE_MILLISECONDS_AFTER_WRITES = 1;
     static const byte POWER_LINE_ATTEMPTS = 10;
     static const byte POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS = 10;
+    static const byte POWER_LINE_SWITCH_OFF = 0;
+    static const byte POWER_LINE_SWITCH_ON = 1;
 #endif /* ARDUINO_ESAT_OBC */
 
     // Duty cycle percentage point per wheel speed RPM.
@@ -100,6 +102,12 @@ class ESAT_WheelClass
 
     // Switch on or off the electronic speed controller.
     void switchElectronicSpeedController(boolean on);
+
+    // Switch off the electronic speed controller.
+    void switchOffElectronicSpeedController();
+
+    // Switch on the electronic speed controller.
+    void switchOnElectronicSpeedController();
 };
 
 extern ESAT_WheelClass ESAT_Wheel;
