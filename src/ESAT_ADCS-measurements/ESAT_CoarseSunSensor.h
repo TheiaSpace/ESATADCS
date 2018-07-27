@@ -94,8 +94,14 @@ class ESAT_CoarseSunSensorClass
     float readYPlus();
 
   private:
+#ifdef ARDUINO_ESAT_ADCS
+    // Range of measurement of the analog converter.
+    static const word MEASUREMENT_RANGE = 1023;
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
     // Range of measurement of the analog converter.
     static const word MEASUREMENT_RANGE = 4095;
+#endif /* ARDUINO_ESAT_OBC */
 
     // The individual sensors are connected to these pins.
     static const int PIN_X_PLUS = CSSXPLUS;
