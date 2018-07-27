@@ -17,6 +17,7 @@
  */
 
 #include <ESAT_ADCS.h>
+#include <ESAT_Timer.h>
 #ifdef ARDUINO_ESAT_OBC
 #include <USBSerial.h>
 #endif /* ARDUINO_ESAT_OBC */
@@ -31,6 +32,10 @@
 // code of the ESAT_I2CSlave module (part of the ESATUtil library): it
 // will send telemetry when requested and it will queue telecommands
 // for later retrieval on the main loop with readTelecommand().
+
+// Target period (in milliseconds) for main loop activities with the
+// exception of the response to I2C requests.
+constexpr word TARGET_PERIOD = 1000;
 
 // Maximum packet data length we will handle.
 const word PACKET_DATA_BUFFER_LENGTH = 1024;
@@ -56,6 +61,7 @@ void setup()
   ESAT_ADCS.enableUSBTelecommands(telecommandPacketData,
                                   sizeof(telecommandPacketData));
   ESAT_ADCS.begin();
+  ESAT_Timer.begin(TARGET_PERIOD);
 }
 
 // Body of the main loop of the program:
@@ -71,16 +77,20 @@ void setup()
 // data; if the buffer is too small, the packets will be dropped.
 void loop()
 {
-  byte buffer[PACKET_DATA_BUFFER_LENGTH];
-  ESAT_CCSDSPacket packet(buffer, sizeof(buffer));
-  while (ESAT_ADCS.readTelecommand(packet))
+  if (ESAT_Timer.ellapsedMilliseconds() >= TARGET_PERIOD)
   {
-    ESAT_ADCS.handleTelecommand(packet);
-  }
-  ESAT_ADCS.update();
-  while (ESAT_ADCS.readTelemetry(packet))
-  {
-    ESAT_ADCS.writeTelemetry(packet);
+    byte buffer[PACKET_DATA_BUFFER_LENGTH];
+    ESAT_CCSDSPacket packet(buffer, sizeof(buffer));
+    while (ESAT_ADCS.readTelecommand(packet))
+    {
+      ESAT_ADCS.handleTelecommand(packet);
+    }
+    ESAT_ADCS.update();
+    while (ESAT_ADCS.readTelemetry(packet))
+    {
+      ESAT_ADCS.writeTelemetry(packet);
+    }
+    ESAT_Timer.begin(TARGET_PERIOD);
   }
 #ifdef ARDUINO_ESAT_ADCS
   ESAT_ADCS.respondToI2CRequests();
