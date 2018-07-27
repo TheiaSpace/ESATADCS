@@ -168,6 +168,10 @@ class ESAT_ADCSClass
     // not read yet in the current I2C next-packet telemetry request
     // cycle.
     ESAT_FlagContainer i2cPendingTelemetry;
+
+    // List of pending telemetry identifiers after the latest call
+    // to updatePendingTelemetryLists()
+    ESAT_FlagContainer latestPendingTelemetry;
 #endif /* ARDUINO_ESAT_ADCS */
 
     // Current attitude state vector.

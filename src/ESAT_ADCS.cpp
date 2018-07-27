@@ -394,7 +394,7 @@ void ESAT_ADCSClass::respondToNextPacketTelemetryRequest()
 {
   if (ESAT_I2CSlave.telemetryQueueResetReceived())
   {
-    i2cPendingTelemetry = pendingTelemetry;
+    i2cPendingTelemetry = latestPendingTelemetry;
   }
   const int identifier = i2cPendingTelemetry.readNext();
   if (identifier >= 0)
@@ -423,6 +423,9 @@ void ESAT_ADCSClass::updatePendingTelemetryLists()
     const byte packetIdentifier = telemetryPackets[index]->packetIdentifier();
     pendingTelemetry.set(packetIdentifier);
   }
+#ifdef ARDUINO_ESAT_ADCS
+  latestPendingTelemetry = pendingTelemetry;
+#endif /* ARDUINO_ESAT_ADCS */
 }
 
 void ESAT_ADCSClass::updatePeriod()
