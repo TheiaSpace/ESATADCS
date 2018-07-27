@@ -82,4 +82,7 @@ void loop()
   {
     ESAT_ADCS.writeTelemetry(packet);
   }
+#ifdef ARDUINO_ESAT_ADCS
+  ESAT_ADCS.respondToI2CRequests();
+#endif /* ARDUINO_ESAT_ADCS */
 }

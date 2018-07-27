@@ -335,9 +335,6 @@ void ESAT_ADCSClass::update()
   run();
   addHousekeepingTelemetryPacket();
   updatePendingTelemetryLists();
-#ifdef ARDUINO_ESAT_ADCS
-  respondToI2CRequests();
-#endif /* ARDUINO_ESAT_ADCS */
 }
 
 #ifdef ARDUINO_ESAT_ADCS
