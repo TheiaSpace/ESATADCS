@@ -103,6 +103,11 @@ class ESAT_ADCSClass
     // manages the received telecommand.
     void registerTelecommandHandler(ESAT_ADCSTelecommandHandler& telecommandHandler);
 
+#ifdef ARDUINO_ESAT_ADCS
+    // Respond to telemetry and telecommand requests coming from the I2C bus.
+    void respondToI2CRequests();
+#endif /* ARDUINO_ESAT_ADCS */
+
     // Return the current run mode identifier.
     byte runModeIdentifier();
 
@@ -163,6 +168,10 @@ class ESAT_ADCSClass
     // not read yet in the current I2C next-packet telemetry request
     // cycle.
     ESAT_FlagContainer i2cPendingTelemetry;
+
+    // List of pending telemetry identifiers after the latest call
+    // to updatePendingTelemetryLists()
+    ESAT_FlagContainer latestPendingTelemetry;
 #endif /* ARDUINO_ESAT_ADCS */
 
     // Current attitude state vector.
@@ -225,9 +234,6 @@ class ESAT_ADCSClass
     boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
 
 #ifdef ARDUINO_ESAT_ADCS
-    // Respond to telemetry and telecommand requests coming from the I2C bus.
-    void respondToI2CRequests();
-
     // Respond to a named-packet (of given identifier) telemetry
     // request coming from the I2C bus.
     void respondToNamedPacketTelemetryRequest(byte identifier);
