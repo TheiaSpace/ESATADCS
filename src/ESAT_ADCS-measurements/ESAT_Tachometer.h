@@ -67,10 +67,6 @@ class ESAT_TachometerClass
     // Number of tachometer pulses at the previous measurement.
     unsigned int previousCount;
 
-    // Speed of the rotating wheel (in revolutions per minute) at the
-    // previous measurement.
-    word previousReading;
-
     // Processor uptime in milliseconds at the previous measurement.
     unsigned long previousReadingTime;
 

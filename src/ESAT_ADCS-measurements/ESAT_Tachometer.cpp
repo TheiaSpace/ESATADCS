@@ -22,7 +22,6 @@ void ESAT_TachometerClass::begin()
 {
   count = 0;
   previousCount = 0;
-  previousReading = 0;
   previousReadingTime = 0;
   pinMode(PIN, INPUT_PULLUP);
   attachInterrupt(PIN, incrementCounter, FALLING);
@@ -37,17 +36,12 @@ unsigned int ESAT_TachometerClass::read()
 {
   const unsigned long currentTime = millis();
   const unsigned long ellapsedMilliseconds = currentTime - previousReadingTime;
-  if (ellapsedMilliseconds < PERIOD)
-  {
-    return previousReading;
-  }
   previousReadingTime = currentTime;
   const unsigned long millisecondsPerMinute = 60000;
   const unsigned int reading =
     (long(millisecondsPerMinute / COUNTS_PER_REVOLUTION)
      * long(count - previousCount)) / ellapsedMilliseconds;
   previousCount = count;
-  previousReading = reading;
   return reading;
 }
 
