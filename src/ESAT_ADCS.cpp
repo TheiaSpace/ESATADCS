@@ -154,37 +154,25 @@ boolean ESAT_ADCSClass::fillTelemetryPacket(ESAT_CCSDSPacket& packet,
     }
     if (telemetryPackets[index]->packetIdentifier() == identifier)
     {
-      packet.flush();
-      // Primary header.
-      ESAT_CCSDSPrimaryHeader primaryHeader;
-      primaryHeader.packetVersionNumber = 0;
-      primaryHeader.packetType =
-        primaryHeader.TELEMETRY;
-      primaryHeader.secondaryHeaderFlag =
-        primaryHeader.SECONDARY_HEADER_IS_PRESENT;
-      primaryHeader.applicationProcessIdentifier =
-        getApplicationProcessIdentifier();
-      primaryHeader.sequenceFlags =
-        primaryHeader.UNSEGMENTED_USER_DATA;
-      primaryHeader.packetSequenceCount =
-        telemetryPacketSequenceCount;
-      packet.writePrimaryHeader(primaryHeader);
-      // Secondary header.
-      ESAT_CCSDSSecondaryHeader secondaryHeader;
-      secondaryHeader.preamble =
-        secondaryHeader.CALENDAR_SEGMENTED_TIME_CODE_MONTH_DAY_VARIANT_1_SECOND_RESOLUTION;
+#ifdef ARDUINO_ESAT_ADCS
+      packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
+                                   telemetryPacketSequenceCount,
+                                   ESAT_Timestamp(),
+                                   MAJOR_VERSION_NUMBER,
+                                   MINOR_VERSION_NUMBER,
+                                   PATCH_VERSION_NUMBER,
+                                   telemetryPackets[index]->packetIdentifier());
+#endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
-      secondaryHeader.timestamp = ESAT_OBCClock.read();
+      packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
+                                   telemetryPacketSequenceCount,
+                                   ESAT_OBCClock.read(),
+                                   MAJOR_VERSION_NUMBER,
+                                   MINOR_VERSION_NUMBER,
+                                   PATCH_VERSION_NUMBER,
+                                   telemetryPackets[index]->packetIdentifier());
 #endif /* ARDUINO_ESAT_OBC */
-      secondaryHeader.majorVersionNumber = MAJOR_VERSION_NUMBER;
-      secondaryHeader.minorVersionNumber = MINOR_VERSION_NUMBER;
-      secondaryHeader.patchVersionNumber = PATCH_VERSION_NUMBER;
-      secondaryHeader.packetIdentifier =
-        telemetryPackets[index]->packetIdentifier();
-      packet.writeSecondaryHeader(secondaryHeader);
-      // User data.
       telemetryPackets[index]->readUserData(packet);
-      // Bookkeeping.
       telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
       return true;
     }

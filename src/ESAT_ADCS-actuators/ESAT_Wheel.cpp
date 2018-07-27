@@ -82,21 +82,13 @@ void ESAT_WheelClass::switchOffElectronicSpeedController()
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
   byte buffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(buffer, packetDataBufferLength);
-  packet.flush();
-  ESAT_CCSDSPrimaryHeader primaryHeader;
-  primaryHeader.packetVersionNumber = 0;
-  primaryHeader.packetType = primaryHeader.TELECOMMAND;
-  primaryHeader.secondaryHeaderFlag = primaryHeader.SECONDARY_HEADER_IS_PRESENT;
-  primaryHeader.applicationProcessIdentifier = POWER_LINE_IDENTIFIER;
-  primaryHeader.sequenceFlags = primaryHeader.UNSEGMENTED_USER_DATA;
-  primaryHeader.packetSequenceCount = 0;
-  packet.writePrimaryHeader(primaryHeader);
-  ESAT_CCSDSSecondaryHeader secondaryHeader;
-  secondaryHeader.majorVersionNumber = POWER_LINE_MAJOR_VERSION_NUMBER;
-  secondaryHeader.minorVersionNumber = POWER_LINE_MINOR_VERSION_NUMBER;
-  secondaryHeader.patchVersionNumber = POWER_LINE_PATCH_VERSION_NUMBER;
-  secondaryHeader.packetIdentifier = POWER_LINE_COMMAND_CODE;
-  packet.writeSecondaryHeader(secondaryHeader);
+  packet.writeTelecommandHeaders(POWER_LINE_IDENTIFIER,
+                                 0,
+                                 ESAT_Timestamp(),
+                                 POWER_LINE_MAJOR_VERSION_NUMBER,
+                                 POWER_LINE_MINOR_VERSION_NUMBER,
+                                 POWER_LINE_PATCH_VERSION_NUMBER,
+                                 POWER_LINE_COMMAND_CODE);
   packet.writeByte(POWER_LINE_SWITCH_OFF);
   ESAT_I2CMaster.writePacket(Wire,
                              POWER_LINE_ADDRESS,
@@ -116,21 +108,13 @@ void ESAT_WheelClass::switchOnElectronicSpeedController()
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
   byte buffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(buffer, packetDataBufferLength);
-  packet.flush();
-  ESAT_CCSDSPrimaryHeader primaryHeader;
-  primaryHeader.packetVersionNumber = 0;
-  primaryHeader.packetType = primaryHeader.TELECOMMAND;
-  primaryHeader.secondaryHeaderFlag = primaryHeader.SECONDARY_HEADER_IS_PRESENT;
-  primaryHeader.applicationProcessIdentifier = POWER_LINE_IDENTIFIER;
-  primaryHeader.sequenceFlags = primaryHeader.UNSEGMENTED_USER_DATA;
-  primaryHeader.packetSequenceCount = 0;
-  packet.writePrimaryHeader(primaryHeader);
-  ESAT_CCSDSSecondaryHeader secondaryHeader;
-  secondaryHeader.majorVersionNumber = POWER_LINE_MAJOR_VERSION_NUMBER;
-  secondaryHeader.minorVersionNumber = POWER_LINE_MINOR_VERSION_NUMBER;
-  secondaryHeader.patchVersionNumber = POWER_LINE_PATCH_VERSION_NUMBER;
-  secondaryHeader.packetIdentifier = POWER_LINE_COMMAND_CODE;
-  packet.writeSecondaryHeader(secondaryHeader);
+  packet.writeTelecommandHeaders(POWER_LINE_IDENTIFIER,
+                                 0,
+                                 ESAT_Timestamp(),
+                                 POWER_LINE_MAJOR_VERSION_NUMBER,
+                                 POWER_LINE_MINOR_VERSION_NUMBER,
+                                 POWER_LINE_PATCH_VERSION_NUMBER,
+                                 POWER_LINE_COMMAND_CODE);
   packet.writeByte(POWER_LINE_SWITCH_ON);
   ESAT_I2CMaster.writePacket(Wire,
                              POWER_LINE_ADDRESS,
