@@ -30,6 +30,15 @@
 class ESAT_ADCSTelecommandHandler
 {
   public:
+    // Next telecommand handler in the list of registered telecommand
+    // handlers.
+    // ESAT_ADCS uses this to keep a linked list of registered
+    // telecommand handlers: it can traverse the list by going from
+    // one telecommand handler to the next telecommand handler until
+    // reaching the end of the list at nullptr.
+    // Only ESAT_ADCS should care about this.
+    ESAT_ADCSTelecommandHandler* nextTelecommandHandler = nullptr;
+
     virtual ~ESAT_ADCSTelecommandHandler() {};
 
     // Either handle the telecommand provided by the packet and return

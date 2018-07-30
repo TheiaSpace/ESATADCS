@@ -21,7 +21,6 @@
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
-#include <ESAT_FlagContainer.h>
 #include <ESAT_KISSStream.h>
 #include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
@@ -141,12 +140,6 @@ class ESAT_ADCSClass
     static const byte MINOR_VERSION_NUMBER = 1;
     static const byte PATCH_VERSION_NUMBER = 0;
 
-    // Maximum number of telecommand handlers.
-    static const byte MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS = 16;
-
-    // Maximum number of telemetry packets.
-    static const byte MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS = 16;
-
 #ifdef ARDUINO_ESAT_ADCS
     // Maximum number of bytes of the telecommand packet data field
     // of telecommand packets coming from the I2C bus.
@@ -164,14 +157,12 @@ class ESAT_ADCSClass
     // going out through the I2C bus.
     byte i2cTelemetryPacketData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
 
-    // List of pending telemetry identifiers for I2C requests: packets
-    // not read yet in the current I2C next-packet telemetry request
-    // cycle.
-    ESAT_FlagContainer i2cPendingTelemetry;
+    // Top element of the stack of telemetry packets for I2C telemetry
+    // requests.
+    ESAT_ADCSTelemetryPacket* i2cTelemetryPacket;
 
-    // List of pending telemetry identifiers after the latest call
-    // to updatePendingTelemetryLists()
-    ESAT_FlagContainer latestPendingTelemetry;
+    // Latest element added to the stack of telemetry packets.
+    ESAT_ADCSTelemetryPacket* latestTelemetryPacket;
 #endif /* ARDUINO_ESAT_ADCS */
 
     // Current attitude state vector.
@@ -180,27 +171,17 @@ class ESAT_ADCSClass
     // Processor uptime (in milliseconds) at the current call to update().
     unsigned long currentUpdateTime;
 
-    // Number of registered telecommand handlers.
-    byte numberOfTelecommandHandlers;
-
-    // Number of stacked telemetry packets.
-    byte numberOfTelemetryPackets;
-
-    // List of pending telemetry packet identifiers: packets not read
-    // yet in the current ADCS cycle.
-    ESAT_FlagContainer pendingTelemetry;
-
     // Processor uptime (in milliseconds) at the previous call to update().
     unsigned long previousUpdateTime;
 
     // Current run mode.
     ESAT_ADCSRunMode* runMode;
 
-    // List of telecommand handlers.
-    ESAT_ADCSTelecommandHandler* telecommandHandlers[MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS];
+    // First element of the list of telecommand handlers.
+    ESAT_ADCSTelecommandHandler* telecommandHandler = nullptr;
 
-    // Stack of telemetry packets.
-    ESAT_ADCSTelemetryPacket* telemetryPackets[MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS];
+    // Top element of the stack of telemetry packets.
+    ESAT_ADCSTelemetryPacket* telemetryPacket;
 
     // Counter of generated telemetry packets.
     word telemetryPacketSequenceCount;
@@ -219,10 +200,18 @@ class ESAT_ADCSClass
     // Add the housekeeping telemetry packet to the telemetry packet stack.
     void addHousekeepingTelemetryPacket();
 
+    // Clear the list of telemetry packets.
+    void clearTelemetryPacketList();
+
     // Fill a telemetry packet with the contents of the
-    // ESAT_ADCSTelemetryPacket added with the given identifier.
+    // given ESAT_ADCSTelemetryPacket.
     // Return true on success; otherwise return false.
-    boolean fillTelemetryPacket(ESAT_CCSDSPacket& packet, byte identifier);
+    boolean fillTelemetryPacket(ESAT_CCSDSPacket& packet,
+                                ESAT_ADCSTelemetryPacket& contents);
+
+    // Return the telemetry packet of given identifier
+    // or nullptr if it couldn't be found.
+    ESAT_ADCSTelemetryPacket* findTelemetryPacket(byte identifier);
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();
@@ -249,9 +238,6 @@ class ESAT_ADCSClass
 
     // Actuate according to the current run mode.
     void run();
-
-    // Update the lists of pending telemetry packets.
-    void updatePendingTelemetryLists();
 
     // Recalculate the period.
     void updatePeriod();
