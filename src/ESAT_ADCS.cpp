@@ -95,7 +95,7 @@ void ESAT_ADCSClass::begin()
   latestTelemetryPacket = nullptr;
   i2cTelemetryPacket = nullptr;
 #endif /* ARDUINO_ESAT_ADCS */
-  telecommandHandlers = nullptr;
+  telecommandHandler = nullptr;
   registerTelecommandHandler(ESAT_AttitudeTelecommandHandler);
   registerTelecommandHandler(ESAT_DiagnosticsTelecommandHandler);
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
@@ -216,11 +216,11 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  for (ESAT_ADCSTelecommandHandler* telecommandHandler = telecommandHandlers;
-       telecommandHandler != nullptr;
-       telecommandHandler = telecommandHandler->nextTelecommandHandler)
+  for (ESAT_ADCSTelecommandHandler* handler = telecommandHandler;
+       handler != nullptr;
+       handler = handler->nextTelecommandHandler)
   {
-    const boolean handled = telecommandHandler->handleTelecommand(packet);
+    const boolean handled = handler->handleTelecommand(packet);
     if (handled)
     {
       return;
@@ -306,10 +306,10 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
   return gotPacket;
 }
 
-void ESAT_ADCSClass::registerTelecommandHandler(ESAT_ADCSTelecommandHandler& telecommandHandler)
+void ESAT_ADCSClass::registerTelecommandHandler(ESAT_ADCSTelecommandHandler& newTelecommandHandler)
 {
-  telecommandHandler.nextTelecommandHandler = telecommandHandlers;
-  telecommandHandlers = &telecommandHandler;
+  newTelecommandHandler.nextTelecommandHandler = telecommandHandler;
+  telecommandHandler = &newTelecommandHandler;
 }
 
 void ESAT_ADCSClass::run()
@@ -372,16 +372,12 @@ void ESAT_ADCSClass::respondToI2CRequests()
 #ifdef ARDUINO_ESAT_ADCS
 void ESAT_ADCSClass::respondToNamedPacketTelemetryRequest(const byte identifier)
 {
-  if (pendingTelemetry.read(identifier))
+  ESAT_ADCSTelemetryPacket* const matchingTelemetryPacket =
+    findTelemetryPacket(identifier);
+  if (matchingTelemetryPacket != nullptr)
   {
     byte packetData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
     ESAT_CCSDSPacket packet(packetData, MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
-    ESAT_ADCSTelemetryPacket* const matchingTelemetryPacket =
-      findTelemetryPacket(identifier);
-    if (matchingTelemetryPacket == nullptr)
-    {
-      return;
-    }
     const boolean gotPacket = fillTelemetryPacket(packet,
                                                   *matchingTelemetryPacket);
     if (gotPacket)

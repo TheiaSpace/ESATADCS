@@ -177,8 +177,8 @@ class ESAT_ADCSClass
     // Current run mode.
     ESAT_ADCSRunMode* runMode;
 
-    // List of telecommand handlers.
-    ESAT_ADCSTelecommandHandler* telecommandHandlers = nullptr;
+    // First element of the list of telecommand handlers.
+    ESAT_ADCSTelecommandHandler* telecommandHandler = nullptr;
 
     // Top element of the stack of telemetry packets.
     ESAT_ADCSTelemetryPacket* telemetryPacket;
