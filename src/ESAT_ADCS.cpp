@@ -62,14 +62,13 @@ void ESAT_ADCSClass::addHousekeepingTelemetryPacket()
   addTelemetryPacket(ESAT_ADCSHousekeepingTelemetryPacket);
 }
 
-void ESAT_ADCSClass::addTelemetryPacket(ESAT_ADCSTelemetryPacket& telemetryPacket)
+void ESAT_ADCSClass::addTelemetryPacket(ESAT_ADCSTelemetryPacket& newTelemetryPacket)
 {
-  if (numberOfTelemetryPackets >= MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS)
-  {
-    return;
-  }
-  telemetryPackets[numberOfTelemetryPackets] = &telemetryPacket;
-  numberOfTelemetryPackets = numberOfTelemetryPackets + 1;
+  newTelemetryPacket.nextTelemetryPacket = telemetryPacket;
+  telemetryPacket = &newTelemetryPacket;
+#ifdef ARDUINO_ESAT_ADCS
+  latestTelemetryPacket = &newTelemetryPacket;
+#endif /* ARDUINO_ESAT_ADCS */
 }
 
 ESAT_AttitudeStateVector ESAT_ADCSClass::attitudeStateVector()
@@ -91,7 +90,11 @@ void ESAT_ADCSClass::begin()
   ESAT_Tachometer.begin();
   ESAT_Magnetorquer.begin();
   setRunMode(ESAT_StopActuatorsRunMode);
-  numberOfTelemetryPackets = 0;
+  telemetryPacket = nullptr;
+#ifdef ARDUINO_ESAT_ADCS
+  latestTelemetryPacket = nullptr;
+  i2cTelemetryPacket = nullptr;
+#endif /* ARDUINO_ESAT_ADCS */
   telecommandHandlers = nullptr;
   registerTelecommandHandler(ESAT_AttitudeTelecommandHandler);
   registerTelecommandHandler(ESAT_DiagnosticsTelecommandHandler);
@@ -104,6 +107,14 @@ void ESAT_ADCSClass::begin()
                       MAXIMUM_TELECOMMAND_PACKET_DATA_LENGTH,
                       i2cTelemetryPacketData,
                       MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
+#endif /* ARDUINO_ESAT_ADCS */
+}
+
+void ESAT_ADCSClass::clearTelemetryPacketList()
+{
+  telemetryPacket = nullptr;
+#ifdef ARDUINO_ESAT_ADCS
+  latestTelemetryPacket = nullptr;
 #endif /* ARDUINO_ESAT_ADCS */
 }
 
@@ -140,44 +151,47 @@ void ESAT_ADCSClass::enableUSBTelemetry()
 }
 
 boolean ESAT_ADCSClass::fillTelemetryPacket(ESAT_CCSDSPacket& packet,
-                                            const byte identifier)
+                                            ESAT_ADCSTelemetryPacket& contents)
 {
   if (packet.capacity() < ESAT_CCSDSSecondaryHeader::LENGTH)
   {
     return false;
   }
-  for (int index = 0; index < numberOfTelemetryPackets; index++)
-  {
-    if (!telemetryPackets[index])
-    {
-      return false;
-    }
-    if (telemetryPackets[index]->packetIdentifier() == identifier)
-    {
 #ifdef ARDUINO_ESAT_ADCS
-      packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
-                                   telemetryPacketSequenceCount,
-                                   ESAT_Timestamp(),
-                                   MAJOR_VERSION_NUMBER,
-                                   MINOR_VERSION_NUMBER,
-                                   PATCH_VERSION_NUMBER,
-                                   telemetryPackets[index]->packetIdentifier());
+  packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
+                               telemetryPacketSequenceCount,
+                               ESAT_Timestamp(),
+                               MAJOR_VERSION_NUMBER,
+                               MINOR_VERSION_NUMBER,
+                               PATCH_VERSION_NUMBER,
+                               contents.packetIdentifier());
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
-      packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
-                                   telemetryPacketSequenceCount,
-                                   ESAT_OBCClock.read(),
-                                   MAJOR_VERSION_NUMBER,
-                                   MINOR_VERSION_NUMBER,
-                                   PATCH_VERSION_NUMBER,
-                                   telemetryPackets[index]->packetIdentifier());
+  packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
+                               telemetryPacketSequenceCount,
+                               ESAT_OBCClock.read(),
+                               MAJOR_VERSION_NUMBER,
+                               MINOR_VERSION_NUMBER,
+                               PATCH_VERSION_NUMBER,
+                               contents.packetIdentifier());
 #endif /* ARDUINO_ESAT_OBC */
-      telemetryPackets[index]->readUserData(packet);
-      telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
-      return true;
+  contents.readUserData(packet);
+  telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+  return true;
+}
+
+ESAT_ADCSTelemetryPacket* ESAT_ADCSClass::findTelemetryPacket(const byte identifier)
+{
+  for (ESAT_ADCSTelemetryPacket* packet = telemetryPacket;
+       packet != nullptr;
+       packet = packet->nextTelemetryPacket)
+  {
+    if (packet->packetIdentifier() == identifier)
+    {
+      return packet;
     }
   }
-  return false;
+  return nullptr;
 }
 
 word ESAT_ADCSClass::getApplicationProcessIdentifier()
@@ -282,13 +296,13 @@ boolean ESAT_ADCSClass::readTelecommandFromUSB(ESAT_CCSDSPacket& packet)
 
 boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
 {
-  const int identifier = pendingTelemetry.readNext();
-  if (identifier < 0)
+  if (telemetryPacket == nullptr)
   {
     return false;
   }
-  const boolean gotPacket = fillTelemetryPacket(packet, byte(identifier));
-  pendingTelemetry.clear(byte(identifier));
+  const boolean gotPacket = fillTelemetryPacket(packet,
+                                                *telemetryPacket);
+  telemetryPacket = telemetryPacket->nextTelemetryPacket;
   return gotPacket;
 }
 
@@ -315,7 +329,7 @@ void ESAT_ADCSClass::setRunMode(ESAT_ADCSRunMode& newRunMode)
 
 boolean ESAT_ADCSClass::telemetryAvailable()
 {
-  if (pendingTelemetry.readNext() != pendingTelemetry.NO_ACTIVE_FLAGS)
+  if (telemetryPacket != nullptr)
   {
     return true;
   }
@@ -327,12 +341,11 @@ boolean ESAT_ADCSClass::telemetryAvailable()
 
 void ESAT_ADCSClass::update()
 {
-  numberOfTelemetryPackets = 0;
+  clearTelemetryPacketList();
   updatePeriod();
   readSensors();
   run();
   addHousekeepingTelemetryPacket();
-  updatePendingTelemetryLists();
 }
 
 #ifdef ARDUINO_ESAT_ADCS
@@ -363,7 +376,14 @@ void ESAT_ADCSClass::respondToNamedPacketTelemetryRequest(const byte identifier)
   {
     byte packetData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
     ESAT_CCSDSPacket packet(packetData, MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
-    const boolean gotPacket = fillTelemetryPacket(packet, identifier);
+    ESAT_ADCSTelemetryPacket* const matchingTelemetryPacket =
+      findTelemetryPacket(identifier);
+    if (matchingTelemetryPacket == nullptr)
+    {
+      return;
+    }
+    const boolean gotPacket = fillTelemetryPacket(packet,
+                                                  *matchingTelemetryPacket);
     if (gotPacket)
     {
       ESAT_I2CSlave.writePacket(packet);
@@ -392,19 +412,19 @@ void ESAT_ADCSClass::respondToNextPacketTelemetryRequest()
 {
   if (ESAT_I2CSlave.telemetryQueueResetReceived())
   {
-    i2cPendingTelemetry = latestPendingTelemetry;
+    i2cTelemetryPacket = latestTelemetryPacket;
   }
-  const int identifier = i2cPendingTelemetry.readNext();
-  if (identifier >= 0)
+  if (i2cTelemetryPacket != nullptr)
   {
     byte packetData[MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH];
     ESAT_CCSDSPacket packet(packetData, MAXIMUM_TELEMETRY_PACKET_DATA_LENGTH);
-    const boolean gotPacket = fillTelemetryPacket(packet, identifier);
+    const boolean gotPacket = fillTelemetryPacket(packet,
+                                                  *i2cTelemetryPacket);
     if (gotPacket)
     {
       ESAT_I2CSlave.writePacket(packet);
     }
-    i2cPendingTelemetry.clear(byte(identifier));
+    i2cTelemetryPacket = i2cTelemetryPacket->nextTelemetryPacket;
   }
   else
   {
@@ -412,19 +432,6 @@ void ESAT_ADCSClass::respondToNextPacketTelemetryRequest()
   }
 }
 #endif /* ARDUINO_ESAT_ADCS */
-
-void ESAT_ADCSClass::updatePendingTelemetryLists()
-{
-  pendingTelemetry.clearAll();
-  for (int index = 0; index < numberOfTelemetryPackets; index++)
-  {
-    const byte packetIdentifier = telemetryPackets[index]->packetIdentifier();
-    pendingTelemetry.set(packetIdentifier);
-  }
-#ifdef ARDUINO_ESAT_ADCS
-  latestPendingTelemetry = pendingTelemetry;
-#endif /* ARDUINO_ESAT_ADCS */
-}
 
 void ESAT_ADCSClass::updatePeriod()
 {
