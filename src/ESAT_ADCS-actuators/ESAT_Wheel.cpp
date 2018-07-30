@@ -31,6 +31,7 @@ void ESAT_WheelClass::begin()
   switchOffElectronicSpeedController();
   delay(1000);
   switchOnElectronicSpeedController();
+  delay(1000);
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   electronicSpeedController.attach(PWM);
