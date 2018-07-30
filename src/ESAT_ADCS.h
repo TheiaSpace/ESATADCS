@@ -141,9 +141,6 @@ class ESAT_ADCSClass
     static const byte MINOR_VERSION_NUMBER = 1;
     static const byte PATCH_VERSION_NUMBER = 0;
 
-    // Maximum number of telecommand handlers.
-    static const byte MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS = 16;
-
     // Maximum number of telemetry packets.
     static const byte MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS = 16;
 
@@ -180,9 +177,6 @@ class ESAT_ADCSClass
     // Processor uptime (in milliseconds) at the current call to update().
     unsigned long currentUpdateTime;
 
-    // Number of registered telecommand handlers.
-    byte numberOfTelecommandHandlers;
-
     // Number of stacked telemetry packets.
     byte numberOfTelemetryPackets;
 
@@ -197,7 +191,7 @@ class ESAT_ADCSClass
     ESAT_ADCSRunMode* runMode;
 
     // List of telecommand handlers.
-    ESAT_ADCSTelecommandHandler* telecommandHandlers[MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS];
+    ESAT_ADCSTelecommandHandler* telecommandHandlers = nullptr;
 
     // Stack of telemetry packets.
     ESAT_ADCSTelemetryPacket* telemetryPackets[MAXIMUM_NUMBER_OF_TELEMETRY_PACKETS];

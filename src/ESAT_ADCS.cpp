@@ -92,7 +92,7 @@ void ESAT_ADCSClass::begin()
   ESAT_Magnetorquer.begin();
   setRunMode(ESAT_StopActuatorsRunMode);
   numberOfTelemetryPackets = 0;
-  numberOfTelecommandHandlers = 0;
+  telecommandHandlers = nullptr;
   registerTelecommandHandler(ESAT_AttitudeTelecommandHandler);
   registerTelecommandHandler(ESAT_DiagnosticsTelecommandHandler);
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
@@ -202,9 +202,11 @@ void ESAT_ADCSClass::handleTelecommand(ESAT_CCSDSPacket& packet)
   {
     return;
   }
-  for (int i = 0; i < numberOfTelecommandHandlers; i++)
+  for (ESAT_ADCSTelecommandHandler* telecommandHandler = telecommandHandlers;
+       telecommandHandler != nullptr;
+       telecommandHandler = telecommandHandler->nextTelecommandHandler)
   {
-    const boolean handled = telecommandHandlers[i]->handleTelecommand(packet);
+    const boolean handled = telecommandHandler->handleTelecommand(packet);
     if (handled)
     {
       return;
@@ -292,12 +294,8 @@ boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
 
 void ESAT_ADCSClass::registerTelecommandHandler(ESAT_ADCSTelecommandHandler& telecommandHandler)
 {
-  if (numberOfTelecommandHandlers == MAXIMUM_NUMBER_OF_TELECOMMAND_HANDLERS)
-  {
-    return;
-  }
-  telecommandHandlers[numberOfTelecommandHandlers] = &telecommandHandler;
-  numberOfTelecommandHandlers = numberOfTelecommandHandlers + 1;
+  telecommandHandler.nextTelecommandHandler = telecommandHandlers;
+  telecommandHandlers = &telecommandHandler;
 }
 
 void ESAT_ADCSClass::run()
