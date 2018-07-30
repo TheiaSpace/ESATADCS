@@ -420,6 +420,10 @@ void ESAT_ADCSClass::respondToNextPacketTelemetryRequest()
     {
       ESAT_I2CSlave.writePacket(packet);
     }
+    else
+    {
+      ESAT_I2CSlave.rejectPacket();
+    }
     i2cTelemetryPacket = i2cTelemetryPacket->nextTelemetryPacket;
   }
   else
