@@ -21,6 +21,27 @@ ESAT ADCS library version 3.2.0.
 
 Attitude Determination and Control Subsystem (ADCS) for ESAT.
 
+This software runs either as the main program in the ESAT ADCS board
+(for the newer model with a standalone microprocessor) or as a library
+in the ESAT OBC board (for use together with the legacy ESAT ADCS
+board controlled by the ESAT OBC board).  Use it with Arduino 1.8.0 or
+newer together with:
+
+  * ESAT ADCS board: the Arduino core for STM32L4-based ESAT
+    boards (Theia Space's ESAT Boards (STM32L4)) 1.0.0 or a newer 1.x.y
+    version and the ESAT utility library (ESATUtil) version 2.1.0 or a
+    newer 2.x.y version.  Use ESAT-ADCS as the target board.  In
+    addition, program the On-Board Computer with the option ADCS Code
+    Running in ADCS (option ADCS=ADCS).
+
+  * ESAT OBC board: the Arduino core for MSP430-based ESAT boards
+    (Theia Space's ESAT Boards (MSP430)) 2.2.0 or a newer 2.x.y
+    version, the ESAT utility library (ESATUtil) version 2.1.0 or a
+    newer 2.x.y version, and the ESAT OBC library (ESATOBC) version
+    4.1.0 or a newer 4.x.y version.  Use the example OBC program,
+    ESAT-OBC as the target board and the option ADCS Code Running in
+    OBC (option ADCS=OBC).
+
 ESAT_ADCS contains the public interface to the ADCS.  Currently, the
 ADCS runs as a library used by the On-Board Computer program:
 
