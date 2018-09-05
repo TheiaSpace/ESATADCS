@@ -1,18 +1,5 @@
 /*
- *       ESAT ADCS library.
- *       Author Daniel Calvo @ Theia
- ******
- * Angles are defined as follows
- *
- *             X-(180º)
- *           __________
- *          |     --> Y||
- * Y-(270º) |    |     || panel  Y+(90º)
- *          |    V X   ||
- *          |__________||
- *           ----------
- *             panel
- *             X+(0º)
+ * Copyright (C) 2017-2018 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
