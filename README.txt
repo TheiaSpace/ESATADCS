@@ -42,6 +42,12 @@ newer together with:
     ESAT-OBC as the target board and the option ADCS Code Running in
     OBC (option ADCS=OBC).
 
+See the example ADCS program (examples/ADCS/ADCS.ino).  This program
+uses the modules of the ADCS library.  This program runs in the ADCS
+board.
+
+The src/ directory contains the ADCS library, which has a main module
+(ESAT_ADCS) as well as helper modules distributed in subdirectories.
 ESAT_ADCS contains the public interface to the ADCS.  Currently, the
 ADCS runs as a library used by the On-Board Computer program:
 
@@ -67,7 +73,7 @@ each ADCS cycle.  A telemetry packet object implements the
 ESAT_ADCSTelemetryPacket interface.  To stack a new telemetry packet
 on a given ADCS cycle, use ESAT_ADCS.addTelemetryPacket().
 
-There are 5 subdirectories with the libraries that provide the
+There are 5 subdirectories in src/ with the libraries that provide the
 detailed ADCS functionality:
 
   * ESAT_ADCS-actuators: low-level actuator control libraries.
