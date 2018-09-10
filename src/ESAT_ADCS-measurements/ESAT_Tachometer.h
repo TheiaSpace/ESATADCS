@@ -47,12 +47,6 @@ class ESAT_TachometerClass
     // as many counts per revolution.
     static const unsigned int COUNTS_PER_REVOLUTION = 8;
 
-    // Update the tachometer reading up to once every PERIOD
-    // milliseconds.  If PERIOD is too long, then we will not respond
-    // to quick transients.  If PERIOD is too short, then we will lose
-    // resolution.
-    static const unsigned long PERIOD = 1000;
-
 #ifdef ARDUINO_ESAT_ADCS
     // The output signal of the tachometer goes to this pin.
     static const unsigned int PIN = TCH_A;
