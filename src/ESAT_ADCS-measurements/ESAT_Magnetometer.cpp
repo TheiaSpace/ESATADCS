@@ -57,7 +57,12 @@ word ESAT_MagnetometerClass::getReading()
   const word yFieldBits = word(yHighByte, yLowByte);
   const int xField = ESAT_Util.wordToInt(xFieldBits);
   const int yField = ESAT_Util.wordToInt(yFieldBits);
+#ifdef ARDUINO_ESAT_OBC
   const int angle = round(atan2(xField, yField) * RAD_TO_DEG);
+#endif /* ARDUINO_ESAT_OBC */
+#ifdef ARDUINO_ESAT_ADCS
+  const int angle = -round(atan2(xField, yField) * RAD_TO_DEG);
+#endif /* ARDUINO_ESAT_ADCS */
   if (angle < 0)
   {
     return angle + 360;
