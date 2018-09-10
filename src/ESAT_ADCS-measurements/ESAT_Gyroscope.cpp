@@ -80,7 +80,12 @@ int ESAT_GyroscopeClass::readRawSample()
   const byte lowByte = bus->read();
   const word bits = word(highByte, lowByte);
   const int reading = ESAT_Util.wordToInt(bits);
+#ifdef ARDUINO_ESAT_OBC
   return reading;
+#endif /* ARDUINO_ESAT_OBC */
+#ifdef ARDUINO_ESAT_ADCS
+  return -reading;
+#endif /* ARDUINO_ESAT_ADCS */
 }
 
 void ESAT_GyroscopeClass::setGain(const byte fullScaleConfiguration)
