@@ -140,10 +140,6 @@ void ESAT_ADCSClass::enableUSBTelemetry()
 boolean ESAT_ADCSClass::fillTelemetryPacket(ESAT_CCSDSPacket& packet,
                                             ESAT_ADCSTelemetryPacket& contents)
 {
-  if (packet.capacity() < ESAT_CCSDSSecondaryHeader::LENGTH)
-  {
-    return false;
-  }
 #ifdef ARDUINO_ESAT_ADCS
   packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
                                telemetryPacketSequenceCount,
@@ -163,8 +159,15 @@ boolean ESAT_ADCSClass::fillTelemetryPacket(ESAT_CCSDSPacket& packet,
                                contents.packetIdentifier());
 #endif /* ARDUINO_ESAT_OBC */
   contents.readUserData(packet);
-  telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
-  return true;
+  if (packet.triedToWriteBeyondCapacity())
+  {
+    return false;
+  }
+  else
+  {
+    telemetryPacketSequenceCount = telemetryPacketSequenceCount + 1;
+    return true;
+  }
 }
 
 ESAT_ADCSTelemetryPacket* ESAT_ADCSClass::findTelemetryPacket(const byte identifier)
