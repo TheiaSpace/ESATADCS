@@ -448,10 +448,7 @@ void ESAT_ADCSClass::writeTelemetry(ESAT_CCSDSPacket& packet)
   if (usbTelemetryEnabled)
   {
     packet.rewind();
-    const unsigned long encoderBufferLength =
-      ESAT_KISSStream::frameLength(packet.length());
-    byte encoderBuffer[encoderBufferLength];
-    ESAT_KISSStream encoder(USB, encoderBuffer, encoderBufferLength);
+    ESAT_KISSStream encoder(USB);
     (void) encoder.beginFrame();
     (void) packet.writeTo(encoder);
     (void) encoder.endFrame();
