@@ -79,7 +79,7 @@ void setup()
 // data; if the buffer is too small, the packets will be dropped.
 void loop()
 {
-  if (ESAT_Timer.ellapsedMilliseconds() >= TARGET_PERIOD)
+  if (ESAT_Timer.elapsedMilliseconds() >= TARGET_PERIOD)
   {
     byte buffer[PACKET_DATA_BUFFER_LENGTH];
     ESAT_CCSDSPacket packet(buffer, sizeof(buffer));
