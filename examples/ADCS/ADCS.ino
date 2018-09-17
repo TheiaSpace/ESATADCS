@@ -20,9 +20,6 @@
 
 #include <ESAT_ADCS.h>
 #include <ESAT_Timer.h>
-#ifdef ARDUINO_ESAT_OBC
-#include <USBSerial.h>
-#endif /* ARDUINO_ESAT_OBC */
 #include <Wire.h>
 
 // Main program of the ADCS board: respond to telecommands,
@@ -56,7 +53,7 @@ void setup()
   Wire1.begin();
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
-  USB.begin();
+  Serial.begin();
   Wire.begin();
 #endif /* ARDUINO_ESAT_OBC */
   ESAT_ADCS.enableUSBTelemetry();
