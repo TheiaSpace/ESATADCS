@@ -25,7 +25,6 @@
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
 #include <ESAT_OBCClock.h>
-#include <USBSerial.h>
 #endif /* ARDUINO_ESAT_OBC */
 #include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
@@ -118,18 +117,10 @@ void ESAT_ADCSClass::disableUSBTelemetry()
 void ESAT_ADCSClass::enableUSBTelecommands(byte buffer[],
                                            const unsigned long bufferLength)
 {
-#ifdef ARDUINO_ESAT_ADCS
   usbTelecommandDecoder = ESAT_KISSStream(Serial,
                                           buffer,
                                           bufferLength);
   usbTelecommandsEnabled = true;
-#endif /* ARDUINO_ESAT_ADCS */
-#ifdef ARDUINO_ESAT_OBC
-  usbTelecommandDecoder = ESAT_KISSStream(USB,
-                                          buffer,
-                                          bufferLength);
-  usbTelecommandsEnabled = true;
-#endif /* ARDUINO_ESAT_OBC */
 }
 
 void ESAT_ADCSClass::enableUSBTelemetry()
@@ -431,29 +422,14 @@ void ESAT_ADCSClass::updatePeriod()
 
 void ESAT_ADCSClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
-#ifdef ARDUINO_ESAT_ADCS
   if (usbTelemetryEnabled)
   {
     packet.rewind();
-    const unsigned long encoderBufferLength =
-      ESAT_KISSStream::frameLength(packet.length());
-    byte encoderBuffer[encoderBufferLength];
-    ESAT_KISSStream encoder(Serial, encoderBuffer, encoderBufferLength);
+    ESAT_KISSStream encoder(Serial);
     (void) encoder.beginFrame();
     (void) packet.writeTo(encoder);
     (void) encoder.endFrame();
   }
-#endif /* ARDUINO_ESAT_ADCS */
-#ifdef ARDUINO_ESAT_OBC
-  if (usbTelemetryEnabled)
-  {
-    packet.rewind();
-    ESAT_KISSStream encoder(USB);
-    (void) encoder.beginFrame();
-    (void) packet.writeTo(encoder);
-    (void) encoder.endFrame();
-  }
-#endif /* ARDUINO_ESAT_OBC */
 }
 
 ESAT_ADCSClass ESAT_ADCS;
