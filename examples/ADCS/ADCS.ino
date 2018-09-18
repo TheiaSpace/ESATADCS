@@ -19,6 +19,9 @@
  */
 
 #include <ESAT_ADCS.h>
+#ifdef ARDUINO_ESAT_OBC
+#include <ESAT_I2CMaster.h>
+#endif /* ARDUINO_ESAT_OBC */
 #include <ESAT_Timer.h>
 #include <Wire.h>
 
@@ -55,6 +58,7 @@ void setup()
 #ifdef ARDUINO_ESAT_OBC
   Serial.begin();
   Wire.begin();
+  ESAT_I2CMaster.begin(Wire);
 #endif /* ARDUINO_ESAT_OBC */
   ESAT_ADCS.enableUSBTelemetry();
   ESAT_ADCS.enableUSBTelecommands(telecommandPacketData,
