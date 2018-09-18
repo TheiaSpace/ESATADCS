@@ -52,13 +52,13 @@ void setup()
 #ifdef ARDUINO_ESAT_ADCS
   Serial.begin(9600);
   Serial.blockOnOverrun(false);
-  Wire.begin(ESAT_ADCS.getApplicationProcessIdentifier());
-  Wire1.begin();
+  WireOBC.begin(ESAT_ADCS.getApplicationProcessIdentifier());
+  WireADCS.begin();
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   Serial.begin();
-  Wire.begin();
-  ESAT_I2CMaster.begin(Wire);
+  WireOBC.begin();
+  ESAT_I2CMaster.begin(WireOBC);
 #endif /* ARDUINO_ESAT_OBC */
   ESAT_ADCS.enableUSBTelemetry();
   ESAT_ADCS.enableUSBTelecommands(telecommandPacketData,
