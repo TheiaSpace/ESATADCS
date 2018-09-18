@@ -62,16 +62,11 @@ class ESAT_WheelClass
 #ifdef ARDUINO_ESAT_OBC
     // Power line switch on message.
     static const byte POWER_LINE_ADDRESS = 1;
-    static const byte POWER_LINE_TELECOMMAND_PRIMARY_HEADER_REGISTER = 0;
-    static const byte POWER_LINE_TELECOMMAND_PACKET_DATA_REGISTER = 1;
     static const byte POWER_LINE_IDENTIFIER = 1;
     static const byte POWER_LINE_MAJOR_VERSION_NUMBER = 2;
     static const byte POWER_LINE_MINOR_VERSION_NUMBER = 0;
     static const byte POWER_LINE_PATCH_VERSION_NUMBER = 0;
     static const byte POWER_LINE_COMMAND_CODE = 0x11;
-    static const byte POWER_LINE_MILLISECONDS_AFTER_WRITES = 1;
-    static const byte POWER_LINE_ATTEMPTS = 10;
-    static const byte POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS = 10;
     static const byte POWER_LINE_SWITCH_OFF = 0;
     static const byte POWER_LINE_SWITCH_ON = 1;
 #endif /* ARDUINO_ESAT_OBC */
