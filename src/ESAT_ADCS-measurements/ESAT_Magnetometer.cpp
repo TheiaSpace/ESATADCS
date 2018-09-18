@@ -25,10 +25,10 @@ void ESAT_MagnetometerClass::begin()
 {
   error = false;
 #ifdef ARDUINO_ESAT_ADCS
-  bus = &Wire1;
+  bus = &WireADCS;
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
-  bus = &Wire;
+  bus = &WireOBC;
 #endif /* ARDUINO_ESAT_OBC */
   setBypassMode();
 }
