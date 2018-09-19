@@ -106,26 +106,25 @@ void ESAT_ADCSClass::clearTelemetryPacketList()
 
 void ESAT_ADCSClass::disableUSBTelecommands()
 {
-  usbTelecommandsEnabled = false;
+  usbReader = ESAT_CCSDSPacketFromKISSFrameReader();
 }
 
 void ESAT_ADCSClass::disableUSBTelemetry()
 {
-  usbTelemetryEnabled = false;
+  usbWriter = ESAT_CCSDSPacketToKISSFrameWriter();
 }
 
 void ESAT_ADCSClass::enableUSBTelecommands(byte buffer[],
                                            const unsigned long bufferLength)
 {
-  usbTelecommandDecoder = ESAT_KISSStream(Serial,
-                                          buffer,
-                                          bufferLength);
-  usbTelecommandsEnabled = true;
+  usbReader = ESAT_CCSDSPacketFromKISSFrameReader(Serial,
+                                                  buffer,
+                                                  bufferLength);
 }
 
 void ESAT_ADCSClass::enableUSBTelemetry()
 {
-  usbTelemetryEnabled = true;
+  usbWriter = ESAT_CCSDSPacketToKISSFrameWriter(Serial);
 }
 
 boolean ESAT_ADCSClass::fillTelemetryPacket(ESAT_CCSDSPacket& packet,
@@ -240,9 +239,9 @@ boolean ESAT_ADCSClass::readTelecommand(ESAT_CCSDSPacket& packet)
 #ifdef ARDUINO_ESAT_ADCS
   pendingTelecommand = ESAT_I2CSlave.readPacket(packet);
 #endif /* ARDUINO_ESAT_ADCS */
-  if (!pendingTelecommand && usbTelecommandsEnabled)
+  if (!pendingTelecommand)
   {
-    pendingTelecommand = readTelecommandFromUSB(packet);
+    pendingTelecommand = usbReader.read(packet);
   }
   if (!pendingTelecommand)
   {
@@ -263,16 +262,6 @@ boolean ESAT_ADCSClass::readTelecommand(ESAT_CCSDSPacket& packet)
     return false;
   }
   return true;
-}
-
-boolean ESAT_ADCSClass::readTelecommandFromUSB(ESAT_CCSDSPacket& packet)
-{
-  const boolean gotFrame = usbTelecommandDecoder.receiveFrame();
-  if (!gotFrame)
-  {
-    return false;
-  }
-  return packet.readFrom(usbTelecommandDecoder);
 }
 
 boolean ESAT_ADCSClass::readTelemetry(ESAT_CCSDSPacket& packet)
@@ -422,14 +411,7 @@ void ESAT_ADCSClass::updatePeriod()
 
 void ESAT_ADCSClass::writeTelemetry(ESAT_CCSDSPacket& packet)
 {
-  if (usbTelemetryEnabled)
-  {
-    packet.rewind();
-    ESAT_KISSStream encoder(Serial);
-    (void) encoder.beginFrame();
-    (void) packet.writeTo(encoder);
-    (void) encoder.endFrame();
-  }
+  (void) usbWriter.unbufferedWrite(packet);
 }
 
 ESAT_ADCSClass ESAT_ADCS;
