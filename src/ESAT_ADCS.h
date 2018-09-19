@@ -23,7 +23,8 @@
 
 #include <Arduino.h>
 #include <ESAT_CCSDSPacket.h>
-#include <ESAT_KISSStream.h>
+#include <ESAT_CCSDSPacketFromKISSFrameReader.h>
+#include <ESAT_CCSDSPacketToKISSFrameWriter.h>
 #include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_ADCSTelecommandHandler.h"
@@ -188,16 +189,13 @@ class ESAT_ADCSClass
     // Counter of generated telemetry packets.
     word telemetryPacketSequenceCount;
 
-    // Decode USB KISS frames with telecommands with this stream.
-    ESAT_KISSStream usbTelecommandDecoder;
+    // Use this to read CCSDS packets from KISS frames coming from the
+    // USB interface.
+    ESAT_CCSDSPacketFromKISSFrameReader usbReader;
 
-    // True if the reception of telecommands from the USB interface
-    // is enabled; false otherwise.
-    boolean usbTelecommandsEnabled;
-
-    // True if the emission of telemetry through the USB interface is
-    // enabled; false otherwise.
-    boolean usbTelemetryEnabled;
+    // Use this to write CCSDS packets in KISS frames to the USB
+    // interface.
+    ESAT_CCSDSPacketToKISSFrameWriter usbWriter;
 
     // Add the housekeeping telemetry packet to the telemetry packet stack.
     void addHousekeepingTelemetryPacket();
@@ -217,12 +215,6 @@ class ESAT_ADCSClass
 
     // Read the sensors needed for attitude determination and control.
     void readSensors();
-
-    // Read a telecommand from the USB interface.
-    // Buffer incoming data into usbTelecommandDecoder
-    // from call to call.
-    // Return true on success; otherwise return false.
-    boolean readTelecommandFromUSB(ESAT_CCSDSPacket& packet);
 
 #ifdef ARDUINO_ESAT_ADCS
     // Respond to a named-packet (of given identifier) telemetry
