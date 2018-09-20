@@ -128,12 +128,6 @@ class ESAT_ADCSClass
     void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
-    // Telemetry packet identifiers.
-    enum TelemetryPacketIdentifier
-    {
-      HOUSEKEEPING = 0,
-    };
-
     // Unique identifier of the subsystem.
     static const byte APPLICATION_PROCESS_IDENTIFIER = 2;
 
