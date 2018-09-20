@@ -95,7 +95,5 @@ void loop()
     }
     ESAT_Timer.begin(TARGET_PERIOD);
   }
-#ifdef ARDUINO_ESAT_ADCS
   ESAT_ADCS.respondToI2CRequests();
-#endif /* ARDUINO_ESAT_ADCS */
 }
