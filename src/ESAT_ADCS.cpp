@@ -318,9 +318,9 @@ void ESAT_ADCSClass::update()
   addHousekeepingTelemetryPacket();
 }
 
-#ifdef ARDUINO_ESAT_ADCS
 void ESAT_ADCSClass::respondToI2CRequests()
 {
+  #ifdef ARDUINO_ESAT_ADCS
   const int requestedPacket = ESAT_I2CSlave.requestedPacket();
   switch (requestedPacket)
   {
@@ -336,8 +336,8 @@ void ESAT_ADCSClass::respondToI2CRequests()
       respondToNamedPacketTelemetryRequest(byte(requestedPacket));
       break;
   }
+  #endif /* ARDUINO_ESAT_ADCS */
 }
-#endif /* ARDUINO_ESAT_ADCS */
 
 #ifdef ARDUINO_ESAT_ADCS
 void ESAT_ADCSClass::respondToNamedPacketTelemetryRequest(const byte identifier)

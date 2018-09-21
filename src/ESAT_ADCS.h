@@ -105,10 +105,9 @@ class ESAT_ADCSClass
     // manages the received telecommand.
     void registerTelecommandHandler(ESAT_ADCSTelecommandHandler& telecommandHandler);
 
-#ifdef ARDUINO_ESAT_ADCS
     // Respond to telemetry and telecommand requests coming from the I2C bus.
+    // This method does nothing when run on the ESAT OBC board.
     void respondToI2CRequests();
-#endif /* ARDUINO_ESAT_ADCS */
 
     // Return the current run mode identifier.
     byte runModeIdentifier();
@@ -129,12 +128,6 @@ class ESAT_ADCSClass
     void writeTelemetry(ESAT_CCSDSPacket& packet);
 
   private:
-    // Telemetry packet identifiers.
-    enum TelemetryPacketIdentifier
-    {
-      HOUSEKEEPING = 0,
-    };
-
     // Unique identifier of the subsystem.
     static const byte APPLICATION_PROCESS_IDENTIFIER = 2;
 
