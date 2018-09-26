@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
