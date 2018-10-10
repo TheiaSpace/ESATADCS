@@ -30,10 +30,7 @@ void ESAT_WheelClass::begin()
 #ifdef ARDUINO_ESAT_ADCS
   pinMode(EN5V, OUTPUT);
   electronicSpeedController.attach(PWM_A);
-  switchOffElectronicSpeedController();
-  delay(1000);
-  switchOnElectronicSpeedController();
-  delay(1000);
+  calibrateElectronicSpeedController();
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   electronicSpeedController.attach(PWM);
