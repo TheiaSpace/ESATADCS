@@ -33,6 +33,60 @@ void ESAT_MagnetometerClass::begin()
   setBypassMode();
 }
 
+word ESAT_MagnetometerClass::computeAttitude(const float xField,
+                                             const float yField) const
+{
+  // To estimate the attitude, it is necessary to know the angle of
+  // the magnetic field, which can be deduced from the measured
+  // components of the magnetic field and a little knowledge of the
+  // orientation of the magnetometer.
+  // The field angle is expressed in radians.
+#ifdef ARDUINO_ESAT_OBC
+  const float fieldAngle = atan2(xField, yField);
+#endif /* ARDUINO_ESAT_OBC */
+#ifdef ARDUINO_ESAT_ADCS
+  const float fieldAngle = -atan2(xField, yField);
+#endif /* ARDUINO_ESAT_ADCS */
+  // The following equation approximates the relationship between the
+  // attitude of the satellite and the measured field angle:
+  // fieldAngle(attitude) = attitude
+  //                      + COSINE_CALIBRATION_COEFFICIENT * cos(2 * attitude)
+  //                      + SINE_CALIBRATION_COEFFICIENT * sin(2 * attitude).
+  // In the above equation, all angles are expressed in radians.
+  // In general, COSINE_CALIBRATION_COEFFICIENT and SINE_CALIBRATION_COEFFICIENT
+  // are non-zero because the magnetometer isn't at the geometric centre of the
+  // satellite, so it is necessary to solve the following implicit equation
+  // for the attitude:
+  // function(attitude) = fieldAngle - fieldAngle(attitude) = 0.
+  // The following lines solve the equation approximately using Newton's method,
+  // which gives an improved guess attitude_n+1 from a guess attitude_n through
+  // the expression
+  // attitude_n+1 = attitude_n - function(attitude_n) / derivative(attitude_n),
+  // where derivative(attitude) = 1 - d[fieldAngle(attitude)]/d[attitude].
+  float guess = fieldAngle;
+  for (int iteration = 0;
+       iteration < ATTITUDE_COMPUTATION_ITERATIONS;
+       iteration = iteration + 1)
+  {
+    const float function =
+      fieldAngle
+      - guess
+      - COSINE_CALIBRATION_COEFFICIENT * cos(2 * guess)
+      - SINE_CALIBRATION_COEFFICIENT * sin(2 * guess);
+    const float derivative =
+      -1
+      + 2 * COSINE_CALIBRATION_COEFFICIENT * sin(2 * guess)
+      - 2 * SINE_CALIBRATION_COEFFICIENT * cos(2 * guess);
+    guess = guess - function / derivative;
+  }
+  // The computed attitude must be expressed in degrees; as the guess
+  // is expressed in radians, it must be converted to degrees.
+  const int attitude = round(guess * RAD_TO_DEG);
+  // In addition, the attitude angle must range from 0 degrees to
+  // 359 degrees.
+  return normaliseAttitude(attitude);
+}
+
 word ESAT_MagnetometerClass::getReading()
 {
   bus->beginTransmission(MAGNETOMETER_ADDRESS);
@@ -57,19 +111,22 @@ word ESAT_MagnetometerClass::getReading()
   const word yFieldBits = word(yHighByte, yLowByte);
   const int xField = ESAT_Util.wordToInt(xFieldBits);
   const int yField = ESAT_Util.wordToInt(yFieldBits);
-#ifdef ARDUINO_ESAT_OBC
-  const int angle = round(atan2(xField, yField) * RAD_TO_DEG);
-#endif /* ARDUINO_ESAT_OBC */
-#ifdef ARDUINO_ESAT_ADCS
-  const int angle = -round(atan2(xField, yField) * RAD_TO_DEG);
-#endif /* ARDUINO_ESAT_ADCS */
-  if (angle < 0)
+  return computeAttitude(xField, yField);
+}
+
+word ESAT_MagnetometerClass::normaliseAttitude(const int attitude) const
+{
+  if (attitude < 0)
   {
-    return angle + 360;
+    return attitude + 360;
+  }
+  else if (attitude >= 360)
+  {
+    return attitude - 360;
   }
   else
   {
-    return angle;
+    return attitude;
   }
 }
 
