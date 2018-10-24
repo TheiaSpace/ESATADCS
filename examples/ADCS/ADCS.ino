@@ -20,6 +20,7 @@
  */
 
 #include <ESAT_ADCS.h>
+#include <ESAT_ADCS-actuators/ESAT_ADCSLED.h>
 #ifdef ARDUINO_ESAT_OBC
 #include <ESAT_I2CMaster.h>
 #endif /* ARDUINO_ESAT_OBC */
@@ -47,6 +48,17 @@ const word PACKET_DATA_BUFFER_LENGTH = 1024;
 // interface in this buffer.
 byte telecommandPacketData[PACKET_DATA_BUFFER_LENGTH];
 
+// Update the heartbeat LED.
+void LEDHeartbeat()
+{
+  // The requested brightness varies with the sine of the uptime.
+  // As the LED cannot have negative brightness, it will stay off
+  // half of the cycle.
+  const float periodMilliseconds = 2000;
+  const float brightness = 100 * sin(2 * PI * millis() / periodMilliseconds);
+  ESAT_ADCSLED.write(brightness);
+}
+
 // Start the peripherals and do some initial bookkeeping work.
 void setup()
 {
@@ -65,10 +77,12 @@ void setup()
   ESAT_ADCS.enableUSBTelecommands(telecommandPacketData,
                                   sizeof(telecommandPacketData));
   ESAT_ADCS.begin();
+  ESAT_ADCSLED.begin();
   ESAT_Timer.begin(TARGET_PERIOD);
 }
 
 // Body of the main loop of the program:
+// - Update the heartbeat LED to prove that the ADCS board is working.
 // - Retrieve the incomming telecommands (from the I2C interface
 //   and from the USB interface).
 // - Handle the incoming telecommands.
@@ -81,6 +95,7 @@ void setup()
 // data; if the buffer is too small, the packets will be dropped.
 void loop()
 {
+  LEDHeartbeat();
   if (ESAT_Timer.elapsedMilliseconds() >= TARGET_PERIOD)
   {
     byte buffer[PACKET_DATA_BUFFER_LENGTH];
