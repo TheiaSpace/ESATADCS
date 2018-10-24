@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT ADCS library.
  *
  * Theia Space's ESAT ADCS library is free software: you can
@@ -94,8 +96,14 @@ class ESAT_CoarseSunSensorClass
     float readYPlus();
 
   private:
+#ifdef ARDUINO_ESAT_ADCS
+    // Range of measurement of the analog converter.
+    static const word MEASUREMENT_RANGE = 1023;
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
     // Range of measurement of the analog converter.
     static const word MEASUREMENT_RANGE = 4095;
+#endif /* ARDUINO_ESAT_OBC */
 
     // The individual sensors are connected to these pins.
     static const int PIN_X_PLUS = CSSXPLUS;

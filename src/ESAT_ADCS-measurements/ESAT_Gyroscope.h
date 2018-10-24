@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT ADCS library.
  *
  * Theia Space's ESAT ADCS library is free software: you can
@@ -20,6 +22,7 @@
 #define ESAT_Gyroscope_h
 
 #include <Arduino.h>
+#include <Wire.h>
 
 // Gyroscope used for measuring the angular speed.
 // Use the global instance ESAT_Gyroscope.
@@ -57,6 +60,9 @@ class ESAT_GyroscopeClass
 
     // Register number of the reading of the gyroscope.
     static const byte GYROSCOPE_READING_REGISTER = 71;
+
+    // Communicate with the magnetometer through this bus.
+    TwoWire* bus;
 
     // Gain for internal conversions.  Set by setFullScale().
     double gain;

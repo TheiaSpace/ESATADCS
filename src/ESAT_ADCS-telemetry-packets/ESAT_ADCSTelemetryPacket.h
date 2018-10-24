@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT ADCS library.
  *
  * Theia Space's ESAT ADCS library is free software: you can
@@ -32,6 +34,15 @@
 class ESAT_ADCSTelemetryPacket
 {
   public:
+    // Next telemetry packet in the list of registered telemetry
+    // packets.
+    // ESAT_ADCS uses this to keep a linked list of registered
+    // telemetry packets: it can traverse the list by going from
+    // one telemetry packet to the next telemetry packet until
+    // reaching the end of the list at nullptr.
+    // Only ESAT_ADCS should care about this.
+    ESAT_ADCSTelemetryPacket* nextTelemetryPacket = nullptr;
+
     virtual ~ESAT_ADCSTelemetryPacket() {};
 
     // Return the packet identifier.  Each telemetry packet type has

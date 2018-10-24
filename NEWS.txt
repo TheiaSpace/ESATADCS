@@ -1,0 +1,96 @@
+ESATADCS NEWS -- history of changes.
+
+Copyright (C) 2018 Theia Space, Universidad Politécnica de Madrid
+
+This file is part of Theia Space's ESAT ADCS library.
+
+Theia Space's ESAT ADCS library is free software: you can
+redistribute it and/or modify it under the terms of the GNU General
+Public License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+Theia Space's ESAT ADCS library is distributed in the hope that it
+will be useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Theia Space's ESAT ADCS library.  If not, see
+<http://www.gnu.org/licenses/>.
+
+
+* Changes in ESATADCS 3.2.0, 2018-10-24
+
+** All computer code files have copyright notices.
+
+** There is a new main program.
+
+** The main ADCS library module has new methods needed by the main
+ADCS program.
+
+** The ADCS can run in the new STM32L4-based ADCS board as well as running
+in the OBC board.
+
+** When running in the STM32L4-based ADCS board, the ADCS acts as an
+I2C slave that receives telecommands from the OBC and sends telemetry
+to the OBC.
+
+** The minimum required version of the Arduino core for the ADCS board
+(Theia Space's ESAT Boards (STM32L4)) is 1.0.0.
+
+** The minimum required version of the Arduino core for the OBC board
+(Theia Space's ESAT Boards (MSP430)) is 3.0.0.
+
+** The minimum required version of ESATUtil is 2.1.0.
+
+
+* Changes in ESATADCS 3.1.0, 2017-11-30
+
+** There are new diagnostics telecommands.
+
+** The magnetorquer polarity setting modes of operation have been fixed.
+
+** There is a new detumble mode of operation.
+
+** Some formatting and other style issues have been fixed.
+
+
+* Changes in ESATADCS 3.0.0, 2017-11-08
+
+** Telemetry and telecommand packets are CCSDS Space Packets.
+
+** The modules have been renamed and distributed into directories.
+
+** Users can define new telemetry packets, telecommand handlers
+and modes of operation in the Arduino sketch.
+
+** Packets passed around through the USB interface go in KISS frames.
+
+** The minimum required version of the Arduino core (Theia Space's
+ESAT Boards) is 2.0.0.
+
+** The minimum required version of ESATUtil is 2.0.0.
+
+
+* Changes in ESATADCS 2.2.0, 2017-07-03
+
+** The PID gains have better default values.
+
+** The wheel PID algorithm has a less astonishing form.
+
+** Command names are human-readable now.
+
+
+* Changes in ESATADCS 2.1.0, 2017-02-17
+
+** Some old status flags are recovered.
+
+
+* Changes in ESATADCS 2.0.0, 2017-02-09
+
+** The library has been splitted into different modules.
+
+** The minimum required version of the Energia core (Theia Space's
+ESAT Boards) is 1.0.0.
+
+** There is a new dependency: ESATUtil 1.0.0.

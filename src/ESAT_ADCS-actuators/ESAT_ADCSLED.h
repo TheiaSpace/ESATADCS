@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2018 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -18,27 +18,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_DetumbleRunMode_h
-#define ESAT_DetumbleRunMode_h
+#ifndef ESAT_ADCSLED_h
+#define ESAT_ADCSLED_h
 
 #include <Arduino.h>
-#include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 
-// Run mode for detumbling (stopping the rotation of the satellite).
-// Use the public instance ESAT_DetumbleRunMode.
-class ESAT_DetumbleRunModeClass: public ESAT_ADCSRunMode
+// Heartbeat LED of the ADCS board.
+// Use the global instance ESAT_ADCSLED.
+//
+// The ESAT ADCS board has an LED that proves that the board is working.
+class ESAT_ADCSLEDClass
 {
   public:
-    // Return the identifier number of the mode.  Each run mode has
-    // its own unique identifier number.
-    byte identifier();
+    // Set up the LED.
+    void begin();
 
-    // Use the magnetorquers to apply the maximum possible torque
-    // against the angular velocity of the satellite.
-    void run();
+    // Write an brightness value (from 0 to 100 %) to the LED.
+    // Negative values turn off the LED.
+    // Values above 100 % work the same as 100 %.
+    void write(float brightness);
+
+  private:
+#ifdef ARDUINO_ESAT_ADCS
+    // Pin number of the LED control line.
+    static const int LED_CONTROL_LINE = LED_A;
+#endif /* ARDUINO_ESAT_ADCS */
 };
 
-// Global instance of the detumbling run mode library.
-extern ESAT_DetumbleRunModeClass ESAT_DetumbleRunMode;
+// Global instance of the ADCS LED library.
+extern ESAT_ADCSLEDClass ESAT_ADCSLED;
 
-#endif /* ESAT_DetumbleRunMode_h */
+#endif /* ESAT_ADCSLED_h */

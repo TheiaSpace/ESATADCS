@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT ADCS library.
  *
  * Theia Space's ESAT ADCS library is free software: you can
@@ -89,6 +91,7 @@ void ESAT_WheelTelecommandHandlerClass::handleWheelControllerSetDerivativeGainTe
 
 void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetErrorIntegralTelecommand(ESAT_CCSDSPacket telecommand)
 {
+  (void) telecommand;
   ESAT_WheelPIDController.resetErrorIntegral();
 }
 

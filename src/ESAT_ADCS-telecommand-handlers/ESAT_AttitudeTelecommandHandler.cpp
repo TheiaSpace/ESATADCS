@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT ADCS library.
  *
  * Theia Space's ESAT ADCS library is free software: you can
@@ -94,6 +96,7 @@ void ESAT_AttitudeTelecommandHandlerClass::handleFollowSolarTargetTelecommand(ES
 
 void ESAT_AttitudeTelecommandHandlerClass::handleDetumbleTelecommand(ESAT_CCSDSPacket telecommand)
 {
+  (void) telecommand;
   ESAT_ADCS.setRunMode(ESAT_DetumbleRunMode);
 }
 
@@ -115,6 +118,7 @@ void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerSetDerivative
 
 void ESAT_AttitudeTelecommandHandlerClass::handleAttitudeControllerResetErrorIntegralTelecommand(ESAT_CCSDSPacket telecommand)
 {
+  (void) telecommand;
   ESAT_AttitudePIDController.resetErrorIntegral();
 }
 

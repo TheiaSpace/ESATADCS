@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT ADCS library.
  *
  * Theia Space's ESAT ADCS library is free software: you can
@@ -17,25 +19,32 @@
  */
 
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
+#ifdef ARDUINO_ESAT_OBC
 #include <ESAT_CCSDSPacket.h>
 #include <ESAT_I2CMaster.h>
 #include <Wire.h>
+#endif /* ARDUINO_ESAT_OBC */
 
 void ESAT_WheelClass::begin()
 {
-  pinMode(PIN, OUTPUT);
-  writeDutyCycle(0);
-  electronicSpeedController.attach(PIN);
+#ifdef ARDUINO_ESAT_ADCS
+  pinMode(EN5V, OUTPUT);
+  electronicSpeedController.attach(PWM_A);
   calibrateElectronicSpeedController();
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  electronicSpeedController.attach(PWM);
+  calibrateElectronicSpeedController();
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 void ESAT_WheelClass::calibrateElectronicSpeedController()
 {
   // Perform the ESC calibration sequence (high, low and medium again).
-  switchElectronicSpeedController(false);
+  switchOffElectronicSpeedController();
   delay(1000);
   writeDutyCycle(100);
-  switchElectronicSpeedController(true);
+  switchOnElectronicSpeedController();
   delay(2000);
   writeDutyCycle(-100);
   delay(1000);
@@ -66,33 +75,48 @@ float ESAT_WheelClass::readDutyCycle()
   return dutyCycle;
 }
 
-void ESAT_WheelClass::switchElectronicSpeedController(boolean on)
+void ESAT_WheelClass::switchOffElectronicSpeedController()
 {
+#ifdef ARDUINO_ESAT_ADCS
+  digitalWrite(EN5V, LOW);
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
   const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
   byte buffer[packetDataBufferLength];
   ESAT_CCSDSPacket packet(buffer, packetDataBufferLength);
-  packet.flush();
-  ESAT_CCSDSPrimaryHeader primaryHeader;
-  primaryHeader.packetVersionNumber = 0;
-  primaryHeader.packetType = primaryHeader.TELECOMMAND;
-  primaryHeader.secondaryHeaderFlag = primaryHeader.SECONDARY_HEADER_IS_PRESENT;
-  primaryHeader.applicationProcessIdentifier = POWER_LINE_IDENTIFIER;
-  primaryHeader.sequenceFlags = primaryHeader.UNSEGMENTED_USER_DATA;
-  primaryHeader.packetSequenceCount = 0;
-  packet.writePrimaryHeader(primaryHeader);
-  ESAT_CCSDSSecondaryHeader secondaryHeader;
-  secondaryHeader.majorVersionNumber = POWER_LINE_MAJOR_VERSION_NUMBER;
-  secondaryHeader.minorVersionNumber = POWER_LINE_MINOR_VERSION_NUMBER;
-  secondaryHeader.patchVersionNumber = POWER_LINE_PATCH_VERSION_NUMBER;
-  secondaryHeader.packetIdentifier = POWER_LINE_COMMAND_CODE;
-  packet.writeSecondaryHeader(secondaryHeader);
-  packet.writeBoolean(on);
-  ESAT_I2CMaster.writeTelecommand(Wire,
-                                  POWER_LINE_ADDRESS,
-                                  packet,
-                                  POWER_LINE_MILLISECONDS_AFTER_WRITES,
-                                  POWER_LINE_ATTEMPTS,
-                                  POWER_LINE_MILLISECONDS_BETWEEN_ATTEMPTS);
+  packet.writeTelecommandHeaders(POWER_LINE_IDENTIFIER,
+                                 0,
+                                 ESAT_Timestamp(),
+                                 POWER_LINE_MAJOR_VERSION_NUMBER,
+                                 POWER_LINE_MINOR_VERSION_NUMBER,
+                                 POWER_LINE_PATCH_VERSION_NUMBER,
+                                 POWER_LINE_COMMAND_CODE);
+  packet.writeByte(POWER_LINE_SWITCH_OFF);
+  ESAT_I2CMaster.writePacket(packet,
+                             POWER_LINE_ADDRESS);
+#endif /* ARDUINO_ESAT_OBC */
+}
+
+void ESAT_WheelClass::switchOnElectronicSpeedController()
+{
+#ifdef ARDUINO_ESAT_ADCS
+  digitalWrite(EN5V, HIGH);
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  const byte packetDataBufferLength = ESAT_CCSDSSecondaryHeader::LENGTH + 1;
+  byte buffer[packetDataBufferLength];
+  ESAT_CCSDSPacket packet(buffer, packetDataBufferLength);
+  packet.writeTelecommandHeaders(POWER_LINE_IDENTIFIER,
+                                 0,
+                                 ESAT_Timestamp(),
+                                 POWER_LINE_MAJOR_VERSION_NUMBER,
+                                 POWER_LINE_MINOR_VERSION_NUMBER,
+                                 POWER_LINE_PATCH_VERSION_NUMBER,
+                                 POWER_LINE_COMMAND_CODE);
+  packet.writeByte(POWER_LINE_SWITCH_ON);
+  ESAT_I2CMaster.writePacket(packet,
+                             POWER_LINE_ADDRESS);
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 void ESAT_WheelClass::writeSpeed(const int rpm)

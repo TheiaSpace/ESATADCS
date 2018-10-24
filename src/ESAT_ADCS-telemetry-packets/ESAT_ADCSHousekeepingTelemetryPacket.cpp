@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT ADCS library.
  *
  * Theia Space's ESAT ADCS library is free software: you can
@@ -43,7 +45,7 @@ void ESAT_ADCSHousekeepingTelemetryPacketClass::readUserData(ESAT_CCSDSPacket& p
   packet.writeFloat(ESAT_CoarseSunSensor.readYPlus());
   packet.writeFloat(ESAT_CoarseSunSensor.readXMinus());
   packet.writeFloat(ESAT_CoarseSunSensor.readYMinus());
-  packet.writeWord(attitudeStateVector.rotationalSpeed);
+  packet.writeInt(attitudeStateVector.rotationalSpeed);
   packet.writeFloat(ESAT_AttitudePIDController.proportionalGain);
   packet.writeFloat(ESAT_AttitudePIDController.integralGain);
   packet.writeFloat(ESAT_AttitudePIDController.derivativeGain);

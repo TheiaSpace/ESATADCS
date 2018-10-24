@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT ADCS library.
  *
  * Theia Space's ESAT ADCS library is free software: you can
@@ -20,6 +22,7 @@
 #define ESAT_Magnetometer_h
 
 #include <Arduino.h>
+#include <Wire.h>
 
 // Magnetometer used for attitude determination.
 // Use the global instance ESAT_Magnetometer.
@@ -56,9 +59,45 @@ class ESAT_MagnetometerClass
     static const byte READING_REGISTER = 0x03;
     static const byte SINGLE_MEASUREMENT_MODE = B00000001;
 
+    // The attitude is related to the measured angle of the magnetic
+    // field through an implicit equation that must be solved
+    // iteratively.
+    // ATTITUDE_COMPUTATION_ITERATIONS is the number of iterations
+    // of the iterative solver.
+    // COSINE_CALIBRATION_COEFFICIENT and SINE_CALIBRATION_COEFFICIENT
+    // are the coefficients of the equation that relates the measured
+    // field angle and the attitude:
+    // field angle = attitude
+    //             + COSINE_CALIBRATION_COEFFICIENT * cos(2 * attitude)
+    //             + SINE_CALIBRATION_COEFFICIENT * sin(2 * attitude).
+    // In the above equation, all angles are expressed in radians.
+#ifdef ARDUINO_ESAT_OBC
+    static const byte ATTITUDE_COMPUTATION_ITERATIONS = 0;
+    static constexpr float COSINE_CALIBRATION_COEFFICIENT = 0 * DEG_TO_RAD;
+    static constexpr float SINE_CALIBRATION_COEFFICIENT = 0 * DEG_TO_RAD;
+#endif /* ARDUINO_ESAT_OBC */
+#ifdef ARDUINO_ESAT_ADCS
+    static const byte ATTITUDE_COMPUTATION_ITERATIONS = 2;
+    static constexpr float COSINE_CALIBRATION_COEFFICIENT = -8 * DEG_TO_RAD;
+    static constexpr float SINE_CALIBRATION_COEFFICIENT = -4 * DEG_TO_RAD;
+#endif /* ARDUINO_ESAT_ADCS */
+
+    // Communicate with the magnetometer through this bus.
+    TwoWire* bus;
+
+    // Return the magnetic attitude angle in degress as deduced from
+    // the magnetic field components.  The attitude angle ranges from
+    // 0 degrees to 359 degrees.
+    word computeAttitude(float xField,
+                         float yField) const;
+
     // Get the current reading of the magnetic attitude.
     // Set the error flag on error.
     word getReading();
+
+    // Return the attitude angle normalised from 0 degrees to 359
+    // degrees.
+    word normaliseAttitude(int attitude) const;
 
     // Configure the magnetometer in bypass mode.
     // Set the error flag on error.

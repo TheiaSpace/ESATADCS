@@ -1,4 +1,6 @@
 /*
+ * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ *
  * This file is part of Theia Space's ESAT ADCS library.
  *
  * Theia Space's ESAT ADCS library is free software: you can
@@ -39,6 +41,7 @@ boolean ESAT_StopActuatorsTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSP
 
 void ESAT_StopActuatorsTelecommandHandlerClass::handleStopActuatorsTelecommand(ESAT_CCSDSPacket telecommand)
 {
+  (void) telecommand;
   ESAT_ADCS.setRunMode(ESAT_StopActuatorsRunMode);
 }
 
