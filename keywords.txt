@@ -26,6 +26,7 @@
 #######################################
 
 ESAT_ADCSClass	KEYWORD1
+ESAT_ADCSLEDClass       KEYWORD1
 ESAT_ADCSHousekeepingTelemetryPacketClass	KEYWORD1
 ESAT_ADCSTelemetryPacket	KEYWORD1
 ESAT_ADCSRunMode	KEYWORD1
@@ -66,6 +67,7 @@ ESAT_WheelTelecommandHandlerClass	KEYWORD1
 #######################################
 
 ESAT_ADCS	KEYWORD2
+ESAT_ADCSLED	KEYWORD2
 ESAT_ADCSHousekeepingTelemetryPacket	KEYWORD2
 ESAT_AttitudePIDController	KEYWORD2
 ESAT_AttitudeTelecommandHandler	KEYWORD2
