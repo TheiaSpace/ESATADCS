@@ -26,7 +26,7 @@
 // Heartbeat LED of the ADCS board.
 // Use the global instance ESAT_ADCSLED.
 //
-// The ESAT ADCS board has a LED that proves that the board is working.
+// The ESAT ADCS board has an LED that proves that the board is working.
 class ESAT_ADCSLEDClass
 {
   public:
@@ -35,6 +35,7 @@ class ESAT_ADCSLEDClass
 
     // Write an brightness value (from 0 to 100 %) to the LED.
     // Negative values turn off the LED.
+    // Values above 100 % work the same as 100 %.
     void write(float brightness);
 
   private:
@@ -44,6 +45,7 @@ class ESAT_ADCSLEDClass
 #endif /* ARDUINO_ESAT_ADCS */
 };
 
+// Global instance of the ADCS LED library.
 extern ESAT_ADCSLEDClass ESAT_ADCSLED;
 
 #endif /* ESAT_ADCSLED_h */
