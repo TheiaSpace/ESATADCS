@@ -23,9 +23,6 @@
 #include <ESAT_I2CSlave.h>
 #include <Wire.h>
 #endif /* ARDUINO_ESAT_ADCS */
-#ifdef ARDUINO_ESAT_OBC
-#include <ESAT_OBCClock.h>
-#endif /* ARDUINO_ESAT_OBC */
 #include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
@@ -36,6 +33,7 @@
 #include "ESAT_ADCS-measurements/ESAT_Tachometer.h"
 #include "ESAT_ADCS-run-modes/ESAT_StopActuatorsRunMode.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_AttitudeTelecommandHandler.h"
+#include "ESAT_ADCS-telecommand-handlers/ESAT_ADCSClockTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_DiagnosticsTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_MagnetorquerTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_StopActuatorsTelecommandHandler.h"
@@ -83,6 +81,7 @@ void ESAT_ADCSClass::begin()
 #endif /* ARDUINO_ESAT_ADCS */
   telecommandHandler = nullptr;
   registerTelecommandHandler(ESAT_AttitudeTelecommandHandler);
+  registerTelecommandHandler(ESAT_ADCSClockTelecommandHandler);
   registerTelecommandHandler(ESAT_DiagnosticsTelecommandHandler);
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
   registerTelecommandHandler(ESAT_MagnetorquerTelecommandHandler);
@@ -130,24 +129,13 @@ void ESAT_ADCSClass::enableUSBTelemetry()
 boolean ESAT_ADCSClass::fillTelemetryPacket(ESAT_CCSDSPacket& packet,
                                             ESAT_ADCSTelemetryPacket& contents)
 {
-#ifdef ARDUINO_ESAT_ADCS
   packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
                                telemetryPacketSequenceCount,
-                               ESAT_Timestamp(),
+                               clock.read(),
                                MAJOR_VERSION_NUMBER,
                                MINOR_VERSION_NUMBER,
                                PATCH_VERSION_NUMBER,
                                contents.packetIdentifier());
-#endif /* ARDUINO_ESAT_ADCS */
-#ifdef ARDUINO_ESAT_OBC
-  packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
-                               telemetryPacketSequenceCount,
-                               ESAT_OBCClock.read(),
-                               MAJOR_VERSION_NUMBER,
-                               MINOR_VERSION_NUMBER,
-                               PATCH_VERSION_NUMBER,
-                               contents.packetIdentifier());
-#endif /* ARDUINO_ESAT_OBC */
   contents.readUserData(packet);
   if (packet.triedToWriteBeyondCapacity())
   {
@@ -295,6 +283,11 @@ byte ESAT_ADCSClass::runModeIdentifier()
 void ESAT_ADCSClass::setRunMode(ESAT_ADCSRunMode& newRunMode)
 {
   runMode = &newRunMode;
+}
+
+void ESAT_ADCSClass::setTime(const ESAT_Timestamp timestamp)
+{
+  clock.write(timestamp);
 }
 
 boolean ESAT_ADCSClass::telemetryAvailable()
