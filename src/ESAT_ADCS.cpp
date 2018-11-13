@@ -33,6 +33,7 @@
 #include "ESAT_ADCS-measurements/ESAT_Tachometer.h"
 #include "ESAT_ADCS-run-modes/ESAT_StopActuatorsRunMode.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_AttitudeTelecommandHandler.h"
+#include "ESAT_ADCS-telecommand-handlers/ESAT_ADCSClockTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_DiagnosticsTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_MagnetorquerTelecommandHandler.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_StopActuatorsTelecommandHandler.h"
@@ -80,6 +81,7 @@ void ESAT_ADCSClass::begin()
 #endif /* ARDUINO_ESAT_ADCS */
   telecommandHandler = nullptr;
   registerTelecommandHandler(ESAT_AttitudeTelecommandHandler);
+  registerTelecommandHandler(ESAT_ADCSClockTelecommandHandler);
   registerTelecommandHandler(ESAT_DiagnosticsTelecommandHandler);
   registerTelecommandHandler(ESAT_WheelTelecommandHandler);
   registerTelecommandHandler(ESAT_MagnetorquerTelecommandHandler);
