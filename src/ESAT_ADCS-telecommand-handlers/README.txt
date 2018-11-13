@@ -1,4 +1,4 @@
-Copyright (C) 2017 Theia Space, Universidad Politécnica de Madrid
+Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT ADCS library.
 
@@ -85,6 +85,11 @@ Telecommands related to the magnetorquer:
   MAGNETORQUER_SET_Y_POLARITY = 0x32
   MAGNETORQUER_APPLY_MAXIMUM_TORQUE = 0x33
   MAGNETORQUER_DEMAGNETIZE = 0x34
+
+
+# ESAT_ADCSClockTelecommandHandler
+
+  SET_TIME = 0xC0
 
 
 # ESAT_DiagnosticsTelecommandHandler
