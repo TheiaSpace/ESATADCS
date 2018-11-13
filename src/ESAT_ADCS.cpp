@@ -23,9 +23,6 @@
 #include <ESAT_I2CSlave.h>
 #include <Wire.h>
 #endif /* ARDUINO_ESAT_ADCS */
-#ifdef ARDUINO_ESAT_OBC
-#include <ESAT_OBCClock.h>
-#endif /* ARDUINO_ESAT_OBC */
 #include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
 #include "ESAT_ADCS-controllers/ESAT_AttitudePIDController.h"
@@ -130,24 +127,13 @@ void ESAT_ADCSClass::enableUSBTelemetry()
 boolean ESAT_ADCSClass::fillTelemetryPacket(ESAT_CCSDSPacket& packet,
                                             ESAT_ADCSTelemetryPacket& contents)
 {
-#ifdef ARDUINO_ESAT_ADCS
   packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
                                telemetryPacketSequenceCount,
-                               ESAT_Timestamp(),
+                               clock.read(),
                                MAJOR_VERSION_NUMBER,
                                MINOR_VERSION_NUMBER,
                                PATCH_VERSION_NUMBER,
                                contents.packetIdentifier());
-#endif /* ARDUINO_ESAT_ADCS */
-#ifdef ARDUINO_ESAT_OBC
-  packet.writeTelemetryHeaders(getApplicationProcessIdentifier(),
-                               telemetryPacketSequenceCount,
-                               ESAT_OBCClock.read(),
-                               MAJOR_VERSION_NUMBER,
-                               MINOR_VERSION_NUMBER,
-                               PATCH_VERSION_NUMBER,
-                               contents.packetIdentifier());
-#endif /* ARDUINO_ESAT_OBC */
   contents.readUserData(packet);
   if (packet.triedToWriteBeyondCapacity())
   {
