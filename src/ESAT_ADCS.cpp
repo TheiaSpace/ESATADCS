@@ -297,6 +297,11 @@ void ESAT_ADCSClass::setRunMode(ESAT_ADCSRunMode& newRunMode)
   runMode = &newRunMode;
 }
 
+void ESAT_ADCSClass::setTime(const ESAT_Timestamp timestamp)
+{
+  clock.write(timestamp);
+}
+
 boolean ESAT_ADCSClass::telemetryAvailable()
 {
   if (telemetryPacket != nullptr)

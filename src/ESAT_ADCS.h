@@ -116,6 +116,9 @@ class ESAT_ADCSClass
     // Set the ADCS run mode.
     void setRunMode(ESAT_ADCSRunMode& runMode);
 
+    // Set the time of the real-time clock.
+    void setTime(ESAT_Timestamp timestamp);
+
     // Return true if there is a new telemetry packet available.
     boolean telemetryAvailable();
 
