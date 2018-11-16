@@ -19,6 +19,13 @@ along with Theia Space's ESAT ADCS library.  If not, see
 <http://www.gnu.org/licenses/>.
 
 
+* Changes in ESATADCS 3.3.0, 2018-11-16
+
+** ESAT_ADCS keeps its own time for telemetry packets.
+
+** There is a new telecommand for setting the time.
+
+
 * Changes in ESATADCS 3.2.0, 2018-10-24
 
 ** All computer code files have copyright notices.
