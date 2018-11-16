@@ -25,6 +25,7 @@
 #include <ESAT_CCSDSPacket.h>
 #include <ESAT_CCSDSPacketFromKISSFrameReader.h>
 #include <ESAT_CCSDSPacketToKISSFrameWriter.h>
+#include <ESAT_SoftwareClock.h>
 #include "ESAT_ADCS-measurements/ESAT_AttitudeStateVector.h"
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 #include "ESAT_ADCS-telecommand-handlers/ESAT_ADCSTelecommandHandler.h"
@@ -115,6 +116,9 @@ class ESAT_ADCSClass
     // Set the ADCS run mode.
     void setRunMode(ESAT_ADCSRunMode& runMode);
 
+    // Set the time of the real-time clock.
+    void setTime(ESAT_Timestamp timestamp);
+
     // Return true if there is a new telemetry packet available.
     boolean telemetryAvailable();
 
@@ -133,7 +137,7 @@ class ESAT_ADCSClass
 
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 3;
-    static const byte MINOR_VERSION_NUMBER = 2;
+    static const byte MINOR_VERSION_NUMBER = 3;
     static const byte PATCH_VERSION_NUMBER = 0;
 
 #ifdef ARDUINO_ESAT_ADCS
@@ -160,6 +164,10 @@ class ESAT_ADCSClass
     // Latest element added to the stack of telemetry packets.
     ESAT_ADCSTelemetryPacket* latestTelemetryPacket;
 #endif /* ARDUINO_ESAT_ADCS */
+
+    // Real-time clock.
+    // Useful for generating timestamps for telemetry packets.
+    ESAT_SoftwareClock clock;
 
     // Current attitude state vector.
     ESAT_AttitudeStateVector currentAttitudeStateVector;
