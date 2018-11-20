@@ -93,7 +93,8 @@ void ESAT_WheelClass::switchOffElectronicSpeedController()
                                  POWER_LINE_COMMAND_CODE);
   packet.writeByte(POWER_LINE_SWITCH_OFF);
   ESAT_I2CMaster.writePacket(packet,
-                             POWER_LINE_ADDRESS);
+                             POWER_LINE_ADDRESS,
+                             MICROSECONDS_BETWEEN_CHUNKS);
 #endif /* ARDUINO_ESAT_OBC */
 }
 
@@ -115,7 +116,8 @@ void ESAT_WheelClass::switchOnElectronicSpeedController()
                                  POWER_LINE_COMMAND_CODE);
   packet.writeByte(POWER_LINE_SWITCH_ON);
   ESAT_I2CMaster.writePacket(packet,
-                             POWER_LINE_ADDRESS);
+                             POWER_LINE_ADDRESS,
+                             MICROSECONDS_BETWEEN_CHUNKS);
 #endif /* ARDUINO_ESAT_OBC */
 }
 
