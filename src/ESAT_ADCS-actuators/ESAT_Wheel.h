@@ -69,6 +69,10 @@ class ESAT_WheelClass
     static const byte POWER_LINE_COMMAND_CODE = 0x11;
     static const byte POWER_LINE_SWITCH_OFF = 0;
     static const byte POWER_LINE_SWITCH_ON = 1;
+
+    // Wait this number of microseconds between successive chunks when
+    // writing packets to the EPS board.
+    static const word MICROSECONDS_BETWEEN_CHUNKS = 500;
 #endif /* ARDUINO_ESAT_OBC */
 
     // Duty cycle percentage point per wheel speed RPM.
