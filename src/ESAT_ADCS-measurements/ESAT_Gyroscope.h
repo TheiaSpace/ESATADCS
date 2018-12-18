@@ -55,17 +55,26 @@ class ESAT_GyroscopeClass
     // I2C address of the gyroscope.
     static const byte ADDRESS = 0x69;
 
+    // Register number of the configuration of the low pass filter.
+    static const byte LOW_PASS_FILTER_CONFIGURATION_REGISTER = 26;
+
     // Register number of the configuration of the gyroscope.
     static const byte CONFIGURATION_REGISTER = 27;
 
     // Register number of the reading of the gyroscope.
     static const byte GYROSCOPE_READING_REGISTER = 71;
 
+    // Low pass filter configuration.
+    static const byte LOW_PASS_FILTER_CONFIGURATION = B00000110;
+
     // Communicate with the magnetometer through this bus.
     TwoWire* bus;
 
     // Gain for internal conversions.  Set by setFullScale().
     double gain;
+
+    // Configure the low pass filter of the gyroscope.
+    void configureLowPassFilter();
 
     // Configure the range of measurement of the gyroscope according
     // to the full scale configuration.
