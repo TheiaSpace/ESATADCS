@@ -40,7 +40,7 @@ void ESAT_WheelPIDControllerClass::loop(const word newTargetSpeed)
     ESAT_ADCS.attitudeStateVector();
   const int error = int(targetSpeed) - int(attitudeStateVector.wheelSpeed);
   errorIntegral = errorIntegral + error * period;
-  const float errorDerivative = (error - previousError) / period;
+  const float errorDerivative = (float(error) - float(previousError)) / period;
   previousError = error;
   const float control =
     proportionalGain * error
