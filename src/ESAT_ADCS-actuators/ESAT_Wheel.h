@@ -72,7 +72,7 @@ class ESAT_WheelClass
 
     // Wait this number of microseconds between successive chunks when
     // writing packets to the EPS board.
-    static const word MICROSECONDS_BETWEEN_CHUNKS = 500;
+    static const word MICROSECONDS_BETWEEN_CHUNKS = 1000;
 #endif /* ARDUINO_ESAT_OBC */
 
     // Duty cycle percentage point per wheel speed RPM.
