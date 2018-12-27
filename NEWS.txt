@@ -1,6 +1,6 @@
 ESATADCS NEWS -- history of changes.
 
-Copyright (C) 2018 Theia Space, Universidad Politécnica de Madrid
+Copyright (C) 2018, 2019 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT ADCS library.
 
@@ -17,6 +17,18 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Theia Space's ESAT ADCS library.  If not, see
 <http://www.gnu.org/licenses/>.
+
+
+* Changes in ESATADCS 3.3.1, 2019-02-07
+
+** The time between 16-octet chunks written to the EPS has been raised
+to 1 ms.
+
+** In order to filter wheel-induced vibrations, the low-pass filter of
+the gyroscope is now active with a bandwidth of 5 Hz.
+
+** An error in the calculation of the derivative correction of the
+wheel PID controller has been fixed.
 
 
 * Changes in ESATADCS 3.3.0, 2018-11-16
