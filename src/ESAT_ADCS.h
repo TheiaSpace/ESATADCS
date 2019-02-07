@@ -138,7 +138,7 @@ class ESAT_ADCSClass
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 3;
     static const byte MINOR_VERSION_NUMBER = 3;
-    static const byte PATCH_VERSION_NUMBER = 0;
+    static const byte PATCH_VERSION_NUMBER = 1;
 
 #ifdef ARDUINO_ESAT_ADCS
     // Maximum number of bytes of the telecommand packet data field

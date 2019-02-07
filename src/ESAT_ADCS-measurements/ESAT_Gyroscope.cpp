@@ -30,8 +30,21 @@ void ESAT_GyroscopeClass::begin(const byte fullScaleConfiguration)
 #ifdef ARDUINO_ESAT_OBC
   bus = &WireOBC;
 #endif /* ARDUINO_ESAT_OBC */
+  configureLowPassFilter();
   configureRange(fullScaleConfiguration);
   setGain(fullScaleConfiguration);
+}
+
+void ESAT_GyroscopeClass::configureLowPassFilter()
+{
+  bus->beginTransmission(ADDRESS);
+  bus->write(LOW_PASS_FILTER_CONFIGURATION_REGISTER);
+  bus->write(LOW_PASS_FILTER_CONFIGURATION);
+  const byte writeStatus = bus->endTransmission();
+  if (writeStatus != 0)
+  {
+    error = true;
+  }
 }
 
 void ESAT_GyroscopeClass::configureRange(const byte fullScaleConfiguration)
