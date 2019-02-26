@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -24,12 +24,6 @@
 void ESAT_GyroscopeClass::begin(const byte fullScaleConfiguration)
 {
   error = false;
-#ifdef ARDUINO_ESAT_ADCS
-  bus = &WireADCS;
-#endif /* ARDUINO_ESAT_ADCS */
-#ifdef ARDUINO_ESAT_OBC
-  bus = &WireOBC;
-#endif /* ARDUINO_ESAT_OBC */
   configureLowPassFilter();
   configureRange(fullScaleConfiguration);
   setGain(fullScaleConfiguration);
@@ -37,10 +31,10 @@ void ESAT_GyroscopeClass::begin(const byte fullScaleConfiguration)
 
 void ESAT_GyroscopeClass::configureLowPassFilter()
 {
-  bus->beginTransmission(ADDRESS);
-  bus->write(LOW_PASS_FILTER_CONFIGURATION_REGISTER);
-  bus->write(LOW_PASS_FILTER_CONFIGURATION);
-  const byte writeStatus = bus->endTransmission();
+  bus.beginTransmission(ADDRESS);
+  bus.write(LOW_PASS_FILTER_CONFIGURATION_REGISTER);
+  bus.write(LOW_PASS_FILTER_CONFIGURATION);
+  const byte writeStatus = bus.endTransmission();
   if (writeStatus != 0)
   {
     error = true;
@@ -52,10 +46,10 @@ void ESAT_GyroscopeClass::configureRange(const byte fullScaleConfiguration)
   const byte fullScaleConfigurationOffset = 3;
   const byte configuration =
     fullScaleConfiguration << fullScaleConfigurationOffset;
-  bus->beginTransmission(ADDRESS);
-  bus->write(CONFIGURATION_REGISTER);
-  bus->write(configuration);
-  const byte writeStatus = bus->endTransmission();
+  bus.beginTransmission(ADDRESS);
+  bus.write(CONFIGURATION_REGISTER);
+  bus.write(configuration);
+  const byte writeStatus = bus.endTransmission();
   if (writeStatus != 0)
   {
     error = true;
@@ -75,22 +69,22 @@ int ESAT_GyroscopeClass::read(unsigned int samples)
 
 int ESAT_GyroscopeClass::readRawSample()
 {
-  bus->beginTransmission(ADDRESS);
-  bus->write(GYROSCOPE_READING_REGISTER);
-  const byte writeStatus = bus->endTransmission();
+  bus.beginTransmission(ADDRESS);
+  bus.write(GYROSCOPE_READING_REGISTER);
+  const byte writeStatus = bus.endTransmission();
   if (writeStatus != 0)
   {
     error = true;
     return 0;
   }
-  const byte bytesRead = bus->requestFrom(int(ADDRESS), 2);
+  const byte bytesRead = bus.requestFrom(int(ADDRESS), 2);
   if (bytesRead != 2)
   {
     error = true;
     return 0;
   }
-  const byte highByte = bus->read();
-  const byte lowByte = bus->read();
+  const byte highByte = bus.read();
+  const byte lowByte = bus.read();
   const word bits = word(highByte, lowByte);
   const int reading = ESAT_Util.wordToInt(bits);
 #ifdef ARDUINO_ESAT_OBC
