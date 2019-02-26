@@ -19,6 +19,12 @@ along with Theia Space's ESAT ADCS library.  If not, see
 <http://www.gnu.org/licenses/>.
 
 
+* Changes in ESATADCS 3.3.2, 2019-02-26
+
+** A crash on reading the gyroscope or the mangetometer before
+configuring/beginning them has been fixed.
+
+
 * Changes in ESATADCS 3.3.1, 2019-02-07
 
 ** The time between 16-octet chunks written to the EPS has been raised
