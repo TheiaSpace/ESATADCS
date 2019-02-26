@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -68,7 +68,14 @@ class ESAT_GyroscopeClass
     static const byte LOW_PASS_FILTER_CONFIGURATION = B00000110;
 
     // Communicate with the magnetometer through this bus.
-    TwoWire* bus;
+    // We use a reference: working with bus is the same as
+    // working with WireADCS or WireOBC directly.
+#ifdef ARDUINO_ESAT_ADCS
+    TwoWire& bus = WireADCS;
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+    TwoWire& bus = WireOBC;
+#endif /* ARDUINO_ESAT_OBC */
 
     // Gain for internal conversions.  Set by setFullScale().
     double gain;
