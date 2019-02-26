@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -138,7 +138,7 @@ class ESAT_ADCSClass
     // Version numbers.
     static const byte MAJOR_VERSION_NUMBER = 3;
     static const byte MINOR_VERSION_NUMBER = 3;
-    static const byte PATCH_VERSION_NUMBER = 1;
+    static const byte PATCH_VERSION_NUMBER = 2;
 
 #ifdef ARDUINO_ESAT_ADCS
     // Maximum number of bytes of the telecommand packet data field
