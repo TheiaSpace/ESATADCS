@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -83,7 +83,14 @@ class ESAT_MagnetometerClass
 #endif /* ARDUINO_ESAT_ADCS */
 
     // Communicate with the magnetometer through this bus.
-    TwoWire* bus;
+    // We use a reference: working with bus is the same as
+    // working with WireADCS or WireOBC directly.
+#ifdef ARDUINO_ESAT_ADCS
+    TwoWire& bus = WireADCS;
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+    TwoWire& bus = WireOBC;
+#endif /* ARDUINO_ESAT_OBC */
 
     // Return the magnetic attitude angle in degress as deduced from
     // the magnetic field components.  The attitude angle ranges from
