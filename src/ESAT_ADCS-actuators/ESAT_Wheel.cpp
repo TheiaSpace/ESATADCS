@@ -75,6 +75,11 @@ float ESAT_WheelClass::readDutyCycle()
   return dutyCycle;
 }
 
+void ESAT_WheelClass::resetWheelController()
+{
+	calibrateElectronicSpeedController();
+}
+
 void ESAT_WheelClass::switchOffElectronicSpeedController()
 {
 #ifdef ARDUINO_ESAT_ADCS
