@@ -21,6 +21,7 @@
 #include "ESAT_ADCS-telecommand-handlers/ESAT_WheelTelecommandHandler.h"
 #include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_WheelPIDController.h"
+#include "ESAT_ADCS-run-modes/ESAT_WheelResetWheelControllerRunMode.h"
 #include "ESAT_ADCS-run-modes/ESAT_WheelSetDutyCycleRunMode.h"
 #include "ESAT_ADCS-run-modes/ESAT_WheelSetSpeedRunMode.h"
 
@@ -55,6 +56,10 @@ boolean ESAT_WheelTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket te
       handleWheelControllerResetErrorIntegralTelecommand(telecommand);
       return true;
       break;
+	case WHEEL_CONTROLLER_RESET_WHEEL_CONTROLLER:
+	  handleWheelControllerResetWheelControllerTelecommand(telecommand);
+	  return true;
+	  break;
     default:
       return false;
       break;
@@ -93,6 +98,15 @@ void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetErrorIntegralT
 {
   (void) telecommand;
   ESAT_WheelPIDController.resetErrorIntegral();
+}
+
+void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetWheelControllerTelecommand(ESAT_CCSDSPacket telecommand)
+{
+	(void) telecommand;
+	ESAT_ADCS.setRunMode(ESAT_WheelResetWheelControllerRunMode);
+    // Currently the number of cycles is hardcoded, but can be provided
+    // by the telecommand (run mode is ready for that).
+	ESAT_WheelResetWheelControllerRunMode.remainingResetCycles = 1;
 }
 
 ESAT_WheelTelecommandHandlerClass ESAT_WheelTelecommandHandler;
