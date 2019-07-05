@@ -24,8 +24,8 @@
 #include <Arduino.h>
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 
-// Run mode for disabling the actuators.
-// Use the public instance ESAT_StopActuatorsRunMode.
+// Run mode for resetting the wheel controller.
+// Use the public instance ESAT_WheelResetWheelControllerRunMode.
 class ESAT_WheelResetWheelControllerRunModeClass: public ESAT_ADCSRunMode
 {
   public:
