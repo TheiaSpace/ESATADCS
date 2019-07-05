@@ -49,7 +49,7 @@ void ESAT_WheelClass::calibrateElectronicSpeedController()
   writeDutyCycle(-100);
   delay(1000);
   writeDutyCycle(0);
-  delay(1000);
+  delay(2200);
 }
 
 float ESAT_WheelClass::constrainDutyCycle(const float dutyCycle)
