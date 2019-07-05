@@ -1,4 +1,4 @@
-Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+﻿Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT ADCS library.
 
@@ -74,6 +74,7 @@ Telecommands related to the wheel:
   WHEEL_CONTROLLER_SET_INTEGRAL_GAIN = 0x23
   WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN = 0x24
   WHEEL_CONTROLLER_RESET_ERROR_INTEGRAL = 0x25
+  WHEEL_CONTROLLER_RESET_WHEEL_CONTROLLER = 0x26
 
 
 # ESAT_MagnetorquerTelecommandHandler

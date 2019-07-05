@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -41,6 +41,13 @@ class ESAT_WheelClass
     // 0 % for negative (clockwise) speed and from 0 % to 100 % for
     // positive (counterclockwise) speed.
     float readDutyCycle();
+	
+	// Reset the wheel controller to initial state performing the
+	// calibration sequence.	
+	void resetWheelController();
+	
+	// Switch off the electronic speed controller.
+    void switchOffElectronicSpeedController();
 
     // Set the speed of the wheel in revolutions per minute: negative
     // for clockwise rotation and positive for counterclockwise
@@ -103,9 +110,6 @@ class ESAT_WheelClass
 
     // Switch on or off the electronic speed controller.
     void switchElectronicSpeedController(boolean on);
-
-    // Switch off the electronic speed controller.
-    void switchOffElectronicSpeedController();
 
     // Switch on the electronic speed controller.
     void switchOnElectronicSpeedController();

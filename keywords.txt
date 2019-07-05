@@ -1,4 +1,4 @@
-# Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+﻿# Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
 #
 # This file is part of Theia Space's ESAT ADCS library.
 #
@@ -55,6 +55,7 @@ ESAT_StopActuatorsTelecommandHandlerClass	KEYWORD1
 ESAT_TachometerClass	KEYWORD1
 ESAT_WheelClass	KEYWORD1
 ESAT_WheelControllerClass	KEYWORD1
+ESAT_WheelResetWheelControllerRunModeClass	KEYWORD1
 ESAT_WheelSetDutyCycleRunModeClass	KEYWORD1
 ESAT_WheelSetSpeedRunModeClass	KEYWORD1
 ESAT_WheelTelecommandHandlerClass	KEYWORD1
@@ -93,6 +94,7 @@ ESAT_StopActuatorsTelecommandHandler	KEYWORD2
 ESAT_Tachometer	KEYWORD2
 ESAT_Wheel	KEYWORD2
 ESAT_WheelPIDController	KEYWORD2
+ESAT_WheelResetWheelControllerRunMode	KEYWORD2
 ESAT_WheelSetDutyCycleRunMode	KEYWORD2
 ESAT_WheelSetSpeedRunMode	KEYWORD2
 ESAT_WheelTelecommandHandler	KEYWORD2
