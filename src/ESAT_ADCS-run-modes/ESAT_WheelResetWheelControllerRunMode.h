@@ -44,7 +44,7 @@ class ESAT_WheelResetWheelControllerRunModeClass: public ESAT_ADCSRunMode
   private:
     // Number of wheel revolutions per minute below that wheel is considered
     // stopped.
-    const unsigned int wheelStoppedSpeedThreshold = 10;
+    const word wheelStoppedSpeedThreshold = 10;
 };
 
 // Global instance of the library of the run mode for resetting the wheel.
