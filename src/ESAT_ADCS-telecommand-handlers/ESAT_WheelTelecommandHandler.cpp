@@ -56,10 +56,10 @@ boolean ESAT_WheelTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket te
       handleWheelControllerResetErrorIntegralTelecommand(telecommand);
       return true;
       break;
-	case WHEEL_CONTROLLER_RESET_WHEEL_CONTROLLER:
-	  handleWheelControllerResetWheelControllerTelecommand(telecommand);
-	  return true;
-	  break;
+    case WHEEL_CONTROLLER_RESET_WHEEL_CONTROLLER:
+      handleWheelControllerResetWheelControllerTelecommand(telecommand);
+      return true;
+      break;
     default:
       return false;
       break;
@@ -102,9 +102,9 @@ void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetErrorIntegralT
 
 void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetWheelControllerTelecommand(ESAT_CCSDSPacket telecommand)
 {
-	(void) telecommand;
-	ESAT_WheelResetWheelControllerRunMode.pendingReset = true;
-	ESAT_ADCS.setRunMode(ESAT_WheelResetWheelControllerRunMode);	
+  (void) telecommand;
+  ESAT_WheelResetWheelControllerRunMode.pendingReset = true;
+  ESAT_ADCS.setRunMode(ESAT_WheelResetWheelControllerRunMode);
 }
 
 ESAT_WheelTelecommandHandlerClass ESAT_WheelTelecommandHandler;

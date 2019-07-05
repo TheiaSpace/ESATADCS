@@ -31,16 +31,16 @@ void ESAT_WheelResetWheelControllerRunModeClass::run()
 {
   if (pendingReset)
   {
-	// Turn off wheel by switching its power off.  
-	ESAT_Wheel.switchOffElectronicSpeedController();
-	// Poll for wheel to be stopped.
-	if (ESAT_Tachometer.read() < wheelStoppedSpeedThreshold)
-	{
-		// Only resets if the wheel is stopped.
-		delay(100);		
-		ESAT_Wheel.resetWheelController();
-		pendingReset = false;
-	}
+    // Turn off wheel by switching its power off.
+    ESAT_Wheel.switchOffElectronicSpeedController();
+    // Poll for wheel to be stopped.
+    if (ESAT_Tachometer.read() < wheelStoppedSpeedThreshold)
+    {
+      // Only resets if the wheel is stopped.
+      delay(100);
+      ESAT_Wheel.resetWheelController();
+      pendingReset = false;
+    }
   }
 }
 
