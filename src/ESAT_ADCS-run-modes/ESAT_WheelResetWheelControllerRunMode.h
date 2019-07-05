@@ -29,22 +29,22 @@
 class ESAT_WheelResetWheelControllerRunModeClass: public ESAT_ADCSRunMode
 {
   public:
-    // Flag that indicates if a reset is pending or not. This is
-	// necessary because a run mode is always executing its run() 
-	// function in a loop and we only want to perform a single reset.
-     boolean pendingReset;
-  
+    // Flag that indicates if a reset is pending or not.  This is
+    // necessary because a run mode is always executing its run()
+    // function in a loop and we only want to perform a single reset.
+    boolean pendingReset;
+
     // Return the identifier number of the mode.  Each run mode has
     // its own unique identifier number.
     byte identifier();
 
     // Stop the actuators
     void run();
-	
-	private: 
-	// Number of wheel revolutions per minute below that wheel is considered
-	// stopped.
-	const unsigned int wheelStoppedSpeedThreshold = 10;	
+
+  private:
+    // Number of wheel revolutions per minute below that wheel is considered
+    // stopped.
+    const unsigned int wheelStoppedSpeedThreshold = 10;
 };
 
 // Global instance of the library of the run mode for resetting the wheel.

@@ -43,7 +43,7 @@ class ESAT_WheelTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
       WHEEL_CONTROLLER_SET_INTEGRAL_GAIN = 0x23,
       WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN = 0x24,
       WHEEL_CONTROLLER_RESET_ERROR_INTEGRAL = 0x25,
-	  WHEEL_CONTROLLER_RESET_WHEEL_CONTROLLER = 0x26,
+      WHEEL_CONTROLLER_RESET_WHEEL_CONTROLLER = 0x26,
     };
 
     // Handle the telecommand for setting the duty cycle of the wheel.
@@ -81,11 +81,11 @@ class ESAT_WheelTelecommandHandlerClass: public ESAT_ADCSTelecommandHandler
     // wheel controller.
     // The telecommand has no parameters.
     void handleWheelControllerResetErrorIntegralTelecommand(ESAT_CCSDSPacket telecommand);
-	
-	// Handle the telecommand for hardware resetting the wheel electronic 
-	// speed controller.
-	// The telecommand has no parameters.
-	void handleWheelControllerResetWheelControllerTelecommand(ESAT_CCSDSPacket telecommand);
+
+    // Handle the telecommand for hardware resetting the wheel electronic
+    // speed controller.
+    // The telecommand has no parameters.
+    void handleWheelControllerResetWheelControllerTelecommand(ESAT_CCSDSPacket telecommand);
 };
 
 // Global instance of the wheel telecommand handler library.
