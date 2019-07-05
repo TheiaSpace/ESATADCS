@@ -45,6 +45,9 @@ class ESAT_WheelClass
 	// Reset the wheel controller to initial state performing the
 	// calibration sequence.	
 	void resetWheelController();
+	
+	// Switch off the electronic speed controller.
+    void switchOffElectronicSpeedController();
 
     // Set the speed of the wheel in revolutions per minute: negative
     // for clockwise rotation and positive for counterclockwise
@@ -107,9 +110,6 @@ class ESAT_WheelClass
 
     // Switch on or off the electronic speed controller.
     void switchElectronicSpeedController(boolean on);
-
-    // Switch off the electronic speed controller.
-    void switchOffElectronicSpeedController();
 
     // Switch on the electronic speed controller.
     void switchOnElectronicSpeedController();
