@@ -18,8 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "ESAT_ADCS-run-modes/ESAT_WheelResetWheelControllerRunMode.h"
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
+#include "ESAT_ADCS-measurements/ESAT_Tachometer.h"
+#include "ESAT_ADCS-run-modes/ESAT_WheelResetWheelControllerRunMode.h"
 
 byte ESAT_WheelResetWheelControllerRunModeClass::identifier()
 {
@@ -28,15 +29,17 @@ byte ESAT_WheelResetWheelControllerRunModeClass::identifier()
 
 void ESAT_WheelResetWheelControllerRunModeClass::run()
 {
-  if (remainingResetCycles <= 0)
+  if (pendingReset)
   {
-	  return;
+	ESAT_Wheel.writeDutyCycle(0);
+	// Poll for wheel to be stopped
+	if (ESAT_Tachometer.read() < wheelStoppedSpeedThreshold)
+	{
+		// Only resets the wheel if it is stopped.
+		ESAT_Wheel.resetWheelController();
+		pendingReset = false;
+	}
   }
-  while (remainingResetCycles > 0)
-  {
-	  ESAT_Wheel.resetWheelController();
-	  remainingResetCycles = remainingResetCycles - 1;
-  }  
 }
 
 ESAT_WheelResetWheelControllerRunModeClass ESAT_WheelResetWheelControllerRunMode;

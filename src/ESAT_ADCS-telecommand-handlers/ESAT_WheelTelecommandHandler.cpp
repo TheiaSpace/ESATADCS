@@ -103,10 +103,8 @@ void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetErrorIntegralT
 void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetWheelControllerTelecommand(ESAT_CCSDSPacket telecommand)
 {
 	(void) telecommand;
-	ESAT_ADCS.setRunMode(ESAT_WheelResetWheelControllerRunMode);
-    // Currently the number of cycles is hardcoded, but can be provided
-    // by the telecommand (run mode is ready for that).
-	ESAT_WheelResetWheelControllerRunMode.remainingResetCycles = 1;
+	ESAT_WheelResetWheelControllerRunMode.pendingReset = true;
+	ESAT_ADCS.setRunMode(ESAT_WheelResetWheelControllerRunMode);	
 }
 
 ESAT_WheelTelecommandHandlerClass ESAT_WheelTelecommandHandler;
