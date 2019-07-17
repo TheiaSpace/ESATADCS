@@ -28,8 +28,8 @@
 // Use the global instance ESAT_Gyroscope.
 //
 // The underlying hardware is the MPU-9250 3-axis gyroscope,
-// accelerometer and magnetometer chip from InvenSense mounted on the
-// ESAT OBC board.  Communications are done though the OBC I2C bus.
+// accelerometer and magnetometer chip from InvenSense.
+// Communications are done through the I2C bus.
 class ESAT_GyroscopeClass
 {
   public:
