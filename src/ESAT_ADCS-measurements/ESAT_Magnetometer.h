@@ -39,6 +39,26 @@ class ESAT_MagnetometerClass
     // Set up the magnetometer.
     void begin();
 
+    // Configure the geometry correction based on measured attitudes
+    // at several actual attitudes.
+    // The measured angle of the magnetic field can differ from the
+    // actual magnetic attitude due to several factors (the
+    // magnetometer isn't in the exact axis of rotation, the Earth
+    // magnetic field simulator magnets may be slightly misaligned…),
+    // so it's necessary to correct for these geometrical factors
+    // to achieve good attitude measurements.  The geometry
+    // correction takes into account the magnetic attitude measured
+    // at 0 degrees, 45 degrees, 90 degrees, 135 degrees, 180 degrees,
+    // 225 degrees, 270 degrees and 315 degrees.
+    void configureGeometryCorrection(int measurement0,
+                                     int measurement45,
+                                     int measurement90,
+                                     int measurement135,
+                                     int measurement180,
+                                     int measurement225,
+                                     int measurement270,
+                                     int measurement315);
+
     // Read the magnetic attitude (in degrees) relative to North:
     // the counterclockwise angle from the +X axis of the satellite
     // to the North direction or the clockwise angle from the North
@@ -59,27 +79,15 @@ class ESAT_MagnetometerClass
     static const byte READING_REGISTER = 0x03;
     static const byte SINGLE_MEASUREMENT_MODE = B00000001;
 
-    // The attitude is related to the measured angle of the magnetic
-    // field through an implicit equation that must be solved
-    // iteratively.
-    // ATTITUDE_COMPUTATION_ITERATIONS is the number of iterations
-    // of the iterative solver.
-    // COSINE_CALIBRATION_COEFFICIENT and SINE_CALIBRATION_COEFFICIENT
-    // are the coefficients of the equation that relates the measured
-    // field angle and the attitude:
-    // field angle = attitude
-    //             + COSINE_CALIBRATION_COEFFICIENT * cos(2 * attitude)
-    //             + SINE_CALIBRATION_COEFFICIENT * sin(2 * attitude).
-    // In the above equation, all angles are expressed in radians.
-#ifdef ARDUINO_ESAT_OBC
-    static const byte ATTITUDE_COMPUTATION_ITERATIONS = 0;
-    static constexpr float COSINE_CALIBRATION_COEFFICIENT = 0 * DEG_TO_RAD;
-    static constexpr float SINE_CALIBRATION_COEFFICIENT = 0 * DEG_TO_RAD;
-#endif /* ARDUINO_ESAT_OBC */
+    // Number of positions of the geometry correction process.
+    static const byte GEOMETRY_CORRECTION_POSITIONS = 8;
+
+    // Persistent geometry correction storage.
 #ifdef ARDUINO_ESAT_ADCS
-    static const byte ATTITUDE_COMPUTATION_ITERATIONS = 2;
-    static constexpr float COSINE_CALIBRATION_COEFFICIENT = -8 * DEG_TO_RAD;
-    static constexpr float SINE_CALIBRATION_COEFFICIENT = -4 * DEG_TO_RAD;
+    static const int GEOMETRY_EEPROM_ADDRESS = 2;
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+    static const char GEOMETRY_FILENAME[];
 #endif /* ARDUINO_ESAT_ADCS */
 
     // Communicate with the magnetometer through this bus.
@@ -92,7 +100,14 @@ class ESAT_MagnetometerClass
     TwoWire& bus = WireOBC;
 #endif /* ARDUINO_ESAT_OBC */
 
-    // Return the magnetic attitude angle in degress as deduced from
+    // Geometry correction coefficients.
+    int fieldAngles[GEOMETRY_CORRECTION_POSITIONS + 2];
+
+    // Return the difference between two angles, normalised between
+    // -180 degrees and 180 degrees.
+    float angleDifference(float minuend, float subtrahend) const;
+
+    // Return the magnetic cattitude angle in degres sas deduced from
     // the magnetic field components.  The attitude angle ranges from
     // 0 degrees to 359 degrees.
     word computeAttitude(float xField,
@@ -106,6 +121,9 @@ class ESAT_MagnetometerClass
     // degrees.
     word normaliseAttitude(int attitude) const;
 
+    // Read the geometry correction from persistent storage.
+    void readGeometryCorrection();
+
     // Configure the magnetometer in bypass mode.
     // Set the error flag on error.
     void setBypassMode();
@@ -117,6 +135,9 @@ class ESAT_MagnetometerClass
     // Wait for the reading process to finish.
     // Set the error flag on error.
     void waitForReading();
+
+    // Write the geometry correction to persistent storage.
+    void writeGeometryCorrection();
 };
 
 // Global instance of the magnetometer library.
