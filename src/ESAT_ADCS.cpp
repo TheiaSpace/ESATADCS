@@ -68,7 +68,7 @@ void ESAT_ADCSClass::begin()
   ESAT_AttitudePIDController.begin();
   ESAT_Wheel.begin();
   ESAT_WheelPIDController.begin();
-  ESAT_Gyroscope.begin(ESAT_Gyroscope.FULL_SCALE_2000_DEGREES_PER_SECOND);
+  ESAT_Gyroscope.begin();
   ESAT_Magnetometer.begin();
   ESAT_CoarseSunSensor.begin();
   ESAT_Tachometer.begin();

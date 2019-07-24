@@ -48,6 +48,10 @@ boolean ESAT_DiagnosticsTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPac
       handleDiagnosticsConfigureMagnetometerGeometryCorrection(telecommand);
       return true;
       break;
+    case DIAGNOSTICS_RECONFIGURE_GYROSCOPE:
+      handleDiagnosticsReconfigureGyroscope(telecommand);
+      return true;
+      break;
     default:
       return false;
       break;
@@ -104,6 +108,12 @@ void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsConfigureMagnetom
                                                 measurement225,
                                                 measurement270,
                                                 measurement315);
+}
+
+void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsReconfigureGyroscope(ESAT_CCSDSPacket telecommand)
+{
+  (void) telecommand; // Unused.
+  ESAT_Gyroscope.begin();
 }
 
 ESAT_DiagnosticsTelecommandHandlerClass ESAT_DiagnosticsTelecommandHandler;

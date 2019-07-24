@@ -41,6 +41,7 @@ class ESAT_DiagnosticsTelecommandHandlerClass: public ESAT_ADCSTelecommandHandle
       DIAGNOSTICS_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xD1,
       DIAGNOSTICS_CONFIGURE_GYROSCOPE_BIAS_CORRECTION = 0xD2,
       DIAGNOSTICS_CONFIGURE_MAGNETOMETER_GEOMETRY_CORRECTION = 0xD3,
+      DIAGNOSTICS_RECONFIGURE_GYROSCOPE = 0xD4,
     };
 
     // Handle the telecommand for setting the coarse sun sensor
@@ -82,6 +83,10 @@ class ESAT_DiagnosticsTelecommandHandlerClass: public ESAT_ADCSTelecommandHandle
     // * the measured magnetic attitude at 270 degrees;
     // * the measured magnetic attitude at 315 degrees.
     void handleDiagnosticsConfigureMagnetometerGeometryCorrection(ESAT_CCSDSPacket telecommand);
+
+    // Handle the telecommand for reconfiguring the gyroscope.
+    // The telecommand has no parameters.
+    void handleDiagnosticsReconfigureGyroscope(ESAT_CCSDSPacket telecommand);
 };
 
 // Global instance of the diagnostics telecommand handler library.
