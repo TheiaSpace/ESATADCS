@@ -42,9 +42,9 @@ class ESAT_WheelClass
     // positive (counterclockwise) speed.
     float readDutyCycle();
 
-    // Reset the wheel controller to initial state performing the
-    // calibration sequence.
-    void resetWheelController();
+    // Reset the wheel electronic speed controller to initial state
+    // performing the calibration sequence.
+    void resetElectronicSpeedController();
 
     // Switch off the electronic speed controller.
     void switchOffElectronicSpeedController();

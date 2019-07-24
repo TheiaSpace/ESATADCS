@@ -75,7 +75,7 @@ float ESAT_WheelClass::readDutyCycle()
   return dutyCycle;
 }
 
-void ESAT_WheelClass::resetWheelController()
+void ESAT_WheelClass::resetElectronicSpeedController()
 {
   calibrateElectronicSpeedController();
 }
