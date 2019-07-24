@@ -1,5 +1,5 @@
 /*
- * ESAT ADCS Main Program version 3.3.2
+ * ESAT ADCS Main Program version 3.4.0
  * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
