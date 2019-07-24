@@ -21,7 +21,7 @@ along with Theia Space's ESAT ADCS library.  If not, see
 
 * Changes in ESATADCS 3.3.2, 2019-02-26
 
-** A crash on reading the gyroscope or the mangetometer before
+** A crash on reading the gyroscope or the magnetometer before
 configuring/beginning them has been fixed.
 
 
