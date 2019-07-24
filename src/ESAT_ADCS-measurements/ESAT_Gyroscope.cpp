@@ -19,7 +19,17 @@
  */
 
 #include "ESAT_ADCS-measurements/ESAT_Gyroscope.h"
+#ifdef ARDUINO_ESAT_ADCS
+#include <EEPROM.h>
+#endif /* ARDUINO_ESAT_ADCS */
 #include <ESAT_Util.h>
+#ifdef ARDUINO_ESAT_OBC
+#include <SD.h>
+#endif /* ARDUINO_ESAT_OBC */
+
+#ifdef ARDUINO_ESAT_OBC
+const char ESAT_GyroscopeClass::BIAS_FILENAME[] = "gyrobias";
+#endif /* ARDUINO_ESAT_OBC */
 
 void ESAT_GyroscopeClass::begin(const byte fullScaleConfiguration)
 {
@@ -27,6 +37,19 @@ void ESAT_GyroscopeClass::begin(const byte fullScaleConfiguration)
   configureLowPassFilter();
   configureRange(fullScaleConfiguration);
   setGain(fullScaleConfiguration);
+  readBiasCorrection();
+}
+
+void ESAT_GyroscopeClass::configureBiasCorrection()
+{
+  const word samples = 1024;
+  long average = 0;
+  for (unsigned long sample = 0; sample < samples; sample = sample + 1)
+  {
+    average = average + readRawSample();
+  }
+  bias = average / samples;
+  writeBiasCorrection();
 }
 
 void ESAT_GyroscopeClass::configureLowPassFilter()
@@ -64,7 +87,7 @@ int ESAT_GyroscopeClass::read(unsigned int samples)
     cumulativeRawReading = cumulativeRawReading + readRawSample();
   }
   const long averageRawReading = cumulativeRawReading / long(samples);
-  return averageRawReading / gain;
+  return (averageRawReading - bias) / gain;
 }
 
 int ESAT_GyroscopeClass::readRawSample()
@@ -100,6 +123,44 @@ void ESAT_GyroscopeClass::setGain(const byte fullScaleConfiguration)
   const word fullScaleTable[] = { 250, 500, 1000, 2000 };
   const word fullScale = fullScaleTable[fullScaleConfiguration];
   gain = 32768.0 / fullScale;
+}
+
+void ESAT_GyroscopeClass::readBiasCorrection()
+{
+#ifdef ARDUINO_ESAT_ADCS
+  const byte highByte = EEPROM.read(BIAS_EEPROM_ADDRESS);
+  const byte lowByte = EEPROM.read(BIAS_EEPROM_ADDRESS + 1);
+  const word bits = word(highByte, lowByte);
+  bias = ESAT_Util.wordToInt(bits);
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  File file = SD.open(BIAS_FILENAME, FILE_READ);
+  if (file.available() == 2)
+  {
+    const byte highByte = byte(file.read());
+    const byte lowByte = byte(file.read());
+    const word bits = word(highByte, lowByte);
+    bias = ESAT_Util.wordToInt(bits);
+  }
+  file.close();
+#endif /* ARDUINO_ESAT_OBC */
+}
+
+void ESAT_GyroscopeClass::writeBiasCorrection()
+{
+#ifdef ARDUINO_ESAT_ADCS
+  const word bits = ESAT_Util.intToWord(bias);
+  EEPROM.write(BIAS_EEPROM_ADDRESS, highByte(bits));
+  EEPROM.write(BIAS_EEPROM_ADDRESS + 1, lowByte(bits));
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  File file = SD.open(BIAS_FILENAME, FILE_WRITE);
+  (void) file.seek(0);
+  const word bits = ESAT_Util.intToWord(bias);
+  (void) file.write(highByte(bits));
+  (void) file.write(lowByte(bits));
+  file.close();
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 ESAT_GyroscopeClass ESAT_Gyroscope;

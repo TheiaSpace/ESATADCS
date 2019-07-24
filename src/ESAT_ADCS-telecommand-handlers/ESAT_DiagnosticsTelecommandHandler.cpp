@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -22,6 +22,8 @@
 #include "ESAT_ADCS.h"
 #include "ESAT_ADCS-actuators/ESAT_Magnetorquer.h"
 #include "ESAT_ADCS-measurements/ESAT_CoarseSunSensor.h"
+#include "ESAT_ADCS-measurements/ESAT_Gyroscope.h"
+#include "ESAT_ADCS-measurements/ESAT_Magnetometer.h"
 
 boolean ESAT_DiagnosticsTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket telecommand)
 {
@@ -36,6 +38,14 @@ boolean ESAT_DiagnosticsTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPac
       break;
     case DIAGNOSTICS_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES:
       handleDiagnosticsChangeMagnetorquerAxesAndPolarities(telecommand);
+      return true;
+      break;
+    case DIAGNOSTICS_CONFIGURE_GYROSCOPE_BIAS_CORRECTION:
+      handleDiagnosticsConfigureGyroscopeBiasCorrection(telecommand);
+      return true;
+      break;
+    case DIAGNOSTICS_CONFIGURE_MAGNETOMETER_GEOMETRY_CORRECTION:
+      handleDiagnosticsConfigureMagnetometerGeometryCorrection(telecommand);
       return true;
       break;
     default:
@@ -68,6 +78,32 @@ void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsChangeMagnetorque
   ESAT_Magnetorquer.swapAxes(swapAxes);
   ESAT_Magnetorquer.invertXPolarity(invertXPolarity);
   ESAT_Magnetorquer.invertYPolarity(invertYPolarity);
+}
+
+void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsConfigureGyroscopeBiasCorrection(ESAT_CCSDSPacket telecommand)
+{
+  (void) telecommand; // Unused.
+  ESAT_Gyroscope.configureBiasCorrection();
+}
+
+void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsConfigureMagnetometerGeometryCorrection(ESAT_CCSDSPacket telecommand)
+{
+  const int measurement0 = telecommand.readInt();
+  const int measurement45 = telecommand.readInt();
+  const int measurement90 = telecommand.readInt();
+  const int measurement135 = telecommand.readInt();
+  const int measurement180 = telecommand.readInt();
+  const int measurement225 = telecommand.readInt();
+  const int measurement270 = telecommand.readInt();
+  const int measurement315 = telecommand.readInt();
+  ESAT_Magnetometer.configureGeometryCorrection(measurement0,
+                                                measurement45,
+                                                measurement90,
+                                                measurement135,
+                                                measurement180,
+                                                measurement225,
+                                                measurement270,
+                                                measurement315);
 }
 
 ESAT_DiagnosticsTelecommandHandlerClass ESAT_DiagnosticsTelecommandHandler;

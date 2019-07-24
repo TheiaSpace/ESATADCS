@@ -19,11 +19,37 @@
  */
 
 #include "ESAT_ADCS-measurements/ESAT_Magnetometer.h"
+#ifdef ARDUINO_ESAT_ADCS
+#include <EEPROM.h>
+#endif /* ARDUINO_ESAT_ADCS */
 #include <ESAT_Util.h>
+#ifdef ARDUINO_ESAT_OBC
+#include <SD.h>
+#endif /* ARDUINO_ESAT_OBC */
+
+#ifdef ARDUINO_ESAT_OBC
+const char ESAT_MagnetometerClass::GEOMETRY_FILENAME[] = "maggeom";
+#endif /* ARDUINO_ESAT_OBC */
+
+float ESAT_MagnetometerClass::angleDifference(const float minuend,
+                                              const float subtrahend) const
+{
+  const float difference = minuend - subtrahend;
+  if (difference > 180)
+  {
+    return difference - 360;
+  }
+  if (difference < -180)
+  {
+    return difference + 360;
+  }
+  return difference;
+}
 
 void ESAT_MagnetometerClass::begin()
 {
   error = false;
+  readGeometryCorrection();
   setBypassMode();
 }
 
@@ -34,51 +60,61 @@ word ESAT_MagnetometerClass::computeAttitude(const float xField,
   // the magnetic field, which can be deduced from the measured
   // components of the magnetic field and a little knowledge of the
   // orientation of the magnetometer.
-  // The field angle is expressed in radians.
 #ifdef ARDUINO_ESAT_OBC
-  const float fieldAngle = atan2(xField, yField);
+  const float fieldAngle =
+    normaliseAttitude(atan2(xField, yField) * RAD_TO_DEG);
 #endif /* ARDUINO_ESAT_OBC */
 #ifdef ARDUINO_ESAT_ADCS
-  const float fieldAngle = -atan2(xField, yField);
+  const float fieldAngle =
+    normaliseAttitude(-atan2(xField, yField) * RAD_TO_DEG);
 #endif /* ARDUINO_ESAT_ADCS */
-  // The following equation approximates the relationship between the
-  // attitude of the satellite and the measured field angle:
-  // fieldAngle(attitude) = attitude
-  //                      + COSINE_CALIBRATION_COEFFICIENT * cos(2 * attitude)
-  //                      + SINE_CALIBRATION_COEFFICIENT * sin(2 * attitude).
-  // In the above equation, all angles are expressed in radians.
-  // In general, COSINE_CALIBRATION_COEFFICIENT and SINE_CALIBRATION_COEFFICIENT
-  // are non-zero because the magnetometer isn't at the geometric centre of the
-  // satellite, so it is necessary to solve the following implicit equation
-  // for the attitude:
-  // function(attitude) = fieldAngle - fieldAngle(attitude) = 0.
-  // The following lines solve the equation approximately using Newton's method,
-  // which gives an improved guess attitude_n+1 from a guess attitude_n through
-  // the expression
-  // attitude_n+1 = attitude_n - function(attitude_n) / derivative(attitude_n),
-  // where derivative(attitude) = 1 - d[fieldAngle(attitude)]/d[attitude].
-  float guess = fieldAngle;
-  for (int iteration = 0;
-       iteration < ATTITUDE_COMPUTATION_ITERATIONS;
-       iteration = iteration + 1)
+  // The attitude is obtained from a piecewise linear interpolation of the
+  // measured angles.
+  const int actualAngles[] = {315, 0, 45, 90, 135, 180, 225, 270, 315, 0};
+  for (int position = 0;
+       position < (GEOMETRY_CORRECTION_POSITIONS + 1);
+       position = position + 1)
   {
-    const float function =
-      fieldAngle
-      - guess
-      - COSINE_CALIBRATION_COEFFICIENT * cos(2 * guess)
-      - SINE_CALIBRATION_COEFFICIENT * sin(2 * guess);
-    const float derivative =
-      -1
-      + 2 * COSINE_CALIBRATION_COEFFICIENT * sin(2 * guess)
-      - 2 * SINE_CALIBRATION_COEFFICIENT * cos(2 * guess);
-    guess = guess - function / derivative;
+    if ((angleDifference(fieldAngle, fieldAngles[position]) >= 0)
+        && (angleDifference(fieldAngle, fieldAngles[position + 1]) <= 0))
+    {
+      const float attitude =
+        fieldAngle
+        + angleDifference(actualAngles[position], fieldAngles[position])
+        * angleDifference(fieldAngle, fieldAngles[position + 1])
+        / angleDifference(fieldAngles[position], fieldAngles[position + 1])
+        + angleDifference(actualAngles[position + 1], fieldAngles[position + 1])
+        * angleDifference(fieldAngle, fieldAngles[position])
+        / angleDifference(fieldAngles[position + 1], fieldAngles[position]);
+      return normaliseAttitude(attitude);
+    }
   }
-  // The computed attitude must be expressed in degrees; as the guess
-  // is expressed in radians, it must be converted to degrees.
-  const int attitude = round(guess * RAD_TO_DEG);
-  // In addition, the attitude angle must range from 0 degrees to
-  // 359 degrees.
-  return normaliseAttitude(attitude);
+  return fieldAngle;
+}
+
+void ESAT_MagnetometerClass::configureGeometryCorrection(const int measurement0,
+                                                         const int measurement45,
+                                                         const int measurement90,
+                                                         const int measurement135,
+                                                         const int measurement180,
+                                                         const int measurement225,
+                                                         const int measurement270,
+                                                         const int measurement315)
+{
+  // The geometry correction algorithm uses piecewise linear interpolation
+  // with a periodic boundary condition.  The expressions are simpler with
+  // two padding angles, one at each boundary.
+  fieldAngles[0] = measurement315;
+  fieldAngles[1] = measurement0;
+  fieldAngles[2] = measurement45;
+  fieldAngles[3] = measurement90;
+  fieldAngles[4] = measurement135;
+  fieldAngles[5] = measurement180;
+  fieldAngles[6] = measurement225;
+  fieldAngles[7] = measurement270;
+  fieldAngles[8] = measurement315;
+  fieldAngles[9] = measurement0;
+  writeGeometryCorrection();
 }
 
 word ESAT_MagnetometerClass::getReading()
@@ -132,6 +168,56 @@ word ESAT_MagnetometerClass::read()
   return getReading();
 }
 
+void ESAT_MagnetometerClass::readGeometryCorrection()
+{
+#ifdef ARDUINO_ESAT_ADCS
+  for (int position = 0;
+       position < GEOMETRY_CORRECTION_POSITIONS;
+       position = position + 1)
+  {
+    const byte highByte =
+      EEPROM.read(GEOMETRY_EEPROM_ADDRESS + 2 * position);
+    const byte lowByte =
+      EEPROM.read(GEOMETRY_EEPROM_ADDRESS + 2 * position + 1);
+    const word bits = word(highByte, lowByte);
+    fieldAngles[position + 1] = ESAT_Util.wordToInt(bits);
+  }
+  fieldAngles[0] = fieldAngles[GEOMETRY_CORRECTION_POSITIONS];
+  fieldAngles[GEOMETRY_CORRECTION_POSITIONS + 1] = fieldAngles[1];
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  File file = SD.open(GEOMETRY_FILENAME, FILE_READ);
+  if (file.available() == GEOMETRY_CORRECTION_POSITIONS * 4)
+  {
+    for (int position = 0;
+         position < GEOMETRY_CORRECTION_POSITIONS;
+         position = position + 1)
+    {
+      const byte highByte = file.read();
+      const byte lowByte = file.read();
+      const word bits = word(highByte, lowByte);
+      fieldAngles[position + 1] = ESAT_Util.wordToInt(bits);
+    }
+    fieldAngles[0] = fieldAngles[GEOMETRY_CORRECTION_POSITIONS];
+    fieldAngles[GEOMETRY_CORRECTION_POSITIONS + 1] = fieldAngles[1];
+  }
+  else
+  {
+    fieldAngles[0] = 315;
+    fieldAngles[1] = 0;
+    fieldAngles[2] = 45;
+    fieldAngles[3] = 90;
+    fieldAngles[4] = 135;
+    fieldAngles[5] = 180;
+    fieldAngles[6] = 225;
+    fieldAngles[7] = 270;
+    fieldAngles[8] = 315;
+    fieldAngles[9] = 0;
+  }
+  file.close();
+#endif /* ARDUINO_ESAT_OBC */
+}
+
 void ESAT_MagnetometerClass::setBypassMode()
 {
   bus.beginTransmission(CHIP_ADDRESS);
@@ -182,6 +268,35 @@ void ESAT_MagnetometerClass::waitForReading()
     }
   }
   error = true;
+}
+
+void ESAT_MagnetometerClass::writeGeometryCorrection()
+{
+#ifdef ARDUINO_ESAT_ADCS
+  for (int position = 0;
+       position < GEOMETRY_CORRECTION_POSITIONS;
+       position = position + 1)
+  {
+    const word bits = ESAT_Util.intToWord(fieldAngles[position + 1]);
+    (void) EEPROM.write(GEOMETRY_EEPROM_ADDRESS + 2 * position,
+                        highByte(bits));
+    (void) EEPROM.write(GEOMETRY_EEPROM_ADDRESS + 2 * position + 1,
+                        lowByte(bits));
+  }
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+  File file = SD.open(GEOMETRY_FILENAME, FILE_WRITE);
+  (void) file.seek(0);
+  for (int position = 0;
+       position < GEOMETRY_CORRECTION_POSITIONS;
+       position = position + 1)
+  {
+    const word bits = ESAT_Util.intToWord(fieldAngles[position + 1]);
+    (void) file.write(highByte(bits));
+    (void) file.write(lowByte(bits));
+  }
+  file.close();
+#endif /* ARDUINO_ESAT_OBC */
 }
 
 ESAT_MagnetometerClass ESAT_Magnetometer;
