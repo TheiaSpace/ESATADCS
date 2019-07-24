@@ -18,15 +18,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ESAT_WheelResetWheelControllerRunMode_h
-#define ESAT_WheelResetWheelControllerRunMode_h
+#ifndef ESAT_WheelResetElectronicSpeedControllerRunMode_h
+#define ESAT_WheelResetElectronicSpeedControllerRunMode_h
 
 #include <Arduino.h>
 #include "ESAT_ADCS-run-modes/ESAT_ADCSRunMode.h"
 
-// Run mode for resetting the wheel controller.
-// Use the public instance ESAT_WheelResetWheelControllerRunMode.
-class ESAT_WheelResetWheelControllerRunModeClass: public ESAT_ADCSRunMode
+// Run mode for resetting the wheel electronic speed controller.
+// Use the public instance ESAT_WheelResetElectronicSpeedControllerRunMode.
+class ESAT_WheelResetElectronicSpeedControllerRunModeClass: public ESAT_ADCSRunMode
 {
   public:
     // Flag that indicates if a reset is pending or not.  This is
@@ -47,7 +47,8 @@ class ESAT_WheelResetWheelControllerRunModeClass: public ESAT_ADCSRunMode
     const word wheelStoppedSpeedThreshold = 10;
 };
 
-// Global instance of the library of the run mode for resetting the wheel.
-extern ESAT_WheelResetWheelControllerRunModeClass ESAT_WheelResetWheelControllerRunMode;
+// Global instance of the library of the run mode for resetting the
+// wheel electronic speed controller.
+extern ESAT_WheelResetElectronicSpeedControllerRunModeClass ESAT_WheelResetElectronicSpeedControllerRunMode;
 
-#endif /* ESAT_WheelResetWheelControllerRunMode_h */
+#endif /* ESAT_WheelResetElectronicSpeedControllerRunMode_h */

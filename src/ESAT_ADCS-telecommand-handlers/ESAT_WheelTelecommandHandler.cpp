@@ -21,7 +21,7 @@
 #include "ESAT_ADCS-telecommand-handlers/ESAT_WheelTelecommandHandler.h"
 #include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_WheelPIDController.h"
-#include "ESAT_ADCS-run-modes/ESAT_WheelResetWheelControllerRunMode.h"
+#include "ESAT_ADCS-run-modes/ESAT_WheelResetElectronicSpeedControllerRunMode.h"
 #include "ESAT_ADCS-run-modes/ESAT_WheelSetDutyCycleRunMode.h"
 #include "ESAT_ADCS-run-modes/ESAT_WheelSetSpeedRunMode.h"
 
@@ -56,8 +56,8 @@ boolean ESAT_WheelTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket te
       handleWheelControllerResetErrorIntegralTelecommand(telecommand);
       return true;
       break;
-    case WHEEL_CONTROLLER_RESET_WHEEL_CONTROLLER:
-      handleWheelControllerResetWheelControllerTelecommand(telecommand);
+    case WHEEL_RESET_ELECTRONIC_SPEED_CONTROLLER:
+      handleWheelResetElectronicSpeedControllerTelecommand(telecommand);
       return true;
       break;
     default:
@@ -100,11 +100,11 @@ void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetErrorIntegralT
   ESAT_WheelPIDController.resetErrorIntegral();
 }
 
-void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetWheelControllerTelecommand(ESAT_CCSDSPacket telecommand)
+void ESAT_WheelTelecommandHandlerClass::handleWheelResetElectronicSpeedControllerTelecommand(ESAT_CCSDSPacket telecommand)
 {
   (void) telecommand;
-  ESAT_WheelResetWheelControllerRunMode.pendingReset = true;
-  ESAT_ADCS.setRunMode(ESAT_WheelResetWheelControllerRunMode);
+  ESAT_WheelResetElectronicSpeedControllerRunMode.pendingReset = true;
+  ESAT_ADCS.setRunMode(ESAT_WheelResetElectronicSpeedControllerRunMode);
 }
 
 ESAT_WheelTelecommandHandlerClass ESAT_WheelTelecommandHandler;

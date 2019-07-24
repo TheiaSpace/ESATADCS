@@ -20,14 +20,14 @@
 
 #include "ESAT_ADCS-actuators/ESAT_Wheel.h"
 #include "ESAT_ADCS-measurements/ESAT_Tachometer.h"
-#include "ESAT_ADCS-run-modes/ESAT_WheelResetWheelControllerRunMode.h"
+#include "ESAT_ADCS-run-modes/ESAT_WheelResetElectronicSpeedControllerRunMode.h"
 
-byte ESAT_WheelResetWheelControllerRunModeClass::identifier()
+byte ESAT_WheelResetElectronicSpeedControllerRunModeClass::identifier()
 {
   return 0x22;
 }
 
-void ESAT_WheelResetWheelControllerRunModeClass::run()
+void ESAT_WheelResetElectronicSpeedControllerRunModeClass::run()
 {
   if (pendingReset)
   {
@@ -38,10 +38,10 @@ void ESAT_WheelResetWheelControllerRunModeClass::run()
     {
       // Only resets if the wheel is stopped.
       delay(100);
-      ESAT_Wheel.resetWheelController();
+      ESAT_Wheel.resetElectronicSpeedController();
       pendingReset = false;
     }
   }
 }
 
-ESAT_WheelResetWheelControllerRunModeClass ESAT_WheelResetWheelControllerRunMode;
+ESAT_WheelResetElectronicSpeedControllerRunModeClass ESAT_WheelResetElectronicSpeedControllerRunMode;
