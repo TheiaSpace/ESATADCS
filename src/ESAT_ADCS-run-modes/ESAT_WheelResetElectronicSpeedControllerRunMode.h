@@ -38,7 +38,7 @@ class ESAT_WheelResetElectronicSpeedControllerRunModeClass: public ESAT_ADCSRunM
     // its own unique identifier number.
     byte identifier();
 
-    // Stop the actuators
+    // Reset the wheel electronic speed controller.
     void run();
 
   private:
