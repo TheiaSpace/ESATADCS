@@ -92,14 +92,14 @@ word ESAT_MagnetometerClass::computeAttitude(const float xField,
   return fieldAngle;
 }
 
-void ESAT_MagnetometerClass::configureGeometryCorrection(const int measurement0,
-                                                         const int measurement45,
-                                                         const int measurement90,
-                                                         const int measurement135,
-                                                         const int measurement180,
-                                                         const int measurement225,
-                                                         const int measurement270,
-                                                         const int measurement315)
+void ESAT_MagnetometerClass::configureGeometryCorrection(const word measurement0,
+                                                         const word measurement45,
+                                                         const word measurement90,
+                                                         const word measurement135,
+                                                         const word measurement180,
+                                                         const word measurement225,
+                                                         const word measurement270,
+                                                         const word measurement315)
 {
   // The geometry correction algorithm uses piecewise linear interpolation
   // with a periodic boundary condition.  The expressions are simpler with
@@ -179,8 +179,7 @@ void ESAT_MagnetometerClass::readGeometryCorrection()
       EEPROM.read(GEOMETRY_EEPROM_ADDRESS + 2 * position);
     const byte lowByte =
       EEPROM.read(GEOMETRY_EEPROM_ADDRESS + 2 * position + 1);
-    const word bits = word(highByte, lowByte);
-    fieldAngles[position + 1] = ESAT_Util.wordToInt(bits);
+    fieldAngles[position + 1] = word(highByte, lowByte);
   }
   fieldAngles[0] = fieldAngles[GEOMETRY_CORRECTION_POSITIONS];
   fieldAngles[GEOMETRY_CORRECTION_POSITIONS + 1] = fieldAngles[1];
@@ -195,8 +194,7 @@ void ESAT_MagnetometerClass::readGeometryCorrection()
     {
       const byte highByte = file.read();
       const byte lowByte = file.read();
-      const word bits = word(highByte, lowByte);
-      fieldAngles[position + 1] = ESAT_Util.wordToInt(bits);
+      fieldAngles[position + 1] = word(highByte, lowByte);
     }
     fieldAngles[0] = fieldAngles[GEOMETRY_CORRECTION_POSITIONS];
     fieldAngles[GEOMETRY_CORRECTION_POSITIONS + 1] = fieldAngles[1];
@@ -277,11 +275,10 @@ void ESAT_MagnetometerClass::writeGeometryCorrection()
        position < GEOMETRY_CORRECTION_POSITIONS;
        position = position + 1)
   {
-    const word bits = ESAT_Util.intToWord(fieldAngles[position + 1]);
     (void) EEPROM.write(GEOMETRY_EEPROM_ADDRESS + 2 * position,
-                        highByte(bits));
+                        highByte(fieldAngles[position + 1]));
     (void) EEPROM.write(GEOMETRY_EEPROM_ADDRESS + 2 * position + 1,
-                        lowByte(bits));
+                        lowByte(fieldAngles[position + 1]));
   }
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
@@ -291,9 +288,8 @@ void ESAT_MagnetometerClass::writeGeometryCorrection()
        position < GEOMETRY_CORRECTION_POSITIONS;
        position = position + 1)
   {
-    const word bits = ESAT_Util.intToWord(fieldAngles[position + 1]);
-    (void) file.write(highByte(bits));
-    (void) file.write(lowByte(bits));
+    (void) file.write(fieldAngles[position + 1]);
+    (void) file.write(fieldAngles[position + 1]);
   }
   file.close();
 #endif /* ARDUINO_ESAT_OBC */

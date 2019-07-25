@@ -73,7 +73,7 @@ class ESAT_DiagnosticsTelecommandHandlerClass: public ESAT_ADCSTelecommandHandle
     void handleDiagnosticsConfigureGyroscopeBiasCorrection(ESAT_CCSDSPacket telecommand);
 
     // Handle the telecommand for configuring the magnetometer geometry correction.
-    // The telecommand has eight 16-bit signed integer parameters:
+    // The telecommand has eight 16-bit unsigned integer parameters:
     // * the measured magnetic attitude at 0 degrees;
     // * the measured magnetic attitude at 45 degrees;
     // * the measured magnetic attitude at 90 degrees;

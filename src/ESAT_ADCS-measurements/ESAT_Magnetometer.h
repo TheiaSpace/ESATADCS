@@ -50,14 +50,14 @@ class ESAT_MagnetometerClass
     // correction takes into account the magnetic attitude measured
     // at 0 degrees, 45 degrees, 90 degrees, 135 degrees, 180 degrees,
     // 225 degrees, 270 degrees and 315 degrees.
-    void configureGeometryCorrection(int measurement0,
-                                     int measurement45,
-                                     int measurement90,
-                                     int measurement135,
-                                     int measurement180,
-                                     int measurement225,
-                                     int measurement270,
-                                     int measurement315);
+    void configureGeometryCorrection(word measurement0,
+                                     word measurement45,
+                                     word measurement90,
+                                     word measurement135,
+                                     word measurement180,
+                                     word measurement225,
+                                     word measurement270,
+                                     word measurement315);
 
     // Read the magnetic attitude (in degrees) relative to North:
     // the counterclockwise angle from the +X axis of the satellite
@@ -101,7 +101,7 @@ class ESAT_MagnetometerClass
 #endif /* ARDUINO_ESAT_OBC */
 
     // Geometry correction coefficients.
-    int fieldAngles[GEOMETRY_CORRECTION_POSITIONS + 2];
+    word fieldAngles[GEOMETRY_CORRECTION_POSITIONS + 2];
 
     // Return the difference between two angles, normalised between
     // -180 degrees and 180 degrees.
