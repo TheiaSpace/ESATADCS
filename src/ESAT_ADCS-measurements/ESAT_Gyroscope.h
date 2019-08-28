@@ -48,7 +48,7 @@ class ESAT_GyroscopeClass
     void begin(byte fullScaleConfiguration = FULL_SCALE_2000_DEGREES_PER_SECOND);
 
     // Configure the sensor bias correction.
-    // They gyroscope may have a small bias.
+    // The gyroscope may have a small bias.
     // Call this function with the satellite perfectly still
     // to estimate the bias for bias correction.
     void configureBiasCorrection();

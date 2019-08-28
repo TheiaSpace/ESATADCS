@@ -17,7 +17,7 @@ along with Theia Space's ESAT ADCS library.  If not, see
 <http://www.gnu.org/licenses/>.
 
 
-ESAT ADCS library version 3.3.2.
+ESAT ADCS library version 3.4.0.
 
 Attitude Determination and Control Subsystem (ADCS) for ESAT.
 

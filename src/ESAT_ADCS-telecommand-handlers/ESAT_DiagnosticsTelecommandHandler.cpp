@@ -92,14 +92,14 @@ void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsConfigureGyroscop
 
 void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsConfigureMagnetometerGeometryCorrection(ESAT_CCSDSPacket telecommand)
 {
-  const int measurement0 = telecommand.readInt();
-  const int measurement45 = telecommand.readInt();
-  const int measurement90 = telecommand.readInt();
-  const int measurement135 = telecommand.readInt();
-  const int measurement180 = telecommand.readInt();
-  const int measurement225 = telecommand.readInt();
-  const int measurement270 = telecommand.readInt();
-  const int measurement315 = telecommand.readInt();
+  const word measurement0 = telecommand.readWord();
+  const word measurement45 = telecommand.readWord();
+  const word measurement90 = telecommand.readWord();
+  const word measurement135 = telecommand.readWord();
+  const word measurement180 = telecommand.readWord();
+  const word measurement225 = telecommand.readWord();
+  const word measurement270 = telecommand.readWord();
+  const word measurement315 = telecommand.readWord();
   ESAT_Magnetometer.configureGeometryCorrection(measurement0,
                                                 measurement45,
                                                 measurement90,
