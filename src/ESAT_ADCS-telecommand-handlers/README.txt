@@ -1,4 +1,4 @@
-Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+﻿Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT ADCS library.
 
@@ -74,6 +74,7 @@ Telecommands related to the wheel:
   WHEEL_CONTROLLER_SET_INTEGRAL_GAIN = 0x23
   WHEEL_CONTROLLER_SET_DERIVATIVE_GAIN = 0x24
   WHEEL_CONTROLLER_RESET_ERROR_INTEGRAL = 0x25
+  WHEEL_RESET_ELECTRONIC_SPEED_CONTROLLER = 0x26
 
 
 # ESAT_MagnetorquerTelecommandHandler
@@ -98,6 +99,9 @@ Telecommands for diagnostics and troubleshooting:
 
   DIAGNOSTICS_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xD0
   DIAGNOSTICS_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xD1
+  DIAGNOSTICS_CONFIGURE_GYROSCOPE_BIAS_CORRECTION = 0xD2
+  DIAGNOSTICS_CONFIGURE_MAGNETOMETER_BIAS_CORRECTION = 0xD3
+  DIAGNOSTICS_RECONFIGURE_GYROSCOPE = 0xD4
 
 
 # ESAT_StopActuatorsTelecommandHandler

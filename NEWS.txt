@@ -19,9 +19,23 @@ along with Theia Space's ESAT ADCS library.  If not, see
 <http://www.gnu.org/licenses/>.
 
 
+* Changes in ESATADCS 3.4.0, 2019-07-24
+
+** The wait at the end of the wheel calibration sequence is longer
+to ensure that the calibration sequence finishes.
+
+** There is a new telecommand for resetting the wheel controller.
+
+** There is a new telecommand for gyroscope bias correction.
+
+** There is a new telecommand for magnetometer geometry correction.
+
+** There is a new telecommand for gyroscope reconfiguration.
+
+
 * Changes in ESATADCS 3.3.2, 2019-02-26
 
-** A crash on reading the gyroscope or the mangetometer before
+** A crash on reading the gyroscope or the magnetometer before
 configuring/beginning them has been fixed.
 
 

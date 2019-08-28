@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -21,6 +21,7 @@
 #include "ESAT_ADCS-telecommand-handlers/ESAT_WheelTelecommandHandler.h"
 #include "ESAT_ADCS.h"
 #include "ESAT_ADCS-controllers/ESAT_WheelPIDController.h"
+#include "ESAT_ADCS-run-modes/ESAT_WheelResetElectronicSpeedControllerRunMode.h"
 #include "ESAT_ADCS-run-modes/ESAT_WheelSetDutyCycleRunMode.h"
 #include "ESAT_ADCS-run-modes/ESAT_WheelSetSpeedRunMode.h"
 
@@ -53,6 +54,10 @@ boolean ESAT_WheelTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPacket te
       break;
     case WHEEL_CONTROLLER_RESET_ERROR_INTEGRAL:
       handleWheelControllerResetErrorIntegralTelecommand(telecommand);
+      return true;
+      break;
+    case WHEEL_RESET_ELECTRONIC_SPEED_CONTROLLER:
+      handleWheelResetElectronicSpeedControllerTelecommand(telecommand);
       return true;
       break;
     default:
@@ -93,6 +98,13 @@ void ESAT_WheelTelecommandHandlerClass::handleWheelControllerResetErrorIntegralT
 {
   (void) telecommand;
   ESAT_WheelPIDController.resetErrorIntegral();
+}
+
+void ESAT_WheelTelecommandHandlerClass::handleWheelResetElectronicSpeedControllerTelecommand(ESAT_CCSDSPacket telecommand)
+{
+  (void) telecommand;
+  ESAT_WheelResetElectronicSpeedControllerRunMode.pendingReset = true;
+  ESAT_ADCS.setRunMode(ESAT_WheelResetElectronicSpeedControllerRunMode);
 }
 
 ESAT_WheelTelecommandHandlerClass ESAT_WheelTelecommandHandler;

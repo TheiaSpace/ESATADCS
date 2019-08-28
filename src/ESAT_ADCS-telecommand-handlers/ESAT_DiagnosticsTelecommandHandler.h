@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -39,6 +39,9 @@ class ESAT_DiagnosticsTelecommandHandlerClass: public ESAT_ADCSTelecommandHandle
     {
       DIAGNOSTICS_SET_COARSE_SUN_SENSOR_READINGS_SOURCES = 0xD0,
       DIAGNOSTICS_CHANGE_MAGNETORQUER_AXES_AND_POLARITIES = 0xD1,
+      DIAGNOSTICS_CONFIGURE_GYROSCOPE_BIAS_CORRECTION = 0xD2,
+      DIAGNOSTICS_CONFIGURE_MAGNETOMETER_GEOMETRY_CORRECTION = 0xD3,
+      DIAGNOSTICS_RECONFIGURE_GYROSCOPE = 0xD4,
     };
 
     // Handle the telecommand for setting the coarse sun sensor
@@ -64,6 +67,26 @@ class ESAT_DiagnosticsTelecommandHandlerClass: public ESAT_ADCSTelecommandHandle
     // * invert (true) or don't invert (false) the X magnetorquer polarity;
     // * invert (true) or don't invert (false) the Y magnetorquer polarity.
     void handleDiagnosticsChangeMagnetorquerAxesAndPolarities(ESAT_CCSDSPacket telecommand);
+
+    // Handle the telecommand for configuring the gyroscope bias correction.
+    // The telecommand has no parameters.
+    void handleDiagnosticsConfigureGyroscopeBiasCorrection(ESAT_CCSDSPacket telecommand);
+
+    // Handle the telecommand for configuring the magnetometer geometry correction.
+    // The telecommand has eight 16-bit unsigned integer parameters:
+    // * the measured magnetic attitude at 0 degrees;
+    // * the measured magnetic attitude at 45 degrees;
+    // * the measured magnetic attitude at 90 degrees;
+    // * the measured magnetic attitude at 135 degrees;
+    // * the measured magnetic attitude at 180 degrees;
+    // * the measured magnetic attitude at 225 degrees;
+    // * the measured magnetic attitude at 270 degrees;
+    // * the measured magnetic attitude at 315 degrees.
+    void handleDiagnosticsConfigureMagnetometerGeometryCorrection(ESAT_CCSDSPacket telecommand);
+
+    // Handle the telecommand for reconfiguring the gyroscope.
+    // The telecommand has no parameters.
+    void handleDiagnosticsReconfigureGyroscope(ESAT_CCSDSPacket telecommand);
 };
 
 // Global instance of the diagnostics telecommand handler library.

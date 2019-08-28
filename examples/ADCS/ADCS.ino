@@ -1,5 +1,5 @@
 /*
- * ESAT ADCS Main Program version 3.3.2
+ * ESAT ADCS Main Program version 3.4.0
  * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
@@ -15,7 +15,7 @@
  * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Theia Space's ESAT EPS library.  If not, see
+ * along with Theia Space's ESAT ADCS library.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
 

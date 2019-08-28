@@ -28,8 +28,8 @@
 // Use the global instance ESAT_Gyroscope.
 //
 // The underlying hardware is the MPU-9250 3-axis gyroscope,
-// accelerometer and magnetometer chip from InvenSense mounted on the
-// ESAT OBC board.  Communications are done though the OBC I2C bus.
+// accelerometer and magnetometer chip from InvenSense.
+// Communications are done through the I2C bus.
 class ESAT_GyroscopeClass
 {
   public:
@@ -45,7 +45,13 @@ class ESAT_GyroscopeClass
     // Set up the gyroscope with a full scale configuration given by
     // one of the FULL_SCALE_X_DEGREES_PER_SECOND constants.
     // Set the error flag on error.
-    void begin(byte fullScaleConfiguration);
+    void begin(byte fullScaleConfiguration = FULL_SCALE_2000_DEGREES_PER_SECOND);
+
+    // Configure the sensor bias correction.
+    // The gyroscope may have a small bias.
+    // Call this function with the satellite perfectly still
+    // to estimate the bias for bias correction.
+    void configureBiasCorrection();
 
     // Read the gyroscope.  Return the average of a number of samples.
     // Set the error flag on error.
@@ -67,6 +73,14 @@ class ESAT_GyroscopeClass
     // Low pass filter configuration.
     static const byte LOW_PASS_FILTER_CONFIGURATION = B00000110;
 
+    // Persistent bias storage.
+#ifdef ARDUINO_ESAT_ADCS
+    static const int BIAS_EEPROM_ADDRESS = 0;
+#endif /* ARDUINO_ESAT_ADCS */
+#ifdef ARDUINO_ESAT_OBC
+    static const char BIAS_FILENAME[];
+#endif /* ARDUINO_ESAT_OBC */
+
     // Communicate with the magnetometer through this bus.
     // We use a reference: working with bus is the same as
     // working with WireADCS or WireOBC directly.
@@ -76,6 +90,10 @@ class ESAT_GyroscopeClass
 #ifdef ARDUINO_ESAT_OBC
     TwoWire& bus = WireOBC;
 #endif /* ARDUINO_ESAT_OBC */
+
+    // Raw reading bias.
+    // Used for bias correction.
+    int bias;
 
     // Gain for internal conversions.  Set by setFullScale().
     double gain;
@@ -95,6 +113,12 @@ class ESAT_GyroscopeClass
     // Set the gain for internal conversions according to the full
     // scale configuration.
     void setGain(byte fullScaleConfiguration);
+
+    // Read the bias correction from non-volatile memory.
+    void readBiasCorrection();
+
+    // Write the bias correction to non-volatile memory.
+    void writeBiasCorrection();
 };
 
 // Global instance of the gyroscope library.

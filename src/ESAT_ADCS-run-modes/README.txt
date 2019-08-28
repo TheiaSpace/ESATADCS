@@ -1,4 +1,4 @@
-Copyright (C) 2017 Theia Space, Universidad Politécnica de Madrid
+﻿Copyright (C) 2017, 2019 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT ADCS library.
 
@@ -44,6 +44,7 @@ To change the run mode, use ESAT_ADCS.setRunMode()
   DETUMBLE: 0x02
   WHEEL_SET_DUTY_CYCLE: 0x20
   WHEEL_SET_SPEED: 0x21
+  WHEEL_RESET_ELECTRONIC_SPEED_CONTROLLER: 0x22
   MAGNETORQUER_ENABLE: 0x30
   MAGNETORQUER_SET_X_POLARITY: 0x31
   MAGNETORQUER_SET_Y_POLARITY: 0x32

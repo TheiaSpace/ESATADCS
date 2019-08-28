@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017, 2018 Theia Space, Universidad Politécnica de Madrid
+ * Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
  *
  * This file is part of Theia Space's ESAT ADCS library.
  *
@@ -49,7 +49,7 @@ void ESAT_WheelClass::calibrateElectronicSpeedController()
   writeDutyCycle(-100);
   delay(1000);
   writeDutyCycle(0);
-  delay(1000);
+  delay(4000);
 }
 
 float ESAT_WheelClass::constrainDutyCycle(const float dutyCycle)
@@ -73,6 +73,11 @@ word ESAT_WheelClass::constrainSpeed(const int wheelSpeed)
 float ESAT_WheelClass::readDutyCycle()
 {
   return dutyCycle;
+}
+
+void ESAT_WheelClass::resetElectronicSpeedController()
+{
+  calibrateElectronicSpeedController();
 }
 
 void ESAT_WheelClass::switchOffElectronicSpeedController()
