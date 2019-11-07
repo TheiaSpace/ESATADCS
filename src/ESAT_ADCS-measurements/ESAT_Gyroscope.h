@@ -44,6 +44,8 @@ class ESAT_GyroscopeClass
 
     // Set up the gyroscope with a full scale configuration given by
     // one of the FULL_SCALE_X_DEGREES_PER_SECOND constants.
+    // Enable the bias correction (use the latest bias value
+    // measured with configureBiasCorrection()).
     // Set the error flag on error.
     void begin(byte fullScaleConfiguration = FULL_SCALE_2000_DEGREES_PER_SECOND);
 
