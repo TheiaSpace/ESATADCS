@@ -24,8 +24,8 @@ void ESAT_MagnetorquerClass::begin()
 {
   configurePins();
   writeEnable(false);
-  writeX(NEGATIVE);
-  writeY(NEGATIVE);
+  writeX(POSITIVE);
+  writeY(POSITIVE);
   invertXPolarity(false);
   invertYPolarity(false);
   swapAxes(false);
