@@ -53,6 +53,14 @@ class ESAT_GyroscopeClass
     // to estimate the bias for bias correction.
     void configureBiasCorrection();
 
+    // Disable the bias correction.
+    // The bias estimation is preserved so that a call to
+    // enableBiasCorrection() will work.
+    void disableBiasCorrection();
+
+    // Enable the bias correction.
+    void enableBiasCorrection();
+
     // Read the gyroscope.  Return the average of a number of samples.
     // Set the error flag on error.
     int read(unsigned int samples);
@@ -94,6 +102,10 @@ class ESAT_GyroscopeClass
     // Raw reading bias.
     // Used for bias correction.
     int bias;
+
+    // Whether to correct the bias.
+    // Set by enableBiasCorrection() and disableBiasCorrect().
+    boolean correctBias;
 
     // Gain for internal conversions.  Set by setFullScale().
     double gain;
