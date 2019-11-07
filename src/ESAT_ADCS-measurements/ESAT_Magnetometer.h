@@ -37,6 +37,8 @@ class ESAT_MagnetometerClass
     boolean error;
 
     // Set up the magnetometer.
+    // Enable the geometry correction (use the latest geometry
+    // correction set with configureGeometryCorrection()).
     void begin();
 
     // Configure the geometry correction based on measured attitudes
