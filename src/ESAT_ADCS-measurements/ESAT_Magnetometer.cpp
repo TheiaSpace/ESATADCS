@@ -50,6 +50,7 @@ void ESAT_MagnetometerClass::begin()
 {
   error = false;
   readGeometryCorrection();
+  enableGeometryCorrection();
   setBypassMode();
 }
 
@@ -68,28 +69,35 @@ word ESAT_MagnetometerClass::computeAttitude(const float xField,
   const float fieldAngle =
     normaliseAttitude(-atan2(xField, yField) * RAD_TO_DEG);
 #endif /* ARDUINO_ESAT_ADCS */
-  // The attitude is obtained from a piecewise linear interpolation of the
-  // measured angles.
-  const int actualAngles[] = {315, 0, 45, 90, 135, 180, 225, 270, 315, 0};
-  for (int position = 0;
-       position < (GEOMETRY_CORRECTION_POSITIONS + 1);
-       position = position + 1)
+  if (correctGeometry)
   {
-    if ((angleDifference(fieldAngle, fieldAngles[position]) >= 0)
-        && (angleDifference(fieldAngle, fieldAngles[position + 1]) <= 0))
+    // The attitude is obtained from a piecewise linear interpolation of the
+    // measured angles.
+    const int actualAngles[] = {315, 0, 45, 90, 135, 180, 225, 270, 315, 0};
+    for (int position = 0;
+         position < (GEOMETRY_CORRECTION_POSITIONS + 1);
+         position = position + 1)
     {
-      const float attitude =
-        fieldAngle
-        + angleDifference(actualAngles[position], fieldAngles[position])
-        * angleDifference(fieldAngle, fieldAngles[position + 1])
-        / angleDifference(fieldAngles[position], fieldAngles[position + 1])
-        + angleDifference(actualAngles[position + 1], fieldAngles[position + 1])
-        * angleDifference(fieldAngle, fieldAngles[position])
-        / angleDifference(fieldAngles[position + 1], fieldAngles[position]);
-      return normaliseAttitude(attitude);
+      if ((angleDifference(fieldAngle, fieldAngles[position]) >= 0)
+          && (angleDifference(fieldAngle, fieldAngles[position + 1]) <= 0))
+      {
+        const float attitude =
+          fieldAngle
+          + angleDifference(actualAngles[position], fieldAngles[position])
+          * angleDifference(fieldAngle, fieldAngles[position + 1])
+          / angleDifference(fieldAngles[position], fieldAngles[position + 1])
+          + angleDifference(actualAngles[position + 1], fieldAngles[position + 1])
+          * angleDifference(fieldAngle, fieldAngles[position])
+          / angleDifference(fieldAngles[position + 1], fieldAngles[position]);
+        return normaliseAttitude(attitude);
+      }
     }
+    return fieldAngle;
   }
-  return fieldAngle;
+  else
+  {
+    return fieldAngle;
+  }
 }
 
 void ESAT_MagnetometerClass::configureGeometryCorrection(const word measurement0,
@@ -115,6 +123,16 @@ void ESAT_MagnetometerClass::configureGeometryCorrection(const word measurement0
   fieldAngles[8] = measurement315;
   fieldAngles[9] = measurement0;
   writeGeometryCorrection();
+}
+
+void ESAT_MagnetometerClass::disableGeometryCorrection()
+{
+  correctGeometry = false;
+}
+
+void ESAT_MagnetometerClass::enableGeometryCorrection()
+{
+  correctGeometry = true;
 }
 
 word ESAT_MagnetometerClass::getReading()
