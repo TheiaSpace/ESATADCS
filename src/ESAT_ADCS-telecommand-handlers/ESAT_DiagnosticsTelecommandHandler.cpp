@@ -52,11 +52,11 @@ boolean ESAT_DiagnosticsTelecommandHandlerClass::handleTelecommand(ESAT_CCSDSPac
       handleDiagnosticsReconfigureGyroscope(telecommand);
       return true;
       break;
-    case DIAGNOSTICS_ENABLE_GYROSCOPE_BIAS_CORRECTION:
-      handleDiagnosticsEnableGyroscopeBiasCorrection(telecommand);
+    case DIAGNOSTICS_SET_GYROSCOPE_BIAS_CORRECTION_USAGE:
+      handleDiagnosticsSetGyroscopeBiasCorrectionUsage(telecommand);
       return true;
-    case DIAGNOSTICS_ENABLE_MAGNETOMETER_GEOMETRY_CORRECTION:
-      handleDiagnosticsEnableMagnetometerGeometryCorrection(telecommand);
+    case DIAGNOSTICS_SET_MAGNETOMETER_GEOMETRY_CORRECTION_USAGE:
+      handleDiagnosticsSetMagnetometerGeometryCorrectionUsage(telecommand);
       return true;
     default:
       return false;
@@ -122,7 +122,7 @@ void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsReconfigureGyrosc
   ESAT_Gyroscope.begin();
 }
 
-void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsEnableGyroscopeBiasCorrection(ESAT_CCSDSPacket telecommand)
+void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsSetGyroscopeBiasCorrectionUsage(ESAT_CCSDSPacket telecommand)
 {
   const boolean enable = telecommand.readBoolean();
   if (enable)
@@ -135,7 +135,7 @@ void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsEnableGyroscopeBi
   }
 }
 
-void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsEnableMagnetometerGeometryCorrection(ESAT_CCSDSPacket telecommand)
+void ESAT_DiagnosticsTelecommandHandlerClass::handleDiagnosticsSetMagnetometerGeometryCorrectionUsage(ESAT_CCSDSPacket telecommand)
 {
   const boolean enable = telecommand.readBoolean();
   if (enable)
