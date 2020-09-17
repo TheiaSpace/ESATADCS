@@ -204,7 +204,7 @@ void ESAT_MagnetometerClass::readGeometryCorrection()
 #endif /* ARDUINO_ESAT_ADCS */
 #ifdef ARDUINO_ESAT_OBC
   File file = SD.open(GEOMETRY_FILENAME, FILE_READ);
-  if (file.available() == GEOMETRY_CORRECTION_POSITIONS * 4)
+  if (file.available() == GEOMETRY_CORRECTION_POSITIONS * 2)
   {
     for (int position = 0;
          position < GEOMETRY_CORRECTION_POSITIONS;
