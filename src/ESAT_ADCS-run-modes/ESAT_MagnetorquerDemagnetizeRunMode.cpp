@@ -30,6 +30,7 @@ void ESAT_MagnetorquerDemagnetizeRunModeClass::run()
 {
   if (cycles == 0)
   {
+    ESAT_Magnetorquer.writeEnable(false);
     return;
   }
   ESAT_Magnetorquer.writeEnable(true);
