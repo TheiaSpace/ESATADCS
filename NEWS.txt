@@ -1,6 +1,6 @@
 ESATADCS NEWS -- history of changes.
 
-Copyright (C) 2018, 2019 Theia Space, Universidad Politécnica de Madrid
+Copyright (C) 2018, 2019, 2021 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT ADCS library.
 
@@ -17,6 +17,23 @@ See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Theia Space's ESAT ADCS library.  If not, see
 <http://www.gnu.org/licenses/>.
+
+* Changes in ESATADCS 3.4.0, 2021-02-12
+
+** There is a new telecommand for disabling magnetometer
+geometry correction.
+
+** There is a new telecommand for disabling gyroscope
+bias correction.
+
+** Now the magnetorquers initial polarity matches the ground
+segment initial value.
+
+** An issue with the magnetorquer geometry correction persistence
+file has ben fixed.
+
+** A glitch with the magnetorquers demagnetization cycles has
+been corrected.
 
 
 * Changes in ESATADCS 3.4.0, 2019-07-24
