@@ -37,6 +37,8 @@ class ESAT_MagnetometerClass
     boolean error;
 
     // Set up the magnetometer.
+    // Enable the geometry correction (use the latest geometry
+    // correction set with configureGeometryCorrection()).
     void begin();
 
     // Configure the geometry correction based on measured attitudes
@@ -58,6 +60,14 @@ class ESAT_MagnetometerClass
                                      word measurement225,
                                      word measurement270,
                                      word measurement315);
+
+    // Disable the geometry correction.
+    // The geometry correction measurements are preserved so that a
+    // call to enableGeometryCorrection() will work.
+    void disableGeometryCorrection();
+
+    // Enable the geometry correction.
+    void enableGeometryCorrection();
 
     // Read the magnetic attitude (in degrees) relative to North:
     // the counterclockwise angle from the +X axis of the satellite
@@ -99,6 +109,10 @@ class ESAT_MagnetometerClass
 #ifdef ARDUINO_ESAT_OBC
     TwoWire& bus = WireOBC;
 #endif /* ARDUINO_ESAT_OBC */
+
+    // Whether to correct the geometry.
+    // Set by enableGeometryCorrection() and disableGeometryCorrection().
+    boolean correctGeometry;
 
     // Geometry correction coefficients.
     word fieldAngles[GEOMETRY_CORRECTION_POSITIONS + 2];

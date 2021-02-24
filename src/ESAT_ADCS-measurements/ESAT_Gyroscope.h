@@ -44,6 +44,8 @@ class ESAT_GyroscopeClass
 
     // Set up the gyroscope with a full scale configuration given by
     // one of the FULL_SCALE_X_DEGREES_PER_SECOND constants.
+    // Enable the bias correction (use the latest bias value
+    // measured with configureBiasCorrection()).
     // Set the error flag on error.
     void begin(byte fullScaleConfiguration = FULL_SCALE_2000_DEGREES_PER_SECOND);
 
@@ -52,6 +54,14 @@ class ESAT_GyroscopeClass
     // Call this function with the satellite perfectly still
     // to estimate the bias for bias correction.
     void configureBiasCorrection();
+
+    // Disable the bias correction.
+    // The bias estimation is preserved so that a call to
+    // enableBiasCorrection() will work.
+    void disableBiasCorrection();
+
+    // Enable the bias correction.
+    void enableBiasCorrection();
 
     // Read the gyroscope.  Return the average of a number of samples.
     // Set the error flag on error.
@@ -94,6 +104,10 @@ class ESAT_GyroscopeClass
     // Raw reading bias.
     // Used for bias correction.
     int bias;
+
+    // Whether to correct the bias.
+    // Set by enableBiasCorrection() and disableBiasCorrect().
+    boolean correctBias;
 
     // Gain for internal conversions.  Set by setFullScale().
     double gain;

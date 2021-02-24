@@ -1,4 +1,4 @@
-Copyright (C) 2017, 2018, 2019 Theia Space, Universidad Politécnica de Madrid
+Copyright (C) 2017, 2018, 2019, 2021 Theia Space, Universidad Politécnica de Madrid
 
 This file is part of Theia Space's ESAT ADCS library.
 
@@ -17,7 +17,7 @@ along with Theia Space's ESAT ADCS library.  If not, see
 <http://www.gnu.org/licenses/>.
 
 
-ESAT ADCS library version 3.4.0.
+ESAT ADCS library version 3.5.0.
 
 Attitude Determination and Control Subsystem (ADCS) for ESAT.
 

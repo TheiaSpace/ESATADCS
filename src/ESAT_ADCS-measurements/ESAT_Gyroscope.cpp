@@ -38,6 +38,7 @@ void ESAT_GyroscopeClass::begin(const byte fullScaleConfiguration)
   configureRange(fullScaleConfiguration);
   setGain(fullScaleConfiguration);
   readBiasCorrection();
+  enableBiasCorrection();
 }
 
 void ESAT_GyroscopeClass::configureBiasCorrection()
@@ -79,6 +80,16 @@ void ESAT_GyroscopeClass::configureRange(const byte fullScaleConfiguration)
   }
 }
 
+void ESAT_GyroscopeClass::disableBiasCorrection()
+{
+  correctBias = false;
+}
+
+void ESAT_GyroscopeClass::enableBiasCorrection()
+{
+  correctBias = true;
+}
+
 int ESAT_GyroscopeClass::read(unsigned int samples)
 {
   long cumulativeRawReading = 0;
@@ -87,7 +98,14 @@ int ESAT_GyroscopeClass::read(unsigned int samples)
     cumulativeRawReading = cumulativeRawReading + readRawSample();
   }
   const long averageRawReading = cumulativeRawReading / long(samples);
-  return (averageRawReading - bias) / gain;
+  if (correctBias)
+  {
+    return (averageRawReading - bias) / gain;
+  }
+  else
+  {
+    return averageRawReading / gain;
+  }
 }
 
 int ESAT_GyroscopeClass::readRawSample()

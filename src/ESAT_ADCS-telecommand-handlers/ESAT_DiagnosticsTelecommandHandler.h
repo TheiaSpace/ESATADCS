@@ -42,6 +42,8 @@ class ESAT_DiagnosticsTelecommandHandlerClass: public ESAT_ADCSTelecommandHandle
       DIAGNOSTICS_CONFIGURE_GYROSCOPE_BIAS_CORRECTION = 0xD2,
       DIAGNOSTICS_CONFIGURE_MAGNETOMETER_GEOMETRY_CORRECTION = 0xD3,
       DIAGNOSTICS_RECONFIGURE_GYROSCOPE = 0xD4,
+      DIAGNOSTICS_SET_GYROSCOPE_BIAS_CORRECTION_USAGE = 0xD5,
+      DIAGNOSTICS_SET_MAGNETOMETER_GEOMETRY_CORRECTION_USAGE = 0xD6,
     };
 
     // Handle the telecommand for setting the coarse sun sensor
@@ -87,6 +89,18 @@ class ESAT_DiagnosticsTelecommandHandlerClass: public ESAT_ADCSTelecommandHandle
     // Handle the telecommand for reconfiguring the gyroscope.
     // The telecommand has no parameters.
     void handleDiagnosticsReconfigureGyroscope(ESAT_CCSDSPacket telecommand);
+
+    // Handle the telecommand for enabling or disabling the
+    // gyroscope bias correction.
+    // The telecommand has a boolean (8-bit unsigned integer) parameter:
+    // * enable (non-zero) or disable (zero) the correction.
+    void handleDiagnosticsSetGyroscopeBiasCorrectionUsage(ESAT_CCSDSPacket telecommand);
+
+    // Handle the telecommand for enabling or disabling the
+    // magnetometer geometry correction.
+    // The telecommand has a boolean (8-bit unsigned integer) parameter:
+    // * enable (non-zero) or disable (zero) the correction.
+    void handleDiagnosticsSetMagnetometerGeometryCorrectionUsage(ESAT_CCSDSPacket telecommand);
 };
 
 // Global instance of the diagnostics telecommand handler library.
